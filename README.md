@@ -1,7 +1,8 @@
 # KidneyImmuneLBM
 code for manuscript Logic-Based Modeling of Inflammatory Macrophage Crosstalk with Glomerular Endothelial Cells in Diabetic Kidney Disease
 
-%[![DOI](https://zenodo.org/badge/385029851.svg)](https://zenodo.org/badge/latestdoi/385029851)
+NEED TO UPDATE THIS DOI
+[![DOI](https://zenodo.org/badge/385029851.svg)](https://zenodo.org/badge/latestdoi/385029851)
 
 Information below is DRAFT only.
 
