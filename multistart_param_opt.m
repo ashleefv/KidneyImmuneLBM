@@ -78,11 +78,11 @@ mean_uq = zeros(repeats, length(p_init));                                  % ini
 % p is new parameter list containing parameters to be optimized
 
 %% Single run for initial parameter estimates
-[Tout, Yout] = coupledODE_run(tspan, y0, params, 0);
+[Tout, Yout] = networkODE_run(tspan, y0, params, 0);
 
 options = [];
 p_sampled(1,:) = p_init;
-res_norm = coupledODE_error(p_init, params, y0, tspan, tau_index, n_index, k_index); % min_error should be called here
+res_norm = networkODE_error(p_init, params, y0, tspan, tau_index, n_index, k_index); % min_error should be called here
 
 error_sampled(1) = abs(res_norm);
 %% Random Sampling
@@ -115,7 +115,7 @@ p1 = parpool('local', 4);
 for k=1:repeats
 
     disp(k);
-    F_errmin = @(p) coupledODE_error(p, params, y0, tspan, tau_index, n_index, k_index);
+    F_errmin = @(p) networkODE_error(p, params, y0, tspan, tau_index, n_index, k_index);
     
     if isreal(F_errmin(p_sampled(k+1,:))) == 0
         continue

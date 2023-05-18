@@ -8,7 +8,7 @@
 function [s_FD_tau, s_FD_n, s_FD_k, tau_index, n_index, k_index] = sens(params, y0, tspan, sens_change)
 tic;
 
-[t,y] = coupledODE_run(tspan,y0,params,0);
+[t,y] = networkODE_run(tspan,y0,params,0);
 yR = y([1,end], [23, 25, 24, 6, 13]);
 
 % Data and parameter size Initialization
@@ -38,7 +38,7 @@ for m = 1:length(params{2}(:))
     dp = params;
     dp{2}(m) = dp{2}(m)*(1+percent*1e-2);                   % perturb parameter by a small amount
     
-    [time,dy_model] = coupledODE_run(tspan,y0,dp,0);
+    [time,dy_model] = networkODE_run(tspan,y0,dp,0);
     dy_model = real(dy_model);
     dy_modelR = [dy_model([1,48],[23,25,24,6,13])];
     for l = 1:length(yR)
@@ -52,7 +52,7 @@ for m = 1:length(params{1}(2,:))
     dp = params;
     dp{1}(2,m) = dp{1}(2,m)*(1+percent*1e-2);               % perturb m-th parameter by a small amount
     
-    [time,dy_model] = coupledODE_run(tspan,y0,dp,0);
+    [time,dy_model] = networkODE_run(tspan,y0,dp,0);
     dy_model = real(dy_model);
     dy_modelR = [dy_model([1,48],[23,25,24,6,13])];
     for l = 1:length(yR)
@@ -66,7 +66,7 @@ end
 for m = 1:length(params{1}(3,:))
     dp = params;
     dp{1}(3,m) = dp{1}(3,m)*(1+percent*1e-2);                % perturb m-th parameter by a small amount
-    [time,dy_model] = coupledODE_run(tspan,y0,dp,0);  
+    [time,dy_model] = networkODE_run(tspan,y0,dp,0);  
     dy_modelR = [dy_model([1,48],[23,25,24,6,13])];
     for l = 1:length(yR)
         s_FD_k(l,m,:) = (dy_modelR(:,1)- yR(:,l))/params{1}(3,m)/(percent*1e-2);

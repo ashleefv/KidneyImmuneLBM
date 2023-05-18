@@ -15,7 +15,7 @@ s_FD_k = zeros(30,RP,1);
 
 sens_change = 15;
 percent = sens_change; % percent perturbation
-[t, y] = coupledODE_run(tspan,y0,params,0);
+[t, y] = networkODE_run(tspan,y0,params,0);
 
 % y = y(:,[12, 20, 23, 24, 25, 27, 29, 30]);
 % AUC_y = trapz(t, y(:,[12, 18, 20, 23, 25, 27, 29, 30]));
@@ -26,7 +26,7 @@ for m = 1:SP
     dp = params;
     dp{3}(m) = dp{3}(m)*(1-percent*1e-2); % perturb each "Ymax" parameter by a small amount
     
-    [time,dy_model] = coupledODE_run(tspan,y0,dp,0); % simulate with perturbed value
+    [time,dy_model] = networkODE_run(tspan,y0,dp,0); % simulate with perturbed value
     dy_model = real(dy_model);
     dy_modelR = [dy_model(:,[1:30])];
     % AUC_dy = trapz(time, dy_model(:,[12, 13, 20, 23, 24, 25, 27, 29]));
@@ -40,7 +40,7 @@ for m = 1:RP
     dp = params;
     dp{1}(1,m) = dp{1}(1,m)*(1-percent*1e-2); % perturb each "W" parameter by a small amount
     
-    [time,dy_model] = coupledODE_run(tspan,y0,dp,0); % simulate with perturbed value
+    [time,dy_model] = networkODE_run(tspan,y0,dp,0); % simulate with perturbed value
     dy_model = real(dy_model);
     dy_modelR = [dy_model(:,[1:30])];
     % AUC_dy = trapz(time, dy_model(:,[12, 13, 20, 23, 24, 25, 27, 29]));
@@ -55,7 +55,7 @@ for m = 1:RP
     dp = params;
     dp{1}(3,m) = dp{1}(3,m)*(1-percent*1e-2); % perturb each "W" parameter by a small amount
     
-    [time,dy_model] = coupledODE_run(tspan,y0,dp,0); % simulate with perturbed value
+    [time,dy_model] = networkODE_run(tspan,y0,dp,0); % simulate with perturbed value
     dy_model = real(dy_model);
     dy_modelR = [dy_model(:,[1:30])];
     % AUC_dy = trapz(time, dy_model(:,[12, 13, 20, 23, 24, 25, 27, 29]));
@@ -90,7 +90,7 @@ for j = 1:length(Ym_pert)
             dp{3}(Ym_pert(j)) = dp{3}(Ym_pert(j))*(1 - 50*1e-2);
 
             options = [];
-            [dt, dy] = ode23s(@coupledODE_opt_extended,tspan,y0,options,dp);
+            [dt, dy] = ode23s(@networkODE,tspan,y0,options,dp);
             for i = 1:11
                 hold on
                 subplot(4,3,i)
