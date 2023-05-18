@@ -9,7 +9,7 @@ NEED TO UPDATE THIS DOI
 This logic-based ODE model predicts the effects of glucose and inflammatory stimulus on pro-inflammatory macrophages and glomerular endothelial cells in diabetic kidney disease. A protein signaling network describes the crosstalk between macrophages and glomerular endothelial cells stimulated by glucose and LPS, and it consists of 30 species and 40 interactions. The model inputs (i.e. glucose or LPS) have a value of 0 or 1 when the input is inactive or fully active, respectively. The model species hold a value between 0 and 1. A set of 30 differential equations define the activation or inhibition of a species using normalized Hill functions. The model simulations were trained and validated against in vitro experimental data. The model was used to explore the possible mechanisms for dysregulated signaling in both macrophages and glomerular endothelial cells during diabetic kidney disease progression.
 
 ## Authors
-Krutika Patidar<sup>a,  Ashlee N. Ford Versypt<sup>a<sup>b,
+Krutika Patidar<sup>a,  Ashlee N. Ford Versypt<sup>a<sup>b
 <sup>a</sup>Department of Chemical and Biological Engineering, University at Buffalo, The State University of New York, Buffalo, NY,USA<br/>
 <sup>b</sup>Institute for Computational and Data Sciences, University at Buffalo, The State University of New York, Buffalo, NY, USA<br/>
 
@@ -34,8 +34,8 @@ K. Patidar and A. N. Ford Versypt, Logic-Based Modeling of Inflammatory Macropha
 
 
 ## Recommended Supplementary Packages
-[Filled area plot](https://github.com/saucermanlab/Netflux) is a NetFlux package, which is used to generate equations and utility funcitons for networkODE.m
-[Filled area plot](https://www.ics.uci.edu/~ihler/code/kde.html) is a function to compute kernel density estimates, which is used to draw confidence intervals around the mean predictions.
+[Netflux](https://github.com/saucermanlab/Netflux) is a package, which is used to generate equations and utility funcitons for networkODE.m
+[kde](https://www.ics.uci.edu/~ihler/code/kde.html) is a function to compute kernel density estimates, which is used to draw confidence intervals around the mean predictions.
 
 ## Acknowledgements
 Research reported in this publication was supported by the National Institute of General Medical Sciences of the National Institutes of Health under award number R35GM133763 and NSF CAREER
