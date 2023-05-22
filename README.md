@@ -9,10 +9,11 @@ NEED TO UPDATE THIS DOI
 This logic-based ODE model predicts the effects of glucose and inflammatory stimulus on pro-inflammatory macrophages and glomerular endothelial cells in diabetic kidney disease. A protein signaling network describes the crosstalk between macrophages and glomerular endothelial cells stimulated by glucose and LPS, and it consists of 30 species and 40 interactions. The model inputs (glucose or LPS) are 0 or 1 when the input is inactive or fully active. The model species hold a value between 0 and 1. A set of 30 differential equations define the activation or inhibition of a species using normalized Hill functions. The model was used to explore the possible mechanisms for dysregulated signaling in both macrophages and glomerular endothelial cells during diabetic kidney disease progression. The model simulations were trained and validated against in vitro experimental data.
 
 ## Authors
-Krutika Patidar<sup>a</sup>,  Ashlee N. Ford Versypt<sup>a,b</sup>
+Krutika Patidar<sup>a</sup>,  Ashlee N. Ford Versypt<sup>a,b,c</sup>
 
 <sup>a</sup>Department of Chemical and Biological Engineering, University at Buffalo, The State University of New York, Buffalo, NY, USA<br/>
-<sup>b</sup>Institute for Computational and Data Sciences, University at Buffalo, The State University of New York, Buffalo, NY, USA<br/>
+<sup>b</sup>Department of Biomedical Engineering, University at Buffalo, The State University of New York, Buffalo, NY, USA<br/>
+<sup>c</sup>Institute for Computational and Data Sciences, University at Buffalo, The State University of New York, Buffalo, NY, USA<br/>
 
 ## Manuscript
 K. Patidar and A. N. Ford Versypt, Logic-Based Modeling of Inflammatory Macrophage Crosstalk with Glomerular Endothelial Cells in Diabetic Kidney Disease, bioRxiv preprint, 2023. DOI: 10.1101/2023.04.04.535594 [Preprint] (https://biorxiv.org/cgi/content/short/2023.04.04.535594)
