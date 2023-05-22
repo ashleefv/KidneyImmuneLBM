@@ -12,7 +12,7 @@ Krutika Patidar<sup>a</sup>,  Ashlee N. Ford Versypt<sup>a,b,c</sup>
 <sup>c</sup>Institute for Computational and Data Sciences, University at Buffalo, The State University of New York, Buffalo, NY, USA<br/>
 
 ## Manuscript
-K. Patidar and A. N. Ford Versypt, Logic-Based Modeling of Inflammatory Macrophage Crosstalk with Glomerular Endothelial Cells in Diabetic Kidney Disease, bioRxiv preprint, 2023. DOI: 10.1101/2023.04.04.535594 [Preprint] (https://biorxiv.org/cgi/content/short/2023.04.04.535594)
+K. Patidar and A. N. Ford Versypt, Logic-Based Modeling of Inflammatory Macrophage Crosstalk with Glomerular Endothelial Cells in Diabetic Kidney Disease, bioRxiv preprint, 2023. DOI: 10.1101/2023.04.04.535594 [Preprint](https://biorxiv.org/cgi/content/short/2023.04.04.535594)
 
 ## Scripts
 
