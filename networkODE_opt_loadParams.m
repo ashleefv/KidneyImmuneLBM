@@ -1,7 +1,7 @@
 function [params,y0] = networkODE_opt_loadParams(choice) 
 
 % species parameters 
-speciesNames = {'GLU','LPS','AGE','VEGFRec1','VEGFRec2','VEGFamRNA','RAGEec','RAGE','TLR4','NADPH','NADPHec','ROSec','ROS','PI3K','AKT','PI3Kec','AKTec','NFKBec','NFKB','NO','ONOO','eNOS','IL6','TNFa','IL1b','PLC','VEGFa','pJunc','Calcium','GapWidth',}; 
+speciesNames = {'GLU','LPS','AGE','VEGFR1','VEGFR2','VEGF-A_m_R_N_A','RAGE_e_c','RAGE','TLR4','NADPH','NADPH_e_c','ROS_e_c','ROS','PI3K','AKT','PI3K_e_c','AKT_e_c','NF\kappaB_e_c','NF\kappaB','NO','ONOO','eNOS','IL-6','TNF-\alpha','IL-1\beta','PLC-\gamma','VEGF-A','pJunction','Ca','Gap Width',}; 
 tau = [1.660000e-02, 1.660000e-02, 5.872056e-01, 6.235103e-01, 6.342806e+00, 4.374468e-02, 2.060257e+00, 1.078800e-01, 6.297263e+00, 2.004718e-02, 1.598986e+00, 8.787416e+00, 8.413487e-01, 7.164454e+00, 1.426456e+00, 3.233964e+00, 6.724014e+00, 9.083571e+00, 3.316558e-01, 10, 10, 6.697772e+00, 3.025606e+00, 0.68390754, 4.962413e+00, 7.538240e+00, 5.622171e-01, 1, 1, 1, ]; 
 ymax = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ];
 

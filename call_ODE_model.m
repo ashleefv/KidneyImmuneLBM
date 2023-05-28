@@ -38,8 +38,9 @@ tau_index = []; n_index = []; k_index = [];
 % choose mode=0 :no plots
 % mode = 1 :plots
 % mode = 2 :additional validation plots
+% mode = 3 :regulatory response plots
 load invitro_data.mat
-mode = 1;
+mode = 2;
 [Time, Y_pred] = networkODE_run(tspan, y0, params, mode);
 %%
 %% Model Workflow
@@ -145,6 +146,7 @@ addpath("C:/Users/krutikap/Research/kdefunc")
 % choose mode=0 :no plots
 % mode = 1 :plots
 % mode = 2 :additional validation plots
+% mode = 3 :regulatory response plots
 mode=0;
 [Time, Y_pred] = networkODE_run(tspan, y0, params, mode);
 
