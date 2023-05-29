@@ -40,7 +40,7 @@ tau_index = []; n_index = []; k_index = [];
 % mode = 2 :additional validation plots
 % mode = 3 :regulatory response plots
 load invitro_data.mat
-mode = 2;
+mode = 1;
 [Time, Y_pred] = networkODE_run(tspan, y0, params, mode);
 %%
 %% Model Workflow
