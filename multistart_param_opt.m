@@ -115,7 +115,7 @@ p1 = parpool('local', 4);
 for k=1:repeats
 
     disp(k);
-    F_errmin = @(p) networkODE_error(p, params, y0, tspan, tau_index, n_index, k_index);
+    F_errmin = @(p) networkODE_error(p, params, p_init, tspan, tau_index, n_index, k_index);
     
     if isreal(F_errmin(p_sampled(k+1,:))) == 0
         continue

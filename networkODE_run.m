@@ -819,44 +819,56 @@ end
 
 
 if mode == 3
+    linest = ["-", "--", "-.", ":", "--."];
     figure(10);
-    for j = [3,8,10]
+    var = [3,8,10];
+    for j = 1:length(var)
         subplot(2,3,1)
-        plot(Tout, Yout(:,[3,8,10]), 'LineWidth', 2)
+        plot(Tout, Yout(:,var(j)), linest(j), 'LineWidth', 2)
+        hold on
         ylabel("Activity"); xlabel('Time (hour)')
         set(gca,'FontName','Arial','FontSize',18);
-        lgd = legend(params{4}([3,8,10]), 'Location', 'SouthEast');
-        lgd.FontSize = 14;
+        hold on
+     lgd = legend(params{4}([3,8,10]), 'Location', 'SouthEast');
+     lgd.FontSize = 14;
 
     end
-    for j = [9,14,15,19]
+    var = [9,14,15,19];
+    for j = 1:length(var)
         subplot(2,3,2)
-        plot(Tout, Yout(:,[9,14,15,19]), 'LineWidth', 2)
+        plot(Tout, Yout(:,var(j)), linest(j), 'LineWidth', 2); 
+        hold on
         ylabel("Activity"); xlabel('Time (hour)')
         set(gca,'FontName','Arial','FontSize',18);
         lgd = legend(params{4}([9,14,15,19]), 'Location', 'SouthEast');
         lgd.FontSize = 14;
         
     end
-    for j = [7,11,18]
+    var = [7,11,18];
+    for j=1:length(var)
         subplot(2,3,3)
-        plot(Tout, Yout(:,[7,11,18]), 'LineWidth', 2)
+        plot(Tout, Yout(:,var(j)), linest(j), 'LineWidth', 2); 
+        hold on
         ylabel("Activity"); xlabel('Time (hour)')
         set(gca,'FontName','Arial','FontSize',18);
         lgd = legend(params{4}([7,11,18]), 'Location', 'SouthEast');
         lgd.FontSize = 14;
     end
-    for j = [4,5,26,16,17]
+    var = [4,5,26,16,17];
+    for j=1:length(var)
         subplot(2,3,4)
-        plot(Tout, Yout(:,[4,5,26,16,17]), 'LineWidth', 2)
+        plot(Tout, Yout(:,var(j)), linest(j), 'LineWidth', 2); 
+        hold on
         ylabel("Activity"); xlabel('Time (hour)')
         set(gca,'FontName','Arial','FontSize',18);
         lgd = legend(params{4}([4,5,26,16,17]), 'Location', 'SouthEast');
         lgd.FontSize = 14;
     end
-    for j = [28,29,30]
+    var = [28,29,30];
+    for j=1:length(var)
         subplot(2,3,5)
-        plot(Tout, Yout(:,[28,29,30]), 'LineWidth', 2)
+        plot(Tout, Yout(:,var(j)), linest(j), 'LineWidth', 2)
+        hold on
         ylabel("Activity"); xlabel('Time (hour)')
         set(gca,'FontName','Arial','FontSize',18);
         lgd = legend(params{4}([28,29,30]), 'Location', 'SouthEast');
