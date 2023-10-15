@@ -33,7 +33,7 @@ K. Patidar and A. N. Ford Versypt, Logic-Based Modeling of Inflammatory Macropha
 * The normalized training and validation data is also provided in MIDAS-formatted CSV files.
 
 ## STRIKEGOLDD Scripts
-* STRIKE_GOLDD.m and options.m These files are provided as part of the STRIKE-GOLDD package. These two scripts are obtained from [STRIKE-GOLDD GitHub Repo] (https://github.com/afvillaverde/strike-goldd). These files are used to run the structure identifiability and observability analysis.
+* STRIKE_GOLDD.m and options.m These files are provided as part of the STRIKE-GOLDD package. These two scripts are obtained from [STRIKE-GOLDD GitHub Repo](https://github.com/afvillaverde/strike-goldd). These files are used to run the structure identifiability and observability analysis.
 * z_network_full_k.m, z_network_full_n.m, z_network_full_W.m, and z_network_full_tau.m These files are used to initialize the network model to perform identifiability analysis for unknown parameters k, n, tau, and W. The structure of these scripts is based on STRIKE-GOLDD package requirements.  
 * Additional information on STRIKE-GOLDD package can be found [here](https://github.com/afvillaverde/strike-goldd)
 
@@ -41,7 +41,7 @@ K. Patidar and A. N. Ford Versypt, Logic-Based Modeling of Inflammatory Macropha
 * UQLab_network_initialize.m This file is used to initialize the network model as per UQLab sensitivity analysis package requirements.
 * UQLab_network_run.m This file can be used to run the Sobol sensitivity analysis, provided UQLab package and supporting files are downloaded.
 * UQLab_Sobolplots_networkmodel.m This file can be used to plot the First-order and Total order Sobol sensitivity indices for W, n, EC50, and tau parameters.
-* Additional information on downloading and using UQLab can be found [here] (https://www.uqlab.com/download)
+* Additional information on downloading and using UQLab can be found [here](https://www.uqlab.com/download)
 
 ## Recommended Supplementary Packages
 * [Netflux](https://github.com/saucermanlab/Netflux) is a package that generates equations and utility functions for networkODE.m
