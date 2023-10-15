@@ -69,7 +69,7 @@ dydt(VEGFa) = (act(y(VEGFamRNA),rpar(:,17))*ymax(VEGFa) - y(VEGFa))/tau(VEGFa);
 dydt(Calcium) = (OR(inhib(y(NO),rpar(:,36)),act(y(PLC),rpar(:,37)))*ymax(Calcium) - y(Calcium))/tau(Calcium);
 dydt(pJunc) = (act(y(Calcium),rpar(:,38))*ymax(pJunc) - y(pJunc))/tau(pJunc); 
   
-if rpar(1,1) == 0 && rpar(1,2) == 0
+if params{1}(1,1) == 0 && params{1}(1,2) == 0
     dydt(GapWidth) = 0;
 else
     dydt(GapWidth) = (act(y(pJunc),rpar(:,39))*ymax(GapWidth) - y(GapWidth))/(tau(GapWidth));

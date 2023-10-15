@@ -11,19 +11,27 @@ choice = "both"; % options: "GLU", "LPS", "both"
 % choose choice of params (tau, y0, ymax parameters) list based on what combination of stimulus is ON 
 
 % Initialize parameters, initial value, and simulation time
-% In Vitro Model Parameters
+% In Vitro Model Parameparaters
 [params, y0] = networkODE_opt_loadParams(choice); %in vitro as optimized
 
 % Time (short-term sim.)
-tspan = [0:1:48];  % Time in hours
+tspan = [0:1:100];  % Time in hours
 
-sens_change = 0.01; % change in percent
+sens_chanparge = 0.01; % change in percent
 params{1}(1,1) = 1; % change whether GLUCOSE present or absent (either 0 or 1)
 params{1}(1,2) = 1; % change whether LPS present or absent (either 0 or 1)
 
 
 % provide array of indices of tau, n, k parameters that need to be optimized
-tau_index = []; n_index = []; k_index = [];
+tau_index = []; tau_index = [ 2     6     9    12    13    14    16    17    19    20    22    23    24    25    27]; 
+k_index = [];  k_index = [3     5     6     8     9    11    12    14    15    16    17    18    21    22    25    26    27    30    31    32    33  34]; 
+n_index = []; n_index = [3     4     5     6      7     8     9    10    11    12    13    14    15    16    17    18    19    20    21    22    23    24    25    26    27    30    31    32    33    34    36]; 
+W_index = []; W_index = [6     8     9    11    12    14    15    16    17    18    22    25    31    32];
+
+%tau_index = []; tau_index = [23    24    25];
+%W_index = [];  W_index = [12    14    15    18  31    32 ];
+%n_index = [];  n_index = [12  14    15    18  31    32 ];
+%k_index = [];  k_index = [12    14    15    18  30    31    32 ];
 
 %% Plots from Trained and Valided Model
 % calculate confidence intervals within '#_run.m' function
@@ -45,6 +53,7 @@ mode = 1;
 %%
 %% Model Workflow
 %% Call local sensitivity analysis
+% gs: 0 or 1, local or global sensitivity analysis
 % s_FD_tau returns sensitivity coefficients for tau parameter
 % s_FD_n returns sensitivity coefficients for n parameter 
 % s_FD_k returns sensitivity coefficients for k parameter (EC_50)
@@ -54,12 +63,16 @@ mode = 1;
 % params: set of parameters (W, n, EC50, tau, ymax, speciesnames)
 % y0: Initial value
 % tspan: simulation time points
+if gs == 0
+    [s_FD_tau, s_FD_n, s_FD_k, tau_index, n_index, k_index] = sens(params, y0, tspan, sens_change);
+    disp(tau_index);
+    disp(n_index);
+    disp(k_index);
+else
+    disp("Run UQ Lab global sensitivity analysis scripts")
+end
 
-[s_FD_tau, s_FD_n, s_FD_k, tau_index, n_index, k_index] = sens(params, y0, tspan, sens_change);
 
-disp(tau_index);
-disp(n_index);
-disp(k_index);
 %% Call parameter estimation function
 
 % global_p_best returns set of best parameters
@@ -71,7 +84,7 @@ disp(k_index);
 % k_index: index of EC_50 parameter (corresponds to reaction index) to be optimized
 % y0_index: index of y0
 
-[global_p_best, h, global_SD] = multistart_param_opt(params, y0, tspan, tau_index, n_index, k_index, y0_index);
+[global_p_best] = multistart_param_opt(params, y0, tspan, tau_index, n_index, k_index, W_index);
 
 disp(global_p_best);
 %% Calculate minimum RMSE for best set of parameters
@@ -87,7 +100,7 @@ disp(global_p_best);
 % k_index: index of EC_50 parameter (corresponds to reaction index) to be tuned
 % y0_index: index of y0
 
-[min_error, w_error] = networkODE_error(global_p_best, params, y0, tspan, tau_index, n_index, k_index);
+[min_error] = networkODE_error(global_p_best, params, y0, tspan, tau_index, n_index, k_index, W_index);
 
 %% Plot graph of select response variables
 % Time: Time output
@@ -102,13 +115,16 @@ disp(global_p_best);
 % mode = 1, plots training graph and validation data
 % mode = 2, plots additional validation graph
 % mode = 3, plots regulatory nodes in the network
+% mode = 4, check for parameter uncertainty and 95% CI
+
 size_tau = size(tau_index,2);
-size_n = size(n_index, 2);
+size_n = size(n_index,2);
 size_k = size(k_index,2);
+size_W = size(W_index,2);
 
 % update the params list with optimal parameter
 %for m = 1:size_tau
-  %      params{2}(tau_index(m)) = global_p_best(m);       
+%       params{2}(tau_index(m)) = global_p_best(m);       
 %end
 %for n = 1:size_n
 %       params{1}(2,n_index(n)) = global_p_best(n+size_tau);       
@@ -117,52 +133,34 @@ size_k = size(k_index,2);
 %        params{1}(3,k_index(o)) = global_p_best(o+size_tau+size_n);       
 %end
 
-% scaled params unscaled to actual values.
-for m = 1:size_tau
-        params{2}(tau_index(m)) = global_p_best(m)*(max(params{2})-min(params{2})) + min(params{2}); 
-        % tau_g(m) = global_p_best(m)*(max(params{2})-min(params{2})) + min(params{2}); 
-end
+% scaled params are unscaled to actual values in given range.
+%for tau_iter = 1:size_tau
+%        params{2}(tau_index(tau_iter)) = global_p_best(tau_iter); 
+%end
 
-for n = 1:size_n
-        params{1}(2,n_index(n)) = global_p_best(n + size_tau)*(max(params{1}(2,:)) -  min(params{1}(2,:))) + min(params{1}(2,:));
-        % n_g(n) = global_p_best(n + size_tau)*(max(params{1}(2,:)) -  min(params{1}(2,:))) + min(params{1}(2,:));
-end
+%for w_iter = 1:size_W % W
+%        params{1}(1, W_index(w_iter)) = global_p_best(w_iter +  size_tau);
+%end
 
-for o = 1:size_k %EC50
-        params{1}(3,k_index(o)) = global_p_best(o+size_tau + size_n);
-        % k_g(o) = global_p_best(o+size_tau + size_n);
-end
+%for n_iter = 1:size_n
+%        params{1}(2,n_index(n_iter)) = global_p_best(n_iter + size_tau + size_W); 
+%end
+
+%for k_iter = 1:size_k % EC50
+%        params{1}(3,k_index(k_iter)) = p(k_iter + size_tau + size_n + size_W); 
+%end
 
 
-% calculate confidence intervals within '#_run.m' function
-
-%uncomment line below to add @kde function to path
-% @kde function documentation: https://www.ics.uci.edu/~ihler/code/kde.html
-% @kde function evaluates kde estimates to compute confidence region
-% addpath("C:/Research/kdefunc") 
-addpath("C:/Users/krutikap/Research/kdefunc") 
 
 % Run networkODE function with optimal parameter set
 % choose mode=0 :no plots
 % mode = 1 :plots
 % mode = 2 :additional validation plots
 % mode = 3 :regulatory response plots
+% mode = 4 : check for parameter uncertainty and 95% CI
+
 mode=0;
 [Time, Y_pred] = networkODE_run(tspan, y0, params, mode);
-
-
-% global_p_best: Optimal parameter set obtained
-% var: variance of estimated parameters
-% SD: standard deviation or sigma
-% OUTPUTS
-% CI_lower: Lower bound of CI for each parameter
-% CI_upper: Upper bound of CI for each parameter
-% var = diag(inv(h));
-% SD = sqrt(var);
-
-CI_lower = global_p_best - global_SD*tinv(0.90,length(global_p_best));
-CI_upper = global_p_best + global_SD*tinv(0.90,length(global_p_best));
-
 
 
 
