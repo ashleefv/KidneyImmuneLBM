@@ -21,7 +21,7 @@ K. Patidar and A. N. Ford Versypt, Logic-Based Modeling of Inflammatory Macropha
 * call_ODE_model.m This file calls the following code scripts to perform necessary functions.
 * networkODE.m This file contains the ODE equations and utility functions (normalized Hill function) and adds parameter constraints as needed.
 * networkODE_opt_loadParams.m This file contains a dictionary of default and optimized parameter values of reaction parameters (W, n, EC50), species parameters (y0, ymax, tau), and species names.
-* networkODE_run.m This file runs the ODE model and provides plots that show trained and validated predictions against experimental data.
+* networkODE_multirun.m This file runs the ODE model and provides plots that show trained and validated predictions against experimental data.
 * networkODE_error.m This file computes the sum of squared error (SSE) and weighted SSE between model predictions and data.
 * sens.m This file performs a local sensitivity analysis on the time constant (tau), Hill coefficient (n), and EC50 parameter.
 * multistart_param_opt.m This file performs a multi-start parameter estimation using a nonlinear optimizer to estimate values for the sensitive parameters in the model. This file also scales the parameters, samples parameter subsets in a given range using Latin hypercube sampling, and provides the standard deviation of the estimates in each run.
@@ -32,10 +32,19 @@ K. Patidar and A. N. Ford Versypt, Logic-Based Modeling of Inflammatory Macropha
 * invitro_data.mat This data file provides an ordered list of normalized data points from published in vitro experiments. The mat file must be loaded to plot model predictions against data.
 * The normalized training and validation data is also provided in MIDAS-formatted CSV files.
 
+## STRIKEGOLDD Scripts
+* STRIKE_GOLDD.m and options.m These files are provided as part of the STRIKE-GOLDD package. These two scripts are obtained from [STRIKE-GOLDD GitHub Repo] (https://github.com/afvillaverde/strike-goldd). These files are used to run the structure identifiability and observability analysis.
+* z_network_full_k.m, z_network_full_n.m, z_network_full_W.m, and z_network_full_tau.m These files are used to initialize the network model to perform identifiability analysis for unknown parameters k, n, tau, and W. The structure of these scripts is based on STRIKE-GOLDD package requirements.  
+* Additional information on STRIKE-GOLDD package can be found [here](https://github.com/afvillaverde/strike-goldd)
+
+## UQLab Scripts
+* UQLab_network_initialize.m This file is used to initialize the network model as per UQLab sensitivity analysis package requirements.
+* UQLab_network_run.m This file can be used to run the Sobol sensitivity analysis, provided UQLab package and supporting files are downloaded.
+* UQLab_Sobolplots_networkmodel.m This file can be used to plot the First-order and Total order Sobol sensitivity indices for W, n, EC50, and tau parameters.
+* Additional information on downloading and using UQLab can be found [here] (https://www.uqlab.com/download)
 
 ## Recommended Supplementary Packages
 * [Netflux](https://github.com/saucermanlab/Netflux) is a package that generates equations and utility functions for networkODE.m
-* [kde](https://www.ics.uci.edu/~ihler/code/kde.html) is a function to compute kernel density estimates, which is used to draw confidence intervals around the mean predictions.
 
 ## Acknowledgements
 Research reported in this publication was supported by the National Institute of General Medical Sciences of the National Institutes of Health under award number R35GM133763 and NSF CAREER
