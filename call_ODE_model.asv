@@ -19,18 +19,10 @@ tspan = [0:1:48];  % Time in hours
 
 sens_chanparge = 0.01; % change in percent
 if strcmp(choice,"GLU")
-    params{1}(1,1) = 1; % change whether GLUCOSE present or absent (either 0 or 1)
-    params{1}(1,2) = 0; % change whether LPS present or absent (either 0 or 1)
-elseif strcmp(choice,"LPS")
     params{1}(1,1) = 0; % change whether GLUCOSE present or absent (either 0 or 1)
     params{1}(1,2) = 1; % change whether LPS present or absent (either 0 or 1)
-elseif strcmp(choice,"both")
-    params{1}(1,1) = 1; % change whether GLUCOSE present or absent (either 0 or 1)
-    params{1}(1,2) = 1; % change whether LPS present or absent (either 0 or 1)
-else
-    beep
-    'Please provide a valid choice of "GLU", "LPS", or "both"'
-end
+elseif strcmp(
+
 
 % provide array of indices of tau, n, k parameters that need to be optimized
 tau_index = []; tau_index = [ 2     6     9    12    13    14    16    17    19    20    22    23    24    25    27]; 
@@ -53,18 +45,17 @@ W_index = []; W_index = [6     8     9    11    12    14    15    16    17    18
 % addpath("~/kdefunc") 
 
 % Run networkODE function with optimal parameter set
-% choose between
-% mode = 0 :no plots
+% choose mode=0 :no plots
 % mode = 1 :plots
 % mode = 2 :additional validation plots
 % mode = 3 :regulatory response plots
 load invitro_data.mat
 mode = 1;
-[Time, Y_pred] = networkODE_multirun(tspan, y0, params, mode);
+[Time, Y_pred] = networkODE_run(tspan, y0, params, mode);
 %%
 %% Model Workflow
 %% Call local sensitivity analysis
-% ls: 1 or 0 to run local sensitivity analysis or not
+% gs: 0 or 1, local or global sensitivity analysis
 % s_FD_tau returns sensitivity coefficients for tau parameter
 % s_FD_n returns sensitivity coefficients for n parameter 
 % s_FD_k returns sensitivity coefficients for k parameter (EC_50)
@@ -74,13 +65,13 @@ mode = 1;
 % params: set of parameters (W, n, EC50, tau, ymax, speciesnames)
 % y0: Initial value
 % tspan: simulation time points
-if ls == 1
+if gs == 0
     [s_FD_tau, s_FD_n, s_FD_k, tau_index, n_index, k_index] = sens(params, y0, tspan, sens_change);
     disp(tau_index);
     disp(n_index);
     disp(k_index);
 else
-    disp("Run UQ Lab global sensitivity analysis scripts from the UQLab_scripts folder.")
+    disp("Run UQ Lab global sensitivity analysis scripts")
 end
 
 
@@ -164,11 +155,10 @@ size_W = size(W_index,2);
 
 
 % Run networkODE function with optimal parameter set
-% choose 
-% mode = 0 : no plots
-% mode = 1 : plots
-% mode = 2 : additional validation plots
-% mode = 3 : regulatory response plots
+% choose mode=0 :no plots
+% mode = 1 :plots
+% mode = 2 :additional validation plots
+% mode = 3 :regulatory response plots
 % mode = 4 : check for parameter uncertainty and 95% CI
 
 mode=0;
