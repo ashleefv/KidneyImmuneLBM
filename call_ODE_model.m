@@ -7,7 +7,7 @@
 
 % Most supporting file names for this model begin with networkODE_###.m
 %%
-choice = "both"; % options: "GLU", "LPS", "both" 
+choice = "LPS"; % options: "GLU", "LPS", "both" 
 % choose choice of params (tau, y0, ymax parameters) list based on what combination of stimulus is ON 
 
 % Initialize parameters, initial value, and simulation time
@@ -15,10 +15,10 @@ choice = "both"; % options: "GLU", "LPS", "both"
 [params, y0] = networkODE_opt_loadParams(choice); %in vitro as optimized
 
 % Time (short-term sim.)
-tspan = [0:1:100];  % Time in hours
+tspan = [0:1:48];  % Time in hours
 
 sens_chanparge = 0.01; % change in percent
-params{1}(1,1) = 1; % change whether GLUCOSE present or absent (either 0 or 1)
+params{1}(1,1) = 0; % change whether GLUCOSE present or absent (either 0 or 1)
 params{1}(1,2) = 1; % change whether LPS present or absent (either 0 or 1)
 
 
@@ -100,7 +100,7 @@ disp(global_p_best);
 % k_index: index of EC_50 parameter (corresponds to reaction index) to be tuned
 % y0_index: index of y0
 
-[min_error] = networkODE_error(global_p_best, params, y0, tspan, tau_index, n_index, k_index, W_index);
+[min_error] = networkODE_error([], params, y0, tspan, tau_index, n_index, k_index, W_index);
 
 %% Plot graph of select response variables
 % Time: Time output

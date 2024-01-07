@@ -47,30 +47,31 @@ purp = [0.4940    0.1840    0.5560];
 
 speciesNames = params{4};
 
+
 options=[];
 [T_best, Y_best] = ode23s(@networkODE,tspan,y0,options,params);
 
 
 %%
-%dp = params;
+dp = params;
 
-%dp{2}(tau_index) = global_p_best(1:size_tau);
-%dp{1}(1,W_index) = global_p_best(size_tau+1:size_tau+size_W);
-%dp{1}(2,n_index) = global_p_best(size_tau+size_W+1:size_tau+size_W+size_n);
-%dp{1}(3,k_index) = global_p_best(size_tau+size_W+size_n+1:size_tau+size_W+size_n+size_k);
+dp{2}(tau_index) = global_p_best(1:size_tau);
+dp{1}(1,W_index) = global_p_best(size_tau+1:size_tau+size_W);
+dp{1}(2,n_index) = global_p_best(size_tau+size_W+1:size_tau+size_W+size_n);
+dp{1}(3,k_index) = global_p_best(size_tau+size_W+size_n+1:size_tau+size_W+size_n+size_k);
 
 %% plot global best-fit parameters for each treatment condition
 
 
 if mode==1
 
-figure(10)
+figure(13)
 hold on
 
              subplot(2,4,1)
              hold on
              % --- Prediction
-             plot(T_best, Y_best(:,23),  'color', 'b', 'LineWidth', 1.2)
+             plot(T_best, Y_best(:,23), 'color', 'k',  'LineWidth', 1.2)
              hold on
              % --- Training data
              scatter(timedata(:,1), t_data(:,1), 50, 'filled')
@@ -87,7 +88,7 @@ hold on
              subplot(2,4,2)
              hold on
              % --- Prediction
-             plot(T_best, Y_best(:,24),  'color', 'b', 'LineWidth', 1.2)
+             plot(T_best, Y_best(:,24) ,'color', 'k', 'LineWidth', 1.2)
              hold on
              % --- Training data
              scatter(timedata(:,3), t_data(:,3),  50, 'filled')
@@ -104,7 +105,7 @@ hold on
              subplot(2,4,3)
              hold on
              % --- Prediction
-             plot(T_best, Y_best(:,25),  'color', 'b', 'LineWidth', 1.2)
+             plot(T_best, Y_best(:,25),  'color', 'k', 'LineWidth', 1.2)
              hold on
              % --- Training data
              scatter(timedata(:,2), t_data(:,2),  50, 'filled')
@@ -121,7 +122,7 @@ hold on
              subplot(2,4,4)
              hold on
              % --- Prediction
-             plot(T_best, Y_best(:,6),  'color', 'b', 'LineWidth', 1.2)
+             plot(T_best, Y_best(:,6),  'color', 'k', 'LineWidth', 1.2)
              hold on
              % --- Training data
              scatter(timedata(:,4), t_data(:,4), 50, 'filled')
@@ -137,7 +138,7 @@ hold on
              subplot(2,4,5);
              % --- Prediction
              hold on
-             plot(T_best, Y_best(:,13),   'color', 'b', 'LineWidth', 1.2)
+             plot(T_best, Y_best(:,13),  'color', 'k', 'LineWidth', 1.2)
              hold on
              % --- Training data
              scatter(timedata(:,5), t_data(:,5),  50, 'filled')
@@ -153,7 +154,7 @@ hold on
              subplot(2,4,6);
              % --- Prediction
              hold on
-             plot(T_best, Y_best(:,22),   'color', 'b', 'LineWidth', 1.2)
+             plot(T_best, Y_best(:,22),   'color', 'k', 'LineWidth', 1.2)
              hold on
              % --- Training data
              scatter(timedata(:,6), t_data(:,6),  50, 'filled')
@@ -170,7 +171,7 @@ hold on
               subplot(2,4,7)
               hold on
               % --- Prediction
-              plot(T_best, Y_best(:,20),    'color', 'b', 'LineWidth', 1.2)
+              plot(T_best, Y_best(:,20),   'color', 'k', 'LineWidth', 1.2)
               hold on
               % --- Training data
               scatter(timedata(:,7),  t_data(:,7), 50, 'filled')
@@ -186,7 +187,7 @@ hold on
               subplot(2,4,8);
               hold on
               % --- Prediction
-              plot(T_best, Y_best(:,12),  'color', 'b', 'LineWidth', 1.2)
+              plot(T_best, Y_best(:,12),  'color', 'k', 'LineWidth', 1.2)
               hold on
               % --- Training data
               scatter(timedata(:,9),  t_data(:,9), 50, 'filled')
@@ -215,12 +216,11 @@ if mode==2
 
              subplot(2,3,1)
              % --- Prediction
-             plot(T_best, Y_best(:,vars(1)),'color', purp, 'LineWidth', 1.2)
+             plot(T_best, Y_best(:,vars(1)), 'color', 'k', 'LineWidth', 1.2)
              hold on
-             plot(Time, mean_y(:,1), '--','color', 'k', 'LineWidth', 0.8)
-             hold on
-             [ph,msg] = jbfill(Time,upper_CI(:,1)',lower_CI(:,1)',purp, purp,1,0.2);
-             hold on
+             %plot(Time, mean_y(:,1), 'color', purp, 'LineWidth', 0.8)
+             %hold on
+             
              % --- Validation data
              scatter(timev(:,1), v_data(:,1), 30, 'ro', 'MarkerFaceColor', 'r')
              yerr = abs(ev_data(:,1) - v_data(:,1));
@@ -236,19 +236,16 @@ if mode==2
             
              subplot(2,3,2)
              % --- Prediction
-             plot(T_best, Y_best(:,vars(2)),'color', purp, 'LineWidth', 1.2)
+             plot(T_best, Y_best(:,vars(2)), 'color', 'k', 'LineWidth', 1.2)
              hold on
 
-             plot(Time, mean_y(:,2), '--','color', 'k', 'LineWidth', 0.8)
-             hold on
-             [ph,msg] = jbfill(Time,upper_CI(:,2)',lower_CI(:,2)',purp, purp,1,0.2);
-             hold on
+             %plot(Time, mean_y(:,2), 'color', purp, 'LineWidth', 0.8)
+             %hold on
              % --- Validation data
              scatter(timev(:,3), v_data(:,3),  30, 'ro', 'MarkerFaceColor', 'r')
              yerr = abs(ev_data(:,3) - v_data(:,3));
              errorbar(timev(:,3), v_data(:,3),  yerr, 'ro');
-             hold on             
-            
+             hold on         
              xlabel('Time (hour)');
              ylabel(speciesNames([24]));
              ylim([0,1.5]); set(gca,'FontName','Arial','FontSize',18);
@@ -259,20 +256,15 @@ if mode==2
          
              subplot(2,3,3);
              % --- Prediction
-             plot(T_best, Y_best(:,vars(3)),'color', purp, 'LineWidth', 1.2)
+             plot(T_best, Y_best(:,vars(3)), 'color', 'k', 'LineWidth', 1.2)
              hold on
-
-             plot(Time, mean_y(:,3), '--','color', 'k', 'LineWidth', 0.8)
-             hold on
-
-             [ph,msg] = jbfill(Time,upper_CI(:,3)',lower_CI(:,3)',purp, purp,1,0.2);
-             hold on
+             %plot(Time, mean_y(:,3),'color', purp, 'LineWidth', 0.8)
+             %hold on
              % --- Validation data
              scatter(timev(:,2), v_data(:,2),  30, 'ro', 'MarkerFaceColor', 'r')
              yerr = abs(ev_data(:,2)-v_data(:,2));
              errorbar(timev(:,2), v_data(:,2), yerr, 'ro');
-             hold on             
-             
+             hold on
              xlabel('Time (hour)');
              ylabel(speciesNames([25])); 
              ylim([0,1.5]); set(gca,'FontName','Arial','FontSize',18);
@@ -283,14 +275,10 @@ if mode==2
          
              subplot(2,3,4);
              % --- Prediction
-             plot(T_best, Y_best(:,vars(9)),'color', purp, 'LineWidth', 1.2)
+             plot(T_best, Y_best(:,vars(9)), 'color', 'k', 'LineWidth', 1.2)
              hold on
-
-             plot(Time, mean_y(:,9), '--','color', 'k', 'LineWidth', 0.8)
-             hold on
-
-             [ph,msg] = jbfill(Time,upper_CI(:,9)',lower_CI(:,9)',purp, purp,1,0.2);
-             hold on
+             %plot(Time, mean_y(:,9), 'color', purp, 'LineWidth', 0.8)
+             %hold on
              % --- Validation data
              scatter(timev(:,4), v_data(:,4), 30, 'ro', 'MarkerFaceColor', 'r')
              yerr = abs(ev_data(:,4)-v_data(:,4));
@@ -306,18 +294,15 @@ if mode==2
 
              subplot(2,3,5)
              % --- Prediction
-             plot(T_best, Y_best(:,vars(8)),'color', purp, 'LineWidth', 1.2)
+             plot(T_best, Y_best(:,vars(8)), 'color', 'k', 'LineWidth', 1.2)
              hold on
-
-             plot(Time, mean_y(:,8), '--','color', 'k', 'LineWidth', 0.8)
-             hold on
-             [ph,msg] = jbfill(Time,upper_CI(:,8)',lower_CI(:,8)',purp, purp,1,0.2);
-             hold on
+             %plot(Time, mean_y(:,8), 'color', purp, 'LineWidth', 0.8)
+             %hold on
               % --- Validation data
               scatter(timev(:,5), v_data(:,5), 30, 'ro', 'MarkerFaceColor', 'r')
               yerr = abs(ev_data(:,5)-v_data(:,5));
               errorbar(timev(:,5), v_data(:,5), yerr, 'ro');
-             hold on              
+              hold on              
               xlabel('Time (hour)');
               ylabel(speciesNames([12]));
               ylim([0,1.5]); set(gca,'FontName','Arial','FontSize',18);  
@@ -329,40 +314,47 @@ if mode==2
 
               subplot(2,3,6)
               % --- Prediction
-              plot(T_best, Y_best(:,vars(7)),'color', purp, 'LineWidth', 1.2)
-              hold on
-             
-              plot(Time, mean_y(:,7), '--','color', 'k', 'LineWidth', 0.8)
-              hold on
-
-              [ph,msg] = jbfill(Time,upper_CI(:,7)',lower_CI(:,7)',purp, purp,1,0.2);
-              hold on
+              plot(T_best, Y_best(:,vars(7)), 'color', 'k', 'LineWidth', 1.2)
+              hold on             
+              %plot(Time, mean_y(:,7), 'color', purp, 'LineWidth', 0.8)
+              %hold on
               % --- Validation data
               scatter(timev(:,7),  v_data(:,7), 30, 'ro', 'MarkerFaceColor', 'r')
               yerr = abs(ev_data(:,7)-v_data(:,7));
               errorbar(timev(:,7),  v_data(:,7), yerr, 'ro');
-              hold on              
-              
+              hold on         
               xlabel('Time (hour)');
               ylabel(speciesNames([20])); 
               ylim([0,1.5]); set(gca,'FontName','Arial','FontSize',18);
               hold on
               t = title('Ramanathan et al. (2002)'); t.FontSize = 14;
-              lgd = legend('model', 'model (mean)', 'CI-95%', 'data', '',  'Location', 'SouthEast');
-              lgd.FontSize = 14;
+              
               grid on
+
+            vars = [23,24,25,27,12,20];
+            for v = 1:length(vars)
+                for t = 1:length(Time)
+                    credible(t,:) = quantile(abs(Yp(:,t,vars(v))), [0.025 0.975]);
+                end
+                figure(14)
+                grid on
+                hold on
+                subplot(2,3,v)
+                hold on
+                [ph,msg] = jbfill(Time,credible(:,1)', credible(:,2)',purp, purp,1,0.2);
+                hold on
+            end
+            lgd = legend('model prediction', 'data', 'error bar', '95% credible interval',  'Location', 'SouthEast');
+            lgd.FontSize = 14;
     end
     if GLU==0 && LPS>0
         subplot(2,3,1)
              % --- Prediction
-             plot(T_best, Y_best(:,vars(1)),'color', purp, 'LineWidth', 1.2)
+             plot(T_best, Y_best(:,vars(1)), 'color', 'k', 'LineWidth', 1.2)
              hold on
 
-             plot(Time, mean_y(:,1), '--','color', 'k', 'LineWidth', 0.8)
-             hold on
-             [ph,msg] = jbfill(Time,upper_CI(:,1)',lower_CI(:,1)',purp, purp,1,0.2);
-             hold on
-
+             %plot(Time, mean_y(:,1), 'color', purp, 'LineWidth', 0.8)
+             %hold on
              % --- Validation data
              scatter(timev(:,1), v_data(:,1), 30, 'ro', 'MarkerFaceColor', 'r')
              yerr = abs(ev_data(:,1) - v_data(:,1));
@@ -378,13 +370,10 @@ if mode==2
             
              subplot(2,3,2)
              % --- Prediction
-             plot(T_best, Y_best(:,vars(2)),'color', purp, 'LineWidth', 1.2)
+             plot(T_best, Y_best(:,vars(2)),'color', 'k', 'LineWidth', 1.2)
              hold on
-
-             plot(Time, mean_y(:,2), '--','color', 'k', 'LineWidth', 0.8)
-             hold on
-             [ph,msg] = jbfill(Time,upper_CI(:,2)',lower_CI(:,2)',purp, purp,1,0.2);
-             hold on
+             %plot(Time, mean_y(:,2),'color', purp, 'LineWidth', 0.8)
+             %hold on
              % --- Validation data
              scatter(timev(:,3), v_data(:,3),  30, 'ro', 'MarkerFaceColor', 'r')
              yerr = abs(ev_data(:,3) - v_data(:,3));
@@ -401,14 +390,11 @@ if mode==2
          
              subplot(2,3,3);
              % --- Prediction
-             plot(T_best, Y_best(:,vars(3)),'color', purp, 'LineWidth', 1.2)
+             plot(T_best, Y_best(:,vars(3)), 'color', 'k', 'LineWidth', 1.2)
              hold on
 
-             plot(Time, mean_y(:,3), '--','color', 'k', 'LineWidth', 0.8)
-             hold on
-
-             [ph,msg] = jbfill(Time,upper_CI(:,3)',lower_CI(:,3)',purp, purp,1,0.2);
-             hold on
+             %plot(Time, mean_y(:,3),'color', purp, 'LineWidth', 0.8)
+             %hold on
              % --- Validation data
              scatter(timev(:,2), v_data(:,2),  30, 'ro', 'MarkerFaceColor', 'r')
              yerr = abs(ev_data(:,2)-v_data(:,2));
@@ -425,14 +411,10 @@ if mode==2
          
              subplot(2,3,4);
              % --- Prediction
-             plot(T_best, Y_best(:,vars(9)),'color', purp, 'LineWidth', 1.2)
+             plot(T_best, Y_best(:,vars(9)),'color', 'k', 'LineWidth', 1.2)
              hold on
-
-             plot(Time, mean_y(:,9), '--','color', 'k', 'LineWidth', 0.8)
-             hold on
-
-             [ph,msg] = jbfill(Time,upper_CI(:,9)',lower_CI(:,9)',purp, purp,1,0.2);
-             hold on
+             %plot(Time, mean_y(:,9),'color', purp, 'LineWidth', 0.8)
+             %hold on
              % --- Validation data
              scatter(timev(:,4), v_data(:,4), 30, 'ro', 'MarkerFaceColor', 'r')
              yerr = abs(ev_data(:,4)-v_data(:,4));
@@ -448,22 +430,17 @@ if mode==2
 
              subplot(2,3,5)
              % --- Prediction
-             plot(T_best, Y_best(:,vars(10)),'color', purp, 'LineWidth', 1.2)
-             hold on
-
-             plot(Time, mean_y(:,10), '--','color', 'k', 'LineWidth', 0.8)
-             hold on
-
-             [ph,msg] = jbfill(Time,upper_CI(:,10)',lower_CI(:,10)',purp, purp,1,0.2);
-             hold on
-   
+              plot(T_best, Y_best(:,vars(10)), 'color', 'k', 'LineWidth', 1.2)
+              hold on
+              %plot(Time, mean_y(:,10), 'color', purp, 'LineWidth', 0.8)
+              %hold on   
               % --- Validation data
               scatter(timev(:,8), v_data(:,8), 30, 'ro', 'MarkerFaceColor', 'r')
               yerr = abs(ev_data(:,8)-v_data(:,8));
               errorbar(timev(:,8), v_data(:,8), yerr, 'ro');
-             hold on              
+              hold on              
               xlabel('Time (hour)');
-              ylabel(speciesNames([12]));
+              ylabel(speciesNames([28]));
               ylim([0,1.5]); set(gca,'FontName','Arial','FontSize',18);  
               hold on
               t = title('Seo et al. (2022)'); t.FontSize = 14;
@@ -473,40 +450,46 @@ if mode==2
 
               subplot(2,3,6)
               % --- Prediction
-              plot(T_best, Y_best(:,vars(7)),'color', purp, 'LineWidth', 1.2)
-              hold on
-             
-              plot(Time, mean_y(:,7), '--','color', 'k', 'LineWidth', 0.8)
-              hold on
-
-             [ph,msg] = jbfill(Time,upper_CI(:,7)',lower_CI(:,7)',purp, purp,1,0.2);
-             hold on
+              plot(T_best, Y_best(:,vars(7)), 'color', 'k', 'LineWidth', 1.2)
+              hold on             
+              %plot(Time, mean_y(:,7), 'color', purp, 'LineWidth', 0.8)
+              %hold on
               % --- Validation data
               scatter(timev(:,7),  v_data(:,7), 30, 'ro', 'MarkerFaceColor', 'r')
               yerr = abs(ev_data(:,7)-v_data(:,7));
               errorbar(timev(:,7),  v_data(:,7), yerr, 'ro');
-              hold on              
-              
+              hold on                            
               xlabel('Time (hour)');
               ylabel(speciesNames([20])); 
               ylim([0,1.5]); set(gca,'FontName','Arial','FontSize',18);
               hold on
               t = title('Ramanathan et al. (2002)'); t.FontSize = 14;
-              lgd = legend('model', 'model', 'CI-95%', 'data', '',  'Location', 'SouthEast');
-              lgd.FontSize = 14;
               grid on
+
+              vars = [23,24,25,27,28,20];
+              for v = 1:length(vars)
+                for t = 1:length(Time)
+                    credible(t,:) = quantile(abs(Yp(:,t,vars(v))), [0.025 0.975]);
+                end
+                figure(14)
+                grid on
+                hold on
+                subplot(2,3,v)
+                hold on
+                [ph,msg] = jbfill(Time,credible(:,1)', credible(:,2)',purp, purp,1,0.2);
+                hold on
+              end
+            lgd = legend('model prediction', 'data', 'error bar', '95% credible interval',  'Location', 'SouthEast');
+            lgd.FontSize = 14;
 
     end
     if GLU>0 && LPS>0
              subplot(2,3,1)
              % --- Prediction
-             plot(T_best, Y_best(:,vars(1)),'color', purp, 'LineWidth', 1.2)
+             plot(T_best, Y_best(:,vars(1)), 'color', 'k', 'LineWidth', 1.2)
              hold on
-             plot(Time, mean_y(:,1), '--','color', 'k', 'LineWidth', 0.8)
-             hold on
-
-             [ph,msg] = jbfill(Time,upper_CI(:,1)',lower_CI(:,1)',purp, purp,1,0.2);
-             hold on
+             %plot(Time, mean_y(:,1), 'color', purp, 'LineWidth', 0.8)
+             %hold on
              % --- Validation data
              scatter(timev(:,1), v_data(:,1), 30, 'ro', 'MarkerFaceColor', 'r')
              yerr = abs(ev_data(:,1) - v_data(:,1));
@@ -522,14 +505,10 @@ if mode==2
             
              subplot(2,3,2)
              % --- Prediction
-             plot(T_best, Y_best(:,vars(2)),'color', purp, 'LineWidth', 1.2)
+             plot(T_best, Y_best(:,vars(2)), 'color', 'k', 'LineWidth', 1.2)
              hold on
-
-             plot(Time, mean_y(:,2), '--','color', 'k', 'LineWidth', 0.8)
-             hold on
-
-             [ph,msg] = jbfill(Time,upper_CI(:,2)',lower_CI(:,2)',purp, purp,1,0.2);
-             hold on
+             %plot(Time, mean_y(:,2), 'color', purp, 'LineWidth', 0.8)
+             %hold on
              % --- Validation data
              scatter(timev(:,3), v_data(:,3),  30, 'ro', 'MarkerFaceColor', 'r')
              yerr = abs(ev_data(:,3) - v_data(:,3));
@@ -546,14 +525,10 @@ if mode==2
          
              subplot(2,3,3);
              % --- Prediction
-             plot(T_best, Y_best(:,vars(9)),'color', purp, 'LineWidth', 1.2)
+             plot(T_best, Y_best(:,vars(9)),'color', 'k', 'LineWidth', 1.2)
              hold on
-
-             plot(Time, mean_y(:,9), '--','color', 'k', 'LineWidth', 0.8)
-             hold on
-
-             [ph,msg] = jbfill(Time,upper_CI(:,9)',lower_CI(:,9)',purp, purp,1,0.2);
-             hold on
+             %plot(Time, mean_y(:,9),'color', purp, 'LineWidth', 0.8)
+             %hold on
              % --- Validation data
              scatter(timev(:,4), v_data(:,4), 30, 'ro', 'MarkerFaceColor', 'r')
              yerr = abs(ev_data(:,4)-v_data(:,4));
@@ -568,6 +543,21 @@ if mode==2
              lgd.FontSize = 14;
              grid on
 
+             vars = [23,24,27];
+              for v = 1:length(vars)
+                for t = 1:length(Time)
+                    credible(t,:) = quantile(abs(Yp(:,t,vars(v))), [0.025 0.975]);
+                end
+                figure(14)
+                grid on
+                hold on
+                subplot(2,3,v)
+                hold on
+                [ph,msg] = jbfill(Time,credible(:,1)', credible(:,2)',purp, purp,1,0.2);
+                hold on
+              end
+            lgd = legend('model prediction', 'data', 'error bar', '95% credible interval',  'Location', 'SouthEast');
+            lgd.FontSize = 14;
     end
 end
 %% regulatory nodes
@@ -578,11 +568,13 @@ end
 if mode == 3
     linest = ["-", "--", "-.", ":", "--."];
     figure(10);
+    
     var = [3,8,10];
     for j = 1:length(var)
         subplot(2,3,1)
         plot(T_best, Y_best(:,var(j)), linest(j), 'LineWidth', 2)
         hold on
+        grid on
         ylabel("Activity"); xlabel('Time (hour)')
         set(gca,'FontName','Arial','FontSize',18);
         hold on
@@ -595,6 +587,7 @@ if mode == 3
         subplot(2,3,2)
         plot(T_best, Y_best(:,var(j)), linest(j), 'LineWidth', 2); 
         hold on
+        grid on
         ylabel("Activity"); xlabel('Time (hour)')
         set(gca,'FontName','Arial','FontSize',18);
         lgd = legend(params{4}([9,14,15,19]), 'Location', 'SouthEast');
@@ -606,6 +599,7 @@ if mode == 3
         subplot(2,3,3)
         plot(T_best, Y_best(:,var(j)), linest(j), 'LineWidth', 2); 
         hold on
+        grid on
         ylabel("Activity"); xlabel('Time (hour)')
         set(gca,'FontName','Arial','FontSize',18);
         lgd = legend(params{4}([7,11,18]), 'Location', 'SouthEast');
@@ -616,6 +610,7 @@ if mode == 3
         subplot(2,3,4)
         plot(T_best, Y_best(:,var(j)), linest(j), 'LineWidth', 2); 
         hold on
+        grid on
         ylabel("Activity"); xlabel('Time (hour)')
         set(gca,'FontName','Arial','FontSize',18);
         lgd = legend(params{4}([4,5,26,16,17]), 'Location', 'SouthEast');
@@ -626,6 +621,7 @@ if mode == 3
         subplot(2,3,5)
         plot(T_best, Y_best(:,var(j)), linest(j), 'LineWidth', 2)
         hold on
+        grid on
         ylabel("Activity"); xlabel('Time (hour)')
         set(gca,'FontName','Arial','FontSize',18);
         lgd = legend(params{4}([28,29,30]), 'Location', 'SouthEast');
@@ -665,11 +661,11 @@ for i = [1:length(R1)]
     %junc_mean(i) = real(mean(Yout(:,28)));
     
     options = [];
-    [Tout, Yout] = ode23s(@networkODE,tspan,y0,options,params);
+    [To, Yo] = ode23s(@networkODE,tspan,y0,options,params);
 
     figure(21)
     subplot(2,2,1)
-    plot(Tout, Yout(:,23),  linest(i), 'LineWidth', 2)
+    plot(To, Yo(:,23),  linest(i), 'LineWidth', 2)
     hold on
     ylabel("IL-6 activity"); xlabel('Time(hour)')
     set(gca,'FontName','Arial','FontSize',18);
@@ -677,14 +673,14 @@ for i = [1:length(R1)]
     hold on
 
     subplot(2,2,2)
-    plot(Tout, Yout(:,13),  linest(i), 'LineWidth', 2)
+    plot(To, Yo(:,13),  linest(i), 'LineWidth', 2)
     ylabel("ROS_e_c activity"); xlabel('Time(hour)')
     set(gca,'FontName','Arial','FontSize',18);
     grid on;
     hold on
     
     subplot(2,2,3)
-    plot(Tout, Yout(:,26),  linest(i), 'LineWidth', 2)
+    plot(To, Yo(:,26),  linest(i), 'LineWidth', 2)
     hold on
     ylabel("PLC-\gamma activity"); xlabel('Time(hour)')
     set(gca,'FontName','Arial','FontSize',18);
@@ -692,12 +688,12 @@ for i = [1:length(R1)]
     hold on
 
     subplot(2,2,4)
-    plot(Tout, Yout(:,30),  linest(i), 'LineWidth', 2)
+    plot(To, Yo(:,30),  linest(i), 'LineWidth', 2)
     ylabel("Change in Gap Width"); xlabel('Time(hour)')
     set(gca,'FontName','Arial','FontSize',18);
     grid on;
     hold on
-    legendI{i} = ['W_G_L_U =' num2str(R1(i))];
+    legendI{i} = ['W_G_L_U = ' num2str(R1(i))];
     legend(legendI)
     hold on
 
@@ -706,7 +702,7 @@ for i = [1:length(R1)]
     
     figure(22)
     subplot(2,2,1)
-    plot(Tout, Yout(:,24),  linest(i), 'LineWidth', 2)
+    plot(To, Yo(:,24),  linest(i), 'LineWidth', 2)
     hold on
     ylabel("TNF-\alpha activity"); xlabel('Time(hour)')
     set(gca,'FontName','Arial','FontSize',18);
@@ -714,14 +710,14 @@ for i = [1:length(R1)]
     hold on
 
     subplot(2,2,2)
-    plot(Tout, Yout(:,25),  linest(i), 'LineWidth', 2)
+    plot(To, Yo(:,25),  linest(i), 'LineWidth', 2)
     ylabel("IL-1\beta activity"); xlabel('Time(hour)')
     set(gca,'FontName','Arial','FontSize',18);
     grid on;
     hold on
     
     subplot(2,2,3)
-    plot(Tout, Yout(:,26),  linest(i), 'LineWidth', 2)
+    plot(To, Yo(:,26),  linest(i), 'LineWidth', 2)
     hold on
     ylabel("PLC-\gamma activity"); xlabel('Time(hour)')
     set(gca,'FontName','Arial','FontSize',18);
@@ -729,12 +725,12 @@ for i = [1:length(R1)]
     hold on
 
     subplot(2,2,4)
-    plot(Tout, Yout(:,20),  linest(i), 'LineWidth', 2)
+    plot(To, Yo(:,20),  linest(i), 'LineWidth', 2)
     ylabel("NO activity"); xlabel('Time(hour)')
     set(gca,'FontName','Arial','FontSize',18);
     grid on;
     hold on
-    legendInfo{i} = ['W_G_L_U, W_L_P_S=(1,' num2str(R1(i))];
+    legendInfo{i} = ['W_G_L_U, W_L_P_S=(1,' num2str(R1(i)) ')'];
     hold on
     
 
@@ -744,41 +740,6 @@ end
 
 hold on
 legend(legendInfo)
-
-%%
-    figure(21)
-    subplot(2,2,1)
-    plot(Tout, Yout(:,23),  linest(i), 'LineWidth', 2)
-    hold on
-    ylabel("IL-6 activity"); xlabel('Time(hour)')
-    set(gca,'FontName','Arial','FontSize',18);
-    grid on;
-    hold on
-
-    subplot(2,2,2)
-    plot(Tout, Yout(:,13),  linest(i), 'LineWidth', 2)
-    ylabel("ROS_e_c activity"); xlabel('Time(hour)')
-    set(gca,'FontName','Arial','FontSize',18);
-    grid on;
-    hold on
-    
-    subplot(2,2,3)
-    plot(Tout, Yout(:,26),  linest(i), 'LineWidth', 2)
-    hold on
-    ylabel("PLC-\gamma activity"); xlabel('Time(hour)')
-    set(gca,'FontName','Arial','FontSize',18);
-    grid on;
-    hold on
-
-    subplot(2,2,4)
-    plot(Tout, Yout(:,30),  linest(i), 'LineWidth', 2)
-    ylabel("Change in Gap Width"); xlabel('Time(hour)')
-    set(gca,'FontName','Arial','FontSize',18);
-    grid on;
-    hold on
-    legendInfo{i} = ['W_G_L_U =' num2str(R1(i))];
-    hold on
-    
 
 
 %% plot ensemble predictions for all fitted parameter sets (100)
@@ -795,14 +756,14 @@ error_column = 1; % first column stores error_fitted
 
 param_posterior = sorted_Params_error(:,[2:end]);
 
-figure(11)
+figure(13)
 
 for i = 1:100
             dp = params;
             dp{2}(tau_index) = param_posterior(i,[1:size_tau]);
-            dp{1}(1,W_index) = param_posterior(i,[size_tau+1:size_tau+size_W]);
-            dp{1}(2,n_index) = param_posterior(i,[size_tau+size_W+1:size_tau+size_W+size_n]);
-            dp{1}(3,k_index) = param_posterior(i,[size_tau+size_W+size_n+1:end]);
+            %dp{1}(1,W_index) = param_posterior(i,[size_tau+1:size_tau+size_W]);
+            %dp{1}(2,n_index) = param_posterior(i,[size_tau+size_W+1:size_tau+size_W+size_n]);
+            %dp{1}(3,k_index) = param_posterior(i,[size_tau+size_W+size_n+1:end]);
 
             options = [];
             % options = odeset('RelTol',1e-20); %,'MaxStep',1e-16);
@@ -896,8 +857,8 @@ end
 for j = 1:Ns
     dp{2}(tau_index) = population(j,(1:size_tau));
     %dp{1}(1,W_index) = population(j,(size_tau+1:size_tau+size_W));
-   % dp{1}(2,n_index) = population(j,(size_tau+size_W+1:size_tau+size_W+size_n));
-   % dp{1}(3,k_index) = population(j,(size_tau+size_W+size_n+1:end)); 
+    %dp{1}(2,n_index) = population(j,(size_tau+size_W+1:size_tau+size_W+size_n));
+    %dp{1}(3,k_index) = population(j,(size_tau+size_W+size_n+1:end)); 
     
     options = [];
     % options = odeset('RelKTol',1e-20); %,'MaxStep',1e-16);
@@ -928,88 +889,36 @@ for v = 1:length(vars)
 end
 
 %% plot mean posterior predictions and 95% confidence intervals
-
-figure(12)
-grid on
-hold on
-
-             subplot(2,4,1)
-             hold on
-             % --- Prediction
-             plot(Time, mean_y(:,1), '--','color', 'k', 'LineWidth', 0.8)
-             hold on
-             [ph,msg] = jbfill(Time,upper_CI(:,1)',lower_CI(:,1)','b','b',1,0.2);
-             hold on
-             
-                       
-             subplot(2,4,2)
-             hold on
-             % --- Prediction
-             plot(Time, mean_y(:,2), '--','color', 'k', 'LineWidth', 0.8)
-             hold on
-             [ph,msg] = jbfill(Time,upper_CI(:,2)',lower_CI(:,2)','b','b',1,0.2);
-             hold on
-             
-          
-     
-             subplot(2,4,3)
-             hold on
-             % --- Prediction
-             plot(Time, mean_y(:,3), '--','color', 'k', 'LineWidth', 0.8)
-             hold on
-             [ph,msg] = jbfill(Time,upper_CI(:,3)',lower_CI(:,3)','b','b',1,0.2);
-             hold on
-             
          
-             subplot(2,4,4)
-             hold on
-             % --- Prediction
-             plot(Time, mean_y(:,4), '--','color', 'k', 'LineWidth', 0.8)
-             hold on
-             [ph,msg] = jbfill(Time,upper_CI(:,4)',lower_CI(:,4)','b','b',1,0.2);  
-             hold on
-             
+% save('workspaces/both_best_fitted_MC')
+%%
 
-             subplot(2,4,5);
-             % --- Prediction
-             hold on
-             plot(Time, mean_y(:,5),  '--','color', 'k', 'LineWidth', 0.8)
-             hold on
-             [ph,msg] = jbfill(Time,upper_CI(:,5)',lower_CI(:,5)','b','b',1,0.2);
-             hold on
-             
+for v = 1:8
+    for t = 1:length(Time)
+    
+       credible(t,:) = quantile(abs(Yp(:,t,vars(v))), [0.025 0.975]);
+    end
+    figure(13)
+    grid on
+    hold on
+    subplot(2,4,v)
+    hold on
+    % --- Prediction
+    %plot(Time, mean_y(:,v), 'color', 'b', 'LineWidth', 0.8)
+    %hold on
+    [ph,msg] = jbfill(Time,credible(:,1)', credible(:,2)','b','b',1,0.2);
+    hold on
+    ylabel(params{4}(vars(v)))
+    xlabel('Time (hr)')
+    
 
-             subplot(2,4,6);
-             % --- Prediction
-             hold on
-             plot(Time, mean_y(:,6), '--','color', 'k', 'LineWidth', 0.8)
-             hold on
-             [ph,msg] = jbfill(Time,upper_CI(:,6)',lower_CI(:,6)','b','b',1,0.2);
-             hold on
-             
-
-              subplot(2,4,7)
-              hold on
-              % --- Prediction
-              plot(Time, mean_y(:,7), '--','color', 'k', 'LineWidth', 0.8)
-              hold on
-              [ph,msg] = jbfill(Time,upper_CI(:,7)',lower_CI(:,7)','b','b',1,0.2);
-              hold on
-              
-
-              subplot(2,4,8);
-              hold on
-              % --- Prediction
-              plot(Time, mean_y(:,8), '--','color', 'k', 'LineWidth', 0.8)
-              hold on
-              [ph,msg] = jbfill(Time,upper_CI(:,8)',lower_CI(:,8)','b','b',1,0.2);
-              hold on
-              lgd = legend('model', 'data', '', 'model(mean posterior)', 'CI-95%', 'Location', 'SouthEast');
-              lgd.FontSize = 14;
-              
-          
 end
+
+lgd = legend('model prediction', 'data', 'error bar', '95% credible interval',  'Location', 'SouthEast');
+lgd.FontSize = 12;
+
+end
+
 end
 
  
-
