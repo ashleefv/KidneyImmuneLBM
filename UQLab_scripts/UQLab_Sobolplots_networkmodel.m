@@ -1,13 +1,13 @@
-
 speciesNames = {'GLU','LPS','AGE','VEGFR1','VEGFR2','VEGF-A$_{mRNA}$','RAGE$_{ec}$','RAGE','TLR4','NADPH','NADPH$_{ec}$','ROS$_{ec}$','ROS','PI3K','AKT','PI3K$_{ec}$','AKT$_{ec}$','NF$\kappa$B$_{ec}$','NF$\kappa$B','NO','ONOO','eNOS','IL-6','TNF-$\alpha$','IL-1$\beta$','PLC-$\gamma$','VEGF-A','pJunction','Ca','Gap Width',};
-reac_names = {'\Rightarrow GLU','\Rightarrow LPS','LPS \Rightarrow TLR4','GLU \Rightarrow AGE', 'AGE \Rightarrow RAGE','RAGE \Rightarrow NADPH', ...
-    'TLR4 & ROS \Rightarrow NF\kappaB', 'TLR4 \Rightarrow PI3K','NADPH \Rightarrow ROS', 'PI3K \Rightarrow AKT', 'PI3K \Rightarrow ROS', ...
-    'NF\kappaB_e_c \Rightarrow TNF-\alpha','AKT \Rightarrow NF\kappaB','NF\kappaB \Rightarrow IL-6','NF\kappaB \Rightarrow TNF-\alpha','NF\kappaB \Rightarrow VEGF-A_m_R_N_A', ...
-    'VEGF-A_m_R_N_A \Rightarrow VEGF-A','NF\kappaB \Rightarrow IL-1\beta','VEGF-A \Rightarrow VEGFR1','VEGF-A \Rightarrow VEGFR2','AGE \Rightarrow RAGE_e_c','RAGE_e_c \Rightarrow NADPH_e_c','VEGFR2 \Rightarrow PI3K_e_c','VEGFR1 \Rightarrow PI3K_e_c', 'NADPH_e_c \Rightarrow ROS_e_c', 'PI3K_e_c \Rightarrow AKT_e_c', 'AKT_e_c \Rightarrow eNOS' , 'VEGFR1 \Rightarrow PLC-\gamma' ,'PLC-\gamma \Rightarrow NF\kappaB_e_c' , 'ROS_e_c \Rightarrow NF\kappaB_e_c','NF\kappaB_e_c \Rightarrow IL-6', 'NF\kappaB_e_c \Rightarrow IL-1\beta', 'eNOS  \Rightarrow NO', 'eNOS \Rightarrow ROS_e_c' ,'ROS_e_c & NO \Rightarrow ONOO','!NO \Rightarrow Ca','PLC-\gamma =\Rightarrow Ca', 'Ca \Rightarrow pJunction','pJunction \Rightarrow Gap Width', 'Ca \Rightarrow NO'};
+reac_names = {'=\textgreater GLU','=\textgreater LPS','LPS =\textgreater TLR4','GLU =\textgreater AGE', 'AGE =\textgreater RAGE','RAGE =\textgreater NADPH','TLR4 \& ROS =\textgreater NF$\kappa$B', 'TLR4 =\textgreater PI3K','NADPH =\textgreater ROS', 'PI3K =\textgreater AKT', 'PI3K =\textgreater ROS', 'NF$\kappa$B$_{ec}$ =\textgreater TNF-$\alpha$','AKT =\textgreater NF$\kappa$B','NF$\kappa$B =\textgreater IL-6','NF$\kappa$B =\textgreater TNF-$\alpha$','NF$\kappa$B =\textgreater VEGF-A$_{mRNA}$', 'VEGF-A$_{mRNA}$ =\textgreater VEGF-A','NF$\kappa$B =\textgreater IL-1$\beta$','VEGF-A =\textgreater VEGFR1','VEGF-A =\textgreater VEGFR2','AGE =\textgreater RAGE$_{ec}$','RAGE$_{ec}$ =\textgreater NADPH$_{ec}$','VEGFR2 =\textgreater PI3K$_{ec}$','VEGFR1 =\textgreater PI3K$_{ec}$', 'NADPH$_{ec}$ =\textgreater ROS$_{ec}$', 'PI3K$_{ec}$ =\textgreater AKT$_{ec}$', 'AKT$_{ec}$ =\textgreater eNOS' , 'VEGFR1 =\textgreater PLC-$\gamma$' ,'PLC-$\gamma$ =\textgreater NF$\kappa$B$_{ec}$' , 'ROS$_{ec}$ =\textgreater NF$\kappa$B$_{ec}$','NF$\kappa$B$_{ec}$ =\textgreater IL-6', 'NF$\kappa$B$_{ec}$ =\textgreater IL-1$\beta$', 'eNOS  =\textgreater NO', 'eNOS =\textgreater ROS$_{ec}$' ,'ROS$_{ec}$ \& NO =\textgreater ONOO','!NO =\textgreater Ca','PLC-$\gamma$ =\textgreater Ca', 'Ca =\textgreater pJunction','pJunction =\textgreater Gap Width', 'Ca =\textgreater NO'};
+
+%% read stored Sobol coefficients in data files
+
+SobolTotal = readmatrix('fullmodel_global_Total_ode23s.csv'); % 
+SobolFirstOrder = readmatrix('fullmodel_global_FirstOrder_ode23s.csv');
+
 %%
-% readmatrix(real(SobolTotal), 'fullmodel_global_ode23s.csv') % 
-% readmatrix(real(SobolFirstOrder), 'fullmodel_global_FO_ode23s.csv')
-%%
+
 Th_tau = real(0.1*max(max(SobolTotal([1:30],:)')));
 % real(min(max(0.1*SobolTotal(1:30))));
 Th_W = real(0.1*max(max(SobolTotal([31:70],:)')));
@@ -34,8 +34,8 @@ set(...
     'XTickLabel', speciesNames)
 % Set legend
 uq_legend({'ROS', 'IL-6', 'TNF-$\alpha$', 'IL-1$\beta$', 'VEGF-A','ROS$_{ec}$', 'NO', 'eNOS'}, 'Location', 'northeast')
-savefig('TotolSobol_fulltau_ode15s.fig')
-
+%savefig('TotolSobol_fulltau_ode23s.fig')
+%%
 figure(2)
 uq_bar(31:70, real(SobolTotal(31:70,:)), barWidth)
 hold on
@@ -51,8 +51,8 @@ set(...
     'XTickLabel', reac_names)
 % Set legend
 uq_legend({'ROS', 'IL-6', 'TNF-$\alpha$', 'IL-1$\beta$', 'VEGF-A','ROS$_{ec}$', 'NO', 'eNOS'}, 'Location', 'northeast')
-savefig('TotolSobol_fullW_ode15s.fig')
-
+%savefig('TotolSobol_fullW_ode23s.fig')
+%%
 figure(3)
 uq_bar(71:110, real(SobolTotal(71:110,:)), barWidth)
 hold on
@@ -68,7 +68,7 @@ set(...
     'XTickLabel', reac_names)
 % Set legend
 uq_legend({'ROS', 'IL-6', 'TNF-$\alpha$', 'IL-1$\beta$', 'VEGF-A','ROS$_{ec}$', 'NO', 'eNOS'}, 'Location', 'northeast')
-savefig('TotolSobol_fullK_ode15s.fig')
+%savefig('TotolSobol_fullK_ode23s.fig')
 
 figure(4)
 uq_bar(111:150, real(SobolTotal(111:150,:)), barWidth)
@@ -85,7 +85,7 @@ set(...
     'XTickLabel', reac_names)
 % Set legend
 uq_legend({'ROS', 'IL-6', 'TNF-$\alpha$', 'IL-1$\beta$', 'VEGF-A','ROS$_{ec}$', 'NO', 'eNOS'}, 'Location', 'northeast')
-savefig('TotolSobol_fulln_ode15s.fig')
+%savefig('TotolSobol_fulln_ode23s.fig')
 
 %%
 % Create a bar plot to compare the total Sobol' indices:
@@ -106,7 +106,7 @@ set(...
     'XTickLabel', speciesNames)
 % Set legend
 uq_legend({'ROS', 'IL-6', 'TNF-$\alpha$', 'IL-1$\beta$', 'VEGF-A','ROS$_{ec}$', 'NO', 'eNOS'}, 'Location', 'northeast')
-savefig("FirstOrderSobol_fulltau_ode23s.fig")
+%savefig("FirstOrderSobol_fulltau_ode23s.fig")
 
 figure(6)
 uq_bar(31:70, real(SobolFirstOrder(31:70,:)), barWidth)
@@ -121,7 +121,7 @@ set(...
     'XTickLabel', reac_names)
 % Set legend
 uq_legend({'ROS', 'IL-6', 'TNF-$\alpha$', 'IL-1$\beta$', 'VEGF-A','ROS$_{ec}$', 'NO', 'eNOS'}, 'Location', 'northeast')
-savefig("FirstOrderSobol_fullW_ode23s.fig")
+%savefig("FirstOrderSobol_fullW_ode23s.fig")
 
 figure(7)
 uq_bar(71:110, real(SobolFirstOrder(71:110,:)), barWidth)
@@ -136,7 +136,7 @@ set(...
     'XTickLabel', reac_names)
 % Set legend
 uq_legend({'ROS', 'IL-6', 'TNF-$\alpha$', 'IL-1$\beta$', 'VEGF-A','ROS$_{ec}$', 'NO', 'eNOS'}, 'Location', 'northeast')
-savefig("FirstOrderSobol_fullk_ode23s.fig")
+%savefig("FirstOrderSobol_fullk_ode23s.fig")
 
 
 figure(8)
@@ -152,5 +152,5 @@ set(...
     'XTickLabel', reac_names)
 % Set legend
 uq_legend({'ROS', 'IL-6', 'TNF-$\alpha$', 'IL-1$\beta$', 'VEGF-A','ROS$_{ec}$', 'NO', 'eNOS'}, 'Location', 'northeast')
-savefig("FirstOrderSobol_fulln_ode23s.fig")
+%savefig("FirstOrderSobol_fulln_ode23s.fig")
 

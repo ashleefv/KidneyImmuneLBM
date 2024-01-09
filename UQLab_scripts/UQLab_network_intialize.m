@@ -11,6 +11,8 @@
 % Clear variables from the workspace,
 % set random number generator for reproducible results,
 % and initialize the UQLab framework:
+
+% Must be in ~ UQLab/core directory to initialize
 clearvars
 rng(100,'twister')
 uqlab
