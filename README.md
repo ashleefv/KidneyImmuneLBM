@@ -29,10 +29,13 @@ K. Patidar and A. N. Ford Versypt, Logic-Based Modeling of Inflammatory Macropha
 * post_sens.m This file performs local sensitivity analysis on the validated model to identify influential species and interactions in the network for further analyses.
 * LHS_Call.m This supporting function uses Latin hypercube sampling to create sample subsets of parameters within a given range.
 * jbfill.m This supporting function will fill a region with a color between the two vectors.
+* normalizeCNO_file.R This R script can be used to normalize user-provided experimental data.
 
 ## Data
 * invitro_data.mat This data file provides an ordered list of normalized data points from published in vitro experiments. The mat file must be loaded to plot model predictions against data.
-* The normalized training and validation data is also provided in MIDAS-formatted CSV files.
+* model_training_data.csv and model_training_errors.csv This MIDAS-formatted CSV file contains normalized training/fitting data and data errors, respectively.
+* model_validation_data.csv and model_validation_errors.csv This MIDAS-formatted CSV file contains normalized validation data and data errors, respectively.
+
 
 ## STRIKEGOLDD Scripts
 * STRIKE_GOLDD.m and options.m These files are provided as part of the STRIKE-GOLDD package. These two scripts are obtained from [STRIKE-GOLDD GitHub Repo](https://github.com/afvillaverde/strike-goldd). These files are used to run the structure identifiability and observability analysis.
@@ -47,6 +50,7 @@ K. Patidar and A. N. Ford Versypt, Logic-Based Modeling of Inflammatory Macropha
 
 ## Recommended Supplementary Packages
 * [Netflux](https://github.com/saucermanlab/Netflux) is a package that generates equations and utility functions for networkODE.m
+* [CellNOptR](https://bioconductor.org/packages/release/bioc/html/CellNOptR.html) is a package used for data normalization in this study (normalizeCNO_file.R)
 
 ## Acknowledgements
 Research reported in this publication was supported by the National Institute of General Medical Sciences of the National Institutes of Health under award number R35GM133763 and NSF CAREER
