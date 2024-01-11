@@ -6,173 +6,177 @@
 % data from multiple sources, and plots the response variables. 
 
 % Most supporting file names for this model begin with networkODE_###.m
+%% User-defined input
+
+% Choose treatment condition: "GLU", "LPS", "both" 
+choice = "both"; 
+
+% Run the model for different steps
+% step = 'sim_step'   % Model simulation, No plots
+% step = 'plot_step'         % Creates plots
+    % mode = 1               % Fitting plots
+    % mode = 2               % Validation plots
+    % mode = 3               % Regulatory plots
+% step = 'sensitivity_step'    % run sensitivity analysis
+    % LS = 1                % local sensitivity
+    % LS = 0                % user-defined methods
+    % sens_change           % float, percent change in parameter
+%%%% step = 'pub_plot_step'     % recreates publication plots (ONLY PUT THIS PART IN BITBUCKET  - save('data/prediction_posterior_both.mat', 'Yp'))
+% step = 'multistart_opt_step'  % Multi-start optimization, runs in parallel
+    % repeats = 100             % integer, number of optimization runs
+% step = 'MC_sim_step'          % Monte Carlo Simulation
+
+step = 'sim_step';
+
+% choose mode with 'plot_step'
+mode = 1;               % specify either 1, 2, or 3
+
+% choose LS, sens_change with 'sensitivity_step'
+LS = 1;             % specify either 0 or 1 
+sens_change = 0.01; % percent
+
+% choose with 'multistart_opt_step'
+repeats = 100;      % must be greater than 0
+
+% choose with 'MC_sim_step'
+mode = 0;               % specify mode ~ 1: fitted plots or 2: validation plots
 %%
-choice = "GLU"; % options: "GLU", "LPS", "both" 
-% choose choice of params (tau, y0, ymax parameters) list based on what combination of stimulus is ON 
 
 % Initialize parameters, initial value, and simulation time
-% In Vitro Model Parameparaters
+% In Vitro Model Parameters
 [params, y0] = networkODE_opt_loadParams(choice); %in vitro as optimized
 
 % Time (short-term sim.)
 tspan = [0:1:48];  % Time in hours
 
-sens_chanparge = 0.01; % change in percent
+
+% params: dictionary of parameters
+    % params{1}(1,:): W
+    % params{1}(2,:): n
+    % params{1}(3,:): EC50
+    % params{2}(:): tau
+    % params{3}(:): ymax
+    % params{4}(:): speciesNames
+% y0: initial species values
+% tspan: simulation time
+% tau_index: index of sensitive time constant (tau) parameters    
+% W_index: index of sensitive reaction weight parameter (W)
+% n_index: index of sensitive Hill coeff. (n) parameter
+% k_index: index of sensitive Half effect (EC_50) parameter 
+
 if strcmp(choice,"GLU")
     params{1}(1,1) = 1; % change whether GLUCOSE present or absent (either 0 or 1)
     params{1}(1,2) = 0; % change whether LPS present or absent (either 0 or 1)
+
+    % array of parametersindices obtained from global sensitivity analysis (UQLab)
+    tau_index = []; tau_index = [ 2     6     9    12    13    14    16    17    19    20    22    23    24    25    27]; 
+    W_index = []; W_index = [6     8     9    11    12    14    15    16    17    18    22    25    31    32];
+    n_index = []; n_index = [3     4     5     6      7     8     9    10    11    12    13    14    15    16    17    18    19    20    21    22    23    24    25    26    27    30    31    32    33    34    36]; 
+    k_index = [];  k_index = [3     5     6     8     9    11    12    14    15    16    17    18    21    22    25    26    27    30    31    32    33  34]; 
+    
+
 elseif strcmp(choice,"LPS")
     params{1}(1,1) = 0; % change whether GLUCOSE present or absent (either 0 or 1)
     params{1}(1,2) = 1; % change whether LPS present or absent (either 0 or 1)
+
+    % array of parametersindices obtained from global sensitivity analysis (UQLab)
+    tau_index = []; tau_index = [ 2     6     9    12    13    14    16    17    19    20    22    23    24    25    27]; 
+     W_index = []; n_index = []; k_index = []; 
+
 elseif strcmp(choice,"both")
     params{1}(1,1) = 1; % change whether GLUCOSE present or absent (either 0 or 1)
     params{1}(1,2) = 1; % change whether LPS present or absent (either 0 or 1)
+
+    % array of parametersindices obtained from global sensitivity analysis (UQLab)
+    tau_index = []; tau_index = [ 2     6     9    12    13    14    16    17    19    20    22    23    24    25    27]; 
+    W_index = []; n_index = []; k_index = []; 
 else
     beep
     'Please provide a valid choice of "GLU", "LPS", or "both"'
 end
 
-% provide array of indices of tau, n, k parameters that need to be optimized
-tau_index = []; tau_index = [ 2     6     9    12    13    14    16    17    19    20    22    23    24    25    27]; 
-k_index = [];  k_index = [3     5     6     8     9    11    12    14    15    16    17    18    21    22    25    26    27    30    31    32    33  34]; 
-n_index = []; n_index = [3     4     5     6      7     8     9    10    11    12    13    14    15    16    17    18    19    20    21    22    23    24    25    26    27    30    31    32    33    34    36]; 
-W_index = []; W_index = [6     8     9    11    12    14    15    16    17    18    22    25    31    32];
-
-%tau_index = []; tau_index = [23    24    25];
-%W_index = [];  W_index = [12    14    15    18  31    32 ];
-%n_index = [];  n_index = [12  14    15    18  31    32 ];
-%k_index = [];  k_index = [12    14    15    18  30    31    32 ];
-
-%% Plots from Trained and Valided Model
-% calculate confidence intervals within '#_run.m' function
-
-% @kde function documentation: https://www.ics.uci.edu/~ihler/code/kde.html
-% @kde function evaluates kde estimates to compute confidence region
-% Download kdefunc to use the below functionality
-
-% addpath("~/kdefunc") 
-
-% Run networkODE function with optimal parameter set
-% choose between
-% mode = 0 :no plots
-% mode = 1 :plots
-% mode = 2 :additional validation plots
-% mode = 3 :regulatory response plots
-load invitro_data.mat
-mode = 1;
-[Time, Y_pred] = networkODE_multirun(tspan, y0, params, mode);
 %%
-%% Model Workflow
-%% Call local sensitivity analysis
-% ls: 1 or 0 to run local sensitivity analysis or not
-% s_FD_tau returns sensitivity coefficients for tau parameter
-% s_FD_n returns sensitivity coefficients for n parameter 
-% s_FD_k returns sensitivity coefficients for k parameter (EC_50)
-% tau_index: index of tau parameter (corresponds to species ID) to be optimized
-% n_index: index of n parameter (corresponds to reaction index) to be optimized
-% k_index: index of EC_50 parameter (corresponds to reaction index) to be optimized
-% params: set of parameters (W, n, EC50, tau, ymax, speciesnames)
-% y0: Initial value
-% tspan: simulation time points
-if ls == 1
+if strcmp(step,"sim_step")
+    mode = 0;
+    [Time, Y_pred] = networkODE_run(tspan, y0, params, tau_index, k_index, n_index, W_index, mode);
+    
+elseif strcmp(step,"plot_step")
+    % Plots from Fitted Model
+    if mode==1
+        
+       
+        [Time, Y_pred] = networkODE_run(tspan, y0, params, tau_index, k_index, n_index, W_index, mode);
+    elseif mode==2
+        
+       
+        [Time, Y_pred] = networkODE_run(tspan, y0, params, tau_index, k_index, n_index, W_index, mode);
+    elseif mode==3
+        
+       
+        [Time, Y_pred] = networkODE_run(tspan, y0, params, tau_index, k_index, n_index, W_index, mode);
+    else
+        beep
+        'Please provide a valid mode of "1", "2", or "3"'
+    end
+
+% elseif strcmp(step,"pub_plot_step")
+
+elseif strcmp(step, "sensitivity_step")
+
+    % LS = 1 (local)
+    % LS = 0 (global)
+    % s_FD_tau returns sensitivity coefficients for tau parameter
+    % s_FD_n returns sensitivity coefficients for n parameter 
+    % s_FD_k returns sensitivity coefficients for k parameter (EC_50)
+   
+if LS == 1
     [s_FD_tau, s_FD_n, s_FD_k, tau_index, n_index, k_index] = sens(params, y0, tspan, sens_change);
     disp(tau_index);
     disp(n_index);
     disp(k_index);
 else
-    disp("Run UQ Lab global sensitivity analysis scripts from the UQLab_scripts folder.")
+    disp("Run UQ Lab global sensitivity analysis scripts")
 end
 
 
-%% Call parameter estimation function
+elseif strcmp(step,"multistart_opt_step")
+    % Call Multi-start parameter estimation
+    % global_p_best: returns 1xn best parameter set
+    % p_fitted: returns 100xn fitted parameter sets
+    % error_fitted: returns nx1 fitted sum of squared error
+    % *n is the number of parameters in each treatment condition
 
-% global_p_best returns set of best parameters
-% params: set of parameters (W, n, EC50, tau, ymax, speciesnames)
-% y0: Initial values
-% tspan: simulation time points
-% tau_index: index of tau parameters to be optimized
-% n_index: index of n parameters to be optimized
-% k_index: index of EC_50 parameter (corresponds to reaction index) to be optimized
-% y0_index: index of y0
+    % specify parallel loop
+    % pLOOP = parpool(8);
+    % pLOOP.IdleTimeout = 60*8;
+    
 
-[global_p_best] = multistart_param_opt(params, y0, tspan, tau_index, n_index, k_index, W_index);
+    [global_p_best, p_fitted, error_fitted] = multistart_param_opt(params, y0, tspan, tau_index, n_index, k_index, W_index, repeats);    
+    disp(global_p_best);
 
-disp(global_p_best);
-%% Calculate minimum RMSE for best set of parameters
+    % delete(pLOOP);
 
-% min_error returns Sum of Squared Error (SSE)
-% w_error returns weighted SSE
-% global_p_best returns set of best parameters
-% params: set of parameters (W, n, EC50, tau, ymax, speciesnames)
-% y0: Initial values
-% tspan: simulation time points
-% tau_index: index of tau parameters to be tuned
-% n_index: index of n parameters to be tuned
-% k_index: index of EC_50 parameter (corresponds to reaction index) to be tuned
-% y0_index: index of y0
+    % Calculate minimum RMSE for best set of parameters
 
-[min_error] = networkODE_error([], params, y0, tspan, tau_index, n_index, k_index, W_index);
+    % min_error returns Sum of Sqared Error (SSE)
+    % [min_error] = networkODE_error(global_p_best, params, y0, tspan, tau_index, n_index, k_index, W_index);
+    % disp (min_error);
 
-%% Plot graph of select response variables
-% Time: Time output
-% Y_pred: Predicted output
-% global_p_best: partial list of parameters tuned by fmincon
-% params: Complete list of parameters required to run networkODE model
-% tau_index, n_index: indices for tau and n parameter list that are tuned
-% which are replaced in the complete list of parameters (params)
-% y0: Initial value/state
-% tspan: simulation time
-% mode = 0, does not show plot
-% mode = 1, plots training graph and validation data
-% mode = 2, plots additional validation graph
-% mode = 3, plots regulatory nodes in the network
-% mode = 4, check for parameter uncertainty and 95% CI
+   
 
-size_tau = size(tau_index,2);
-size_n = size(n_index,2);
-size_k = size(k_index,2);
-size_W = size(W_index,2);
+elseif strcmp(step,"MC_sim_step")
+    % p_posterior: acceptable set of parameters (1xn)
+    % population:  randomly sampled parameter distribution
+    % Yp: posteriors of prediction using Monte Carlo
+    % credible:    credible (95%) intervals
 
-% update the params list with optimal parameter
-%for m = 1:size_tau
-%       params{2}(tau_index(m)) = global_p_best(m);       
-%end
-%for n = 1:size_n
-%       params{1}(2,n_index(n)) = global_p_best(n+size_tau);       
-%end
-%for o = 1:size_k
-%        params{1}(3,k_index(o)) = global_p_best(o+size_tau+size_n);       
-%end
+    [p_posterior,population, Yp, credible] = networkODE_multirun(tspan, y0, params, p_fitted, error_fitted, global_p_best, tau_index, k_index, n_index, W_index, mode);
 
-% scaled params are unscaled to actual values in given range.
-%for tau_iter = 1:size_tau
-%        params{2}(tau_index(tau_iter)) = global_p_best(tau_iter); 
-%end
+else
+    beep
+    'Please provide a valid mode of "sim_step", "plot_step", "pub_plot_step", "multistart_opt_step", or "MC_sim_step"'
 
-%for w_iter = 1:size_W % W
-%        params{1}(1, W_index(w_iter)) = global_p_best(w_iter +  size_tau);
-%end
-
-%for n_iter = 1:size_n
-%        params{1}(2,n_index(n_iter)) = global_p_best(n_iter + size_tau + size_W); 
-%end
-
-%for k_iter = 1:size_k % EC50
-%        params{1}(3,k_index(k_iter)) = p(k_iter + size_tau + size_n + size_W); 
-%end
-
-
-
-% Run networkODE function with optimal parameter set
-% choose 
-% mode = 0 : no plots
-% mode = 1 : plots
-% mode = 2 : additional validation plots
-% mode = 3 : regulatory response plots
-% mode = 4 : check for parameter uncertainty and 95% CI
-
-mode=0;
-[Time, Y_pred] = networkODE_run(tspan, y0, params, mode);
+end
 
 
 

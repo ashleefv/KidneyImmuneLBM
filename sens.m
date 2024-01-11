@@ -7,95 +7,114 @@
 
 function [s_FD_tau, s_FD_n, s_FD_k, tau_index, n_index, k_index] = sens(params, y0, tspan, sens_change)
 tic;
+% parameter size Initialization
+RP = length(params{1}(1,:));
+SP = length(params{3}(:));
 
-[t,y] = networkODE_run(tspan,y0,params,0);
-yR = y([1,end], [23, 25, 24, 6, 13]);
-
-% Data and parameter size Initialization
-c = length(params{1}(1,:));
-
-% tau = params{2};
-% n = params{1}(2,:);
-% EC50 = params{1}(3,:);
-
-
-S_FD = zeros(length(yR),c,2); %size: length(species), length(params), length(time)
-%S_FD_norm = zeros(length(yR),c,2);
-
-s_FD_tau = zeros(length(yR),length(params{2}(:)),2);
-s_FD_n = zeros(length(yR),c,2);
-s_FD_k = zeros(length(yR),c,2);
-
-%S_norm_tau = zeros(length(yR),length(params{2}(:)),2);
-%S_norm_n = zeros(length(yR),c,2);
-%S_norm_k = zeros(length(yR),c,2);
-
-percent = sens_change; %percent parameter perturbation
+% sensitivity coefficient initialization
+% size: length(species), length(params), length(time)
+s_FD_tau = zeros(30,SP,1); % Sensitivity index
+s_FD_W = zeros(30,RP,1);
+s_FD_k = zeros(30,RP,1);
+s_FD_n = zeros(30,RP,1);
 
 
-% Parameter: Tau
-for m = 1:length(params{2}(:))
+percent = sens_change; % percent perturbation
+options =[];
+[t, y] = ode23s(@networkODE,tspan,y0,options,params);
+
+% y = y(:,[12, 20, 23, 24, 25, 27, 29, 30]);
+% AUC_y = trapz(t, y(:,[12, 18, 20, 23, 25, 27, 29, 30]));
+
+
+% Parameter: tau
+for m = 1:SP
     dp = params;
-    dp{2}(m) = dp{2}(m)*(1+percent*1e-2);                   % perturb parameter by a small amount
+    dp{2}(m) = dp{2}(m)*(1-percent*1e-2); % perturb each "tau" parameter by a small amount
     
-    [time,dy_model] = networkODE_run(tspan,y0,dp,0);
+    [time,dy_model] = ode23s(@networkODE,tspan,y0,options,dp); % simulate with perturbed value
     dy_model = real(dy_model);
-    dy_modelR = [dy_model([1,48],[23,25,24,6,13])];
-    for l = 1:length(yR)
-        s_FD_tau(l,m,:) = (dy_modelR(:,l) - yR(:,l))/params{2}(m)/(percent*1e-2);
-        %S_norm_tau(l,m,:) = (dy_modelR(:,1)- yR(:,l))/(percent*1e-2)./yR(:,l);
+    dy_modelR = [dy_model(:,[1:30])];
+    % AUC_dy = trapz(time, dy_model(:,[12, 13, 20, 23, 24, 25, 27, 29]));
+    for l = 1:size(dy_modelR,2)
+        %s_FD_tau(l,m,:) = (AUC_dy(l) - AUC_y(l))/params{3}(m)/(percent*1e-2); % difference in AUC values 
+        s_FD_tau(l,m,:) = (dy_modelR(end,l) - y(end,l))/params{2}(m)/(percent*1e-2); % difference in values at 48 hours
+    end
+end
+% Parameter: W
+for m = 1:RP
+    dp = params;
+    dp{1}(1,m) = dp{1}(1,m)*(1-percent*1e-2); % perturb each "W" parameter by a small amount
+    
+    [time,dy_model] = ode23s(@networkODE,tspan,y0,options,dp); % simulate with perturbed value
+    dy_model = real(dy_model);
+    dy_modelR = [dy_model(:,[1:30])];
+    % AUC_dy = trapz(time, dy_model(:,[12, 13, 20, 23, 24, 25, 27, 29]));
+    for l = 1:size(dy_modelR,2)
+        %s_FD_W(l,m,:) = (AUC_dy(l) - AUC_y(l))/params{1}(1,m)/(percent*1e-2);
+        s_FD_W(l,m,:) = (dy_modelR(end,l) - y(end,l))/params{1}(1,m)/(percent*1e-2);
+    end
+end
+
+% Parameter: k or EC50
+for m = 1:RP
+    dp = params;
+    dp{1}(3,m) = dp{1}(3,m)*(1-percent*1e-2); % perturb each "W" parameter by a small amount
+    
+    [time,dy_model] = ode23s(@networkODE,tspan,y0,options,dp); % simulate with perturbed value
+    dy_model = real(dy_model);
+    dy_modelR = [dy_model(:,[1:30])];
+    % AUC_dy = trapz(time, dy_model(:,[12, 13, 20, 23, 24, 25, 27, 29]));
+    for l = 1:size(dy_modelR,2)
+        %s_FD_k(l,m,:) = (AUC_dy(l) - AUC_y(l))/params{1}(3,m)/(percent*1e-2);
+        s_FD_k(l,m,:) = (dy_modelR(end,l) - y(end,l))/params{1}(3,m)/(percent*1e-2);
     end
 end
 
 % Parameter: n
-for m = 1:length(params{1}(2,:))
+for m = 1:RP
     dp = params;
-    dp{1}(2,m) = dp{1}(2,m)*(1+percent*1e-2);               % perturb m-th parameter by a small amount
+    dp{1}(2,m) = dp{1}(2,m)*(1-percent*1e-2); % perturb each "W" parameter by a small amount
     
-    [time,dy_model] = networkODE_run(tspan,y0,dp,0);
+    [time,dy_model] = ode23s(@networkODE,tspan,y0,options,dp); % simulate with perturbed value
     dy_model = real(dy_model);
-    dy_modelR = [dy_model([1,48],[23,25,24,6,13])];
-    for l = 1:length(yR)
-        
-        s_FD_n(l,m,:) = (dy_modelR(:,1)- yR(:,l))/params{1}(2,m)/(percent*1e-2);
-        %S_norm_n(l,m,:) = (dy_modelR(:,1)- yR(:,l))/(percent*1e-2)./yR(:,l);
+    dy_modelR = [dy_model(:,[1:30])];
+    % AUC_dy = trapz(time, dy_model(:,[12, 13, 20, 23, 24, 25, 27, 29]));
+    for l = 1:size(dy_modelR,2)
+        %s_FD_n(l,m,:) = (AUC_dy(l) - AUC_y(l))/params{1}(3,m)/(percent*1e-2);
+        s_FD_n(l,m,:) = (dy_modelR(end,l) - y(end,l))/params{1}(2,m)/(percent*1e-2);
     end
 end
 
-% Parameter: k
-for m = 1:length(params{1}(3,:))
-    dp = params;
-    dp{1}(3,m) = dp{1}(3,m)*(1+percent*1e-2);                % perturb m-th parameter by a small amount
-    [time,dy_model] = networkODE_run(tspan,y0,dp,0);  
-    dy_modelR = [dy_model([1,48],[23,25,24,6,13])];
-    for l = 1:length(yR)
-        s_FD_k(l,m,:) = (dy_modelR(:,1)- yR(:,l))/params{1}(3,m)/(percent*1e-2);
-        %S_norm_k(l,m,:) = (dy_modelR(:,1)- yR(:,l))/(percent*1e-2)./yR(:,l);
-    
-    end
-end
 toc;
 t = toc-tic;
 %% Calculate limit/threshold magnitude above which significant parameter indices are considered 
 
-limit_tau = max(max(abs(s_FD_tau(:,:,2)),[],2));
-limit_n = max(max(abs(s_FD_n(:,:,2)),[],2));
-limit_k = max(max(abs(s_FD_k(:,:,2)),[],2));
+limit_tau = max(max(abs(s_FD_tau(:,:,1)),[],2)); % maximum in each parameter set
+limit_n = max(max(abs(s_FD_n(:,:,1)),[],2));
+limit_k = max(max(abs(s_FD_k(:,:,1)),[],2));
+limit_W = max(max(abs(s_FD_W(:,:,1)),[],2));
 
+
+% WORK ON THIS
 % Get the most sensitive parameters (indices)
-tau_index = unique([find(abs(s_FD_tau(1,:,2))>0.01*limit_tau), find(abs(s_FD_tau(2,:,2))>0.01*limit_tau)]);
-n_index = unique([find(abs(s_FD_n(1,:,2))>0.5*limit_n), find(abs(s_FD_n(2,:,2))>0.5*limit_n)]);
-k_index = unique([find(abs(s_FD_k(1,:,2))>0.999*limit_k), find(abs(s_FD_k(2,:,2))>0.999*limit_k)]);
+tau_index = unique([find(abs(s_FD_tau(24,:,1))>0.1*limit_tau), find(abs(s_FD_tau(12,:,1))>0.1*limit_tau)])
+n_index = unique([find(abs(s_FD_n(24,:,1))>0.01*limit_n), find(abs(s_FD_n(12,:,1))>0.01*limit_n)])
+k_index = unique([find(abs(s_FD_k(24,:,1))>0.01*limit_k), find(abs(s_FD_k(12,:,1))>0.01*limit_k)])
+W_index = unique([find(abs(s_FD_W(24,:,1))>0.01*limit_W), find(abs(s_FD_W(12,:,1))>0.01*limit_W)])
 
 %% BAR PLOT of sensitivities 
-top_S_tau = s_FD_tau(:,:,2);
-top_S_n = s_FD_n(:,:,2);
-top_S_k = s_FD_k(:,:,2);
+
+vars = [23,24,25,27,13,22,20,12];
+top_S_tau = s_FD_tau(vars,:,1);
+top_S_n = s_FD_n(vars,:,1);
+top_S_k = s_FD_k(vars,:,1);
+top_S_W = s_FD_W(vars,:,1);
 
 figure(1)
 b = bar(top_S_tau);
 name1={'tau';'n';'EC50'};
-name2={'IL6', 'IL1b','TNFa', 'VEGFa', 'ROS'};
+name2=params{4}(vars);
 set(gca,'xticklabel',name2);
 set(gca,'FontName','Arial','FontSize',10);
 grid on;
@@ -115,6 +134,13 @@ set(gca,'xticklabel',name2);
 set(gca,'FontName','Arial','FontSize',10);
 grid on;
 ylabel('Local Sensitivity of EC50 or K parameter','FontName','Arial','FontSize',10);
+
+figure(4)
+b = bar(top_S_W);
+set(gca,'xticklabel',name2);
+set(gca,'FontName','Arial','FontSize',10);
+grid on;
+ylabel('Local Sensitivity of W parameter','FontName','Arial','FontSize',10);
 
 
 end

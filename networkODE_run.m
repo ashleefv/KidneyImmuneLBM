@@ -1,4 +1,6 @@
-function [p_posterior,population, Yp, credible] = networkODE_multirun(tspan, y0, params, p_fitted, error_fitted, global_p_best, tau_index, k_index, n_index, W_index, mode)
+function [T_best, Y_best] = networkODE_run(tspan, y0, params, tau_index, k_index, n_index, W_index, mode)
+
+warning('off', 'all')
 
 load invitro_data.mat
 
@@ -8,7 +10,6 @@ LPS = params{1}(1,2);
 Time = [0:1:48]; % time span
 
 speciesNames = params{4};
-reac_names = {'=> GLU','=> LPS','LPS => TLR4','GLU => AGE', 'AGE => RAGE','RAGE => NADPH','TLR4 & ROS => NF\kappaB', 'TLR4 => PI3K','NADPH => ROS', 'PI3K => AKT', 'PI3K => ROS', 'NF\kappaB_e_c => TNF-\alpha','AKT => NF\kappaB','NF\kappaB => IL-6','NF\kappaB => TNF-\alpha','NF\kappaB => VEGF-A_m_R_N_A', 'VEGF-A_m_R_N_A => VEGF-A','NF\kappaB => IL-1\beta','VEGF-A => VEGFR1','VEGF-A => VEGFR2','AGE => RAGE_e_c','RAGE_e_c => NADPH_e_c','VEGFR2 => PI3K_e_c','VEGFR1 => PI3K_e_c', 'NADPH_e_c => ROS_e_c', 'PI3K_e_c => AKT_e_c', 'AKT_e_c => eNOS' , 'VEGFR1 => PLC-\gamma' ,'PLC-\gamma => NF\kappaB_e_c' , 'ROS_e_c => NF\kappaB_e_c','NF\kappaB_e_c => IL-6', 'NF\kappaB_e_c => IL-1\beta', 'eNOS  => NO', 'eNOS => ROS_e_c' ,'ROS_e_c & NO => ONOO','!NO => Ca','PLC-\gamma => Ca', 'Ca => pJunction','pJunction => Gap Width', 'Ca => NO'};
 
 size_tau = size(tau_index,2);
 size_n = size(n_index,2);
@@ -25,6 +26,7 @@ if GLU>0 && LPS==0                                   % condition (GLU = 1, LPS =
     timedata = time_data([2,6,10,14,18,22],:);       % Time points for training set
     timev = vtime([2,6,10,14,18],:);                 % Time points for validation set
 
+    load data/prediction_posterior_GLU.mat
 end 
 
 if GLU==0 && LPS>0                                   % condition (LPS = 1, GLU = 0)
@@ -36,6 +38,7 @@ if GLU==0 && LPS>0                                   % condition (LPS = 1, GLU =
     timedata = time_data([3,7,11,15,19,23],:);       % Time points for training set
     timev = vtime([3,7,11,15,19],:);                 % Time points for validation set
 
+    load data/prediction_posterior_LPS.mat
 end
 
 if GLU>0 && LPS>0                                    % condition (GLU = 1, LPS = 1)
@@ -46,229 +49,20 @@ if GLU>0 && LPS>0                                    % condition (GLU = 1, LPS =
     timedata = time_data([4,8,12,16,20,24],:);       % Time points for training set
     timev = vtime([4,8,12,16,20],:);                 % Time points for validation set
 
+    load data/prediction_posterior_both.mat
 end
 
 
 options=[];
 [T_best, Y_best] = ode23s(@networkODE,tspan,y0,options,params);
 
-%%
-if GLU>0 && LPS==0
-    GB = params;
-    GB{2}(tau_index) = global_p_best(1:size_tau);
-    GB{1}(1,W_index) = global_p_best(size_tau+1:size_tau+size_W);
-    GB{1}(2,n_index) = global_p_best(size_tau+size_W+1:size_tau+size_W+size_n);
-    GB{1}(3,k_index) = global_p_best(size_tau+size_W+size_n+1:size_tau+size_W+size_n+size_k);
-end
-if GLU==0 && LPS>0
-    GB = params;
-    GB{2}(tau_index) = global_p_best(1:size_tau);
-end
 
-if GLU>0 && LPS>0
-    GB = params;
-    GB{2}(tau_index) = global_p_best(1:size_tau);
-    
-end
+%% plot global best-fit parameters for each treatment condition
 
-% sort parameters by minimum error
-col = [0 0.4470 0.7410];
-Params_error = [error_fitted p_fitted]; % coef_fitted is the parameter output from all the LHS fmincon runs
-error_column = 1; % first column stores error_fitted
-[sorted_Params_error, index] = sortrows(Params_error,error_column);
-param_posterior = sorted_Params_error(:,[2:end]);
-
-options = [];
-[T_gb, Y_gb] = ode23s(@networkODE,tspan,y0,options,GB); % prediction at global-best estimates
-
-
-% Sum of Squared Error (SSE) plot
-Params_error = [error_fitted p_fitted]; % coef_fitted is the parameter output from all the LHS fmincon runs
-error_column = 1; % first column stores error_fitted
-[sorted_Params_error, index] = sortrows(Params_error,error_column);
-accep_id = find(sorted_Params_error(:,1)<1.2*min(sorted_Params_error(:,1)));
-
-figure(21)
-%-- generate figure to show the error of all the parameter values from LHS
-for i = 1:size(p_fitted, 2)
-    plot(1:length(index),sorted_Params_error(:,error_column),'o')
-    hold on
-    xlabel('number of runs')
-    ylabel('sum of squared error (sse)')
-end
-
-% Monte Carlo Method
-p_posterior = sorted_Params_error(accep_id,[2:end]); % acceptable parameters within 1.2*min(SSE)
-Ns = 1; % number of samples
-population = zeros(1,length(global_p_best));         % initialize population
-%population = zeros(1,size(p_fitted,2));
-s = RandStream('mlfg6331_64');
-tic
-for j = 1:Ns
-    for m = 1:length(global_p_best)
-        population(j,m) = randsample(s, p_posterior(:,m), 1); % posterior population of acceptable parameters
-    end
-end
-sprintf('population size: %d x %d',size(population))
-
-for j = 1:Ns
-    if GLU>0 && LPS==0
-        dp = params;
-        dp{2}(tau_index) = population(j,(1:size_tau));
-        dp{1}(1,W_index) = population(j,(size_tau+1:size_tau+size_W));
-        dp{1}(2,n_index) = population(j,(size_tau+size_W+1:size_tau+size_W+size_n));
-        dp{1}(3,k_index) = population(j,(size_tau+size_W+size_n+1:end)); 
-
-        options = [];
-        [Tout, Yout] = ode23s(@networkODE,tspan,y0,options,dp);
-        Yp(j,:,:) = Yout;
-        dp = params;
-    end
-    if GLU==0 && LPS>0
-        dp = params;
-        dp{2}(tau_index) = population(j,(1:size_tau));
-        
-        options = [];
-        [Tout, Yout] = ode23s(@networkODE,tspan,y0,options,dp);
-        Yp(j,:,:) = Yout;
-        dp = params;
-    end
-    if GLU>0 && LPS>0
-        dp = params;
-        dp{2}(tau_index) = population(j,(1:size_tau));
-        
-        options = [];
-        [Tout, Yout] = ode23s(@networkODE,tspan,y0,options,dp);
-        Yp(j,:,:) = Yout;
-        dp = params;
-    end
-    
-    
-   
-end
-toc
-%%
-% Time = [0:1:48];
-% vars = [23, 24, 25, 6, 13, 22, 20, 12, 27, 28];
-
-% for v = 1:length(vars)
-  %  for i = 1:length(Time)
-    
-   %     mean_y(i,v) = mean(abs(Yp(:,i,vars(v))));
-   %     sd_y(i,v) = std(abs(Yp(:,i,vars(v))));
-        
-
-   % end
-   % ts = tinv([0.025  0.975],length(Time)-1);
-   % CI95 = abs(mean_y(:,v) + ts.*(sd_y(:,v)/sqrt(length(Time))));
-   % lower_CI(:,v) = CI95(:,1);
-   % upper_CI(:,v) = CI95(:,2);
-% end
-
-         
-% save('workspaces/both_best_fitted_MC')
-%%
-vars = [23, 24, 25, 6, 13, 22, 20, 12, 27, 28];
-
-blue = 	[0 0.4470 0.7410];
-for v = 1:8
-    for t = 1:length(Time)
-    
-       credible(t,:) = quantile(abs(Yp(:,t,vars(v))), [0.025 0.975]);
-    end
-    
-    figure(22)
-    grid on
-    hold on
-    subplot(2,4,v)
-    hold on
-    % --- Prediction
-    %plot(Time, mean_y(:,v), 'color', 'b', 'LineWidth', 0.8)            % mean of prediction posterior
-    %hold on
-    plot(T_gb, Y_gb(:,vars(v)), '--', 'color', 'b', 'LineWidth', 0.8)   % global best estimates
-    hold on
-    plot(T_best, Y_best(:,v), 'color', 'k', 'LineWidth', 1)             % mean of acceptable estimates
-    hold on
-    [ph,msg] = jbfill(Time,credible(:,1)', credible(:,2)',blue,blue,1,0.2);
-    hold on    
-
-end
-
-%% Histograms
-
-accep_mean = mean(p_posterior(:,[1:end]));
-
-figure(23)
-
-hold on
-for i=1:size_tau
-subplot(3,5,i)
-grid on
-hold on
-histogram(population(:,i), 'FaceColor', '#00FFFF')
-hold on
-xline(accep_mean(:,i), 'LineWidth', 2, 'color', 'r')
-hold on
-title([num2str(tau_index(i)) + ": " + params{4}(tau_index(i))])
-hold on
-end
-hold on
-legend('\tau', 'mean', 'FontSize', 10)
-
-if GLU>0 && LPS==0
-
-figure(24)
-hold on
-for i=1:size_W
-subplot(3,5,i)
-grid on
-hold on
-histogram(population(:,i+size_tau), 'FaceColor', '#00FFFF')
-hold on
-xline(accep_mean(:,i+size_tau), 'LineWidth', 2, 'color', 'r')
-hold on
-title([num2str(W_index(i)) + ": " + reac_names(W_index(i))])
-end
-hold on
-legend('W', 'mean', 'FontSize', 10)
-
-
-figure(25)
-hold on
-for i=1:size_n
-subplot(4,8,i)
-grid on
-hold on
-histogram(population(:,i+size_tau+size_W), 'FaceColor', '#EDB120')
-hold on
-xline(accep_mean(i+size_tau+size_W), 'LineWidth', 2, 'color', 'r')
-hold on
-title([num2str(n_index(i)) + ": " + reac_names(n_index(i))])
-end
-hold on
-legend('n', 'mean', 'FontSize', 10)
-
-figure(26)
-hold on
-for i=1:size_k
-subplot(4,6,i)
-grid on
-hold on
-histogram(population(:,i+size_tau+size_W+size_n), 'FaceColor', '#77AC30')
-hold on
-xline(accep_mean(i+size_tau+size_W+size_n), 'LineWidth', 2, 'color', 'r')
-hold on
-title([num2str(k_index(i)) + ": " + reac_names(k_index(i))])
-end
-hold on
-legend('EC_{50}', 'mean', 'FontSize', 10)
-
-end
-%%
 
 if mode==1
 
-            figure(27)
+            figure(13)
             hold on
             vars = [23, 24, 25, 6, 13, 22, 20, 12, 27, 28];
 
@@ -435,7 +229,7 @@ if mode==1
               hold on
               t = title('Yang et al. (2008)'); t.FontSize = 14;
 
-              blue = [0 0.4470 0.7410];
+              blue = 	[0 0.4470 0.7410];
               for v = 1:8
                   for t = 1:length(Time)
                       credible(t,:) = quantile(abs(Yp(:,t,vars(v))), [0.025 0.975]);
@@ -456,7 +250,7 @@ elseif mode==2
 
     
 
-    figure(27)
+    figure(14)
 
     if GLU>0 && LPS==0
 
@@ -856,9 +650,86 @@ elseif mode==2
             lgd.FontSize = 14;
     end
 
+elseif  mode == 3
+% regulatory nodes
+
+    linest = ["-", "--", "-.", ":", "--."];
+    
+    figure(10);
+    
+    var = [3,8,10];
+    for j = 1:length(var)
+        subplot(2,3,1)
+        plot(T_best, Y_best(:,var(j)), linest(j), 'LineWidth', 2)
+        hold on
+        grid off
+        ylim([0,1.05])
+        xlim([0,48])
+        xticks([0 12 24 36 48])
+        ylabel("Activity"); xlabel('Time (hour)')
+        set(gca,'FontName','Arial','FontSize',18);
+        hold on
+     lgd = legend(params{4}([3,8,10]), 'Location', 'SouthEast');
+     lgd.FontSize = 14;
+
+    end
+    var = [9,14,15,19];
+    for j = 1:length(var)
+        subplot(2,3,2)
+        plot(T_best, Y_best(:,var(j)), linest(j), 'LineWidth', 2); 
+        hold on
+        grid off
+        ylim([0,1.05])
+        xlim([0,48])
+        xticks([0 12 24 36 48])
+        ylabel("Activity"); xlabel('Time (hour)')
+        set(gca,'FontName','Arial','FontSize',18);
+        lgd = legend(params{4}([9,14,15,19]), 'Location', 'SouthEast');
+        lgd.FontSize = 14;
+        
+    end
+    var = [7,11,18];
+    for j=1:length(var)
+        subplot(2,3,3)
+        plot(T_best, Y_best(:,var(j)), linest(j), 'LineWidth', 2); 
+        hold on
+        grid off
+        ylim([0,1.05])
+        xlim([0,48])
+        xticks([0 12 24 36 48])
+        ylabel("Activity"); xlabel('Time (hour)')
+        set(gca,'FontName','Arial','FontSize',18);
+        lgd = legend(params{4}([7,11,18]), 'Location', 'SouthEast');
+        lgd.FontSize = 14;
+    end
+    var = [4,5,26,16,17];
+    for j=1:length(var)
+        subplot(2,3,4)
+        plot(T_best, Y_best(:,var(j)), linest(j), 'LineWidth', 2); 
+        hold on
+        grid off
+        ylim([0,1.05])
+        xlim([0,48])
+        xticks([0 12 24 36 48])
+       
+        ylabel("Activity"); xlabel('Time (hour)')
+        set(gca,'FontName','Arial','FontSize',18);
+        lgd = legend(params{4}([4,5,26,16,17]), 'Location', 'SouthEast');
+        lgd.FontSize = 14;
+    end
+    var = [28,29,30];
+    for j=1:length(var)
+        subplot(2,3,5)
+        plot(T_best, Y_best(:,var(j)), linest(j), 'LineWidth', 2)
+        hold on
+        grid off
+        ylim([0,1.05])
+        xlim([0,48])
+        xticks([0 12 24 36 48])
+        ylabel("Activity"); xlabel('Time (hour)')
+        set(gca,'FontName','Arial','FontSize',18);
+        lgd = legend(params{4}([28,29,30]), 'Location', 'SouthEast');
+        lgd.FontSize = 14;
+    end
 
 end
-end
-
-
- 
