@@ -1,15 +1,26 @@
+function UQLab_Sobolplots_networkmodel()
+
+%% 1 - INITIALIZE UQLAB
+%
+% Clear variables from the workspace,
+% set random number generator for reproducible results,
+% and initialize the UQLab framework:
+
+% Must be in ~ UQLab/core directory to initialize
+rng(100,'twister')
+uqlab
+%%
 speciesNames = {'GLU','LPS','AGE','VEGFR1','VEGFR2','VEGF-A$_{mRNA}$','RAGE$_{ec}$','RAGE','TLR4','NADPH','NADPH$_{ec}$','ROS$_{ec}$','ROS','PI3K','AKT','PI3K$_{ec}$','AKT$_{ec}$','NF$\kappa$B$_{ec}$','NF$\kappa$B','NO','ONOO','eNOS','IL-6','TNF-$\alpha$','IL-1$\beta$','PLC-$\gamma$','VEGF-A','pJunction','Ca','Gap Width',};
 reac_names = {'=\textgreater GLU','=\textgreater LPS','LPS =\textgreater TLR4','GLU =\textgreater AGE', 'AGE =\textgreater RAGE','RAGE =\textgreater NADPH','TLR4 \& ROS =\textgreater NF$\kappa$B', 'TLR4 =\textgreater PI3K','NADPH =\textgreater ROS', 'PI3K =\textgreater AKT', 'PI3K =\textgreater ROS', 'NF$\kappa$B$_{ec}$ =\textgreater TNF-$\alpha$','AKT =\textgreater NF$\kappa$B','NF$\kappa$B =\textgreater IL-6','NF$\kappa$B =\textgreater TNF-$\alpha$','NF$\kappa$B =\textgreater VEGF-A$_{mRNA}$', 'VEGF-A$_{mRNA}$ =\textgreater VEGF-A','NF$\kappa$B =\textgreater IL-1$\beta$','VEGF-A =\textgreater VEGFR1','VEGF-A =\textgreater VEGFR2','AGE =\textgreater RAGE$_{ec}$','RAGE$_{ec}$ =\textgreater NADPH$_{ec}$','VEGFR2 =\textgreater PI3K$_{ec}$','VEGFR1 =\textgreater PI3K$_{ec}$', 'NADPH$_{ec}$ =\textgreater ROS$_{ec}$', 'PI3K$_{ec}$ =\textgreater AKT$_{ec}$', 'AKT$_{ec}$ =\textgreater eNOS' , 'VEGFR1 =\textgreater PLC-$\gamma$' ,'PLC-$\gamma$ =\textgreater NF$\kappa$B$_{ec}$' , 'ROS$_{ec}$ =\textgreater NF$\kappa$B$_{ec}$','NF$\kappa$B$_{ec}$ =\textgreater IL-6', 'NF$\kappa$B$_{ec}$ =\textgreater IL-1$\beta$', 'eNOS  =\textgreater NO', 'eNOS =\textgreater ROS$_{ec}$' ,'ROS$_{ec}$ \& NO =\textgreater ONOO','!NO =\textgreater Ca','PLC-$\gamma$ =\textgreater Ca', 'Ca =\textgreater pJunction','pJunction =\textgreater Gap Width', 'Ca =\textgreater NO'};
 
 %% read stored Sobol coefficients in data files
 
-SobolTotal = readmatrix('fullmodel_global_Total_ode23s.csv'); % 
+SobolTotal = readmatrix('fullmodel_global_Total__ode23s.csv'); % 
 SobolFirstOrder = readmatrix('fullmodel_global_FirstOrder_ode23s.csv');
 
 %%
 
 Th_tau = real(0.1*max(max(SobolTotal([1:30],:)')));
-% real(min(max(0.1*SobolTotal(1:30))));
 Th_W = real(0.1*max(max(SobolTotal([31:70],:)')));
 Th_k = real(0.1*max(max(SobolTotal([71:110],:)')));
 Th_n = real(0.1*max(max(SobolTotal([111:150],:)')));
@@ -19,6 +30,7 @@ Th_n = real(0.1*max(max(SobolTotal([111:150],:)')));
 % Create the plot
 uq_figure('Name', 'Total Sobol'' Indices')
 barWidth = 1;
+
 figure(1)
 uq_bar(1:30, real(SobolTotal(1:30,:)), barWidth)
 hold on
@@ -93,7 +105,7 @@ uq_legend({'ROS', 'IL-6', 'TNF-$\alpha$', 'IL-1$\beta$', 'VEGF-A','ROS$_{ec}$', 
 % Create the plot
 uq_figure('Name', 'First-order Sobol'' Indices')
 barWidth = 1;
-figure(5)
+figure(1)
 uq_bar(1:30, real(SobolFirstOrder(1:30,:)), barWidth)
 % Set axes limits
 %xlim([0 5])
@@ -108,7 +120,7 @@ set(...
 uq_legend({'ROS', 'IL-6', 'TNF-$\alpha$', 'IL-1$\beta$', 'VEGF-A','ROS$_{ec}$', 'NO', 'eNOS'}, 'Location', 'northeast')
 %savefig("FirstOrderSobol_fulltau_ode23s.fig")
 
-figure(6)
+figure(2)
 uq_bar(31:70, real(SobolFirstOrder(31:70,:)), barWidth)
 % Set axes limits
 %xlim([0 5])
@@ -123,7 +135,7 @@ set(...
 uq_legend({'ROS', 'IL-6', 'TNF-$\alpha$', 'IL-1$\beta$', 'VEGF-A','ROS$_{ec}$', 'NO', 'eNOS'}, 'Location', 'northeast')
 %savefig("FirstOrderSobol_fullW_ode23s.fig")
 
-figure(7)
+figure(3)
 uq_bar(71:110, real(SobolFirstOrder(71:110,:)), barWidth)
 % Set axes limits
 %xlim([0 5])
@@ -139,7 +151,7 @@ uq_legend({'ROS', 'IL-6', 'TNF-$\alpha$', 'IL-1$\beta$', 'VEGF-A','ROS$_{ec}$', 
 %savefig("FirstOrderSobol_fullk_ode23s.fig")
 
 
-figure(8)
+figure(4)
 uq_bar(111:150, real(SobolFirstOrder(111:150,:)), barWidth)
 % Set axes limits
 %xlim([0 5])
@@ -154,3 +166,4 @@ set(...
 uq_legend({'ROS', 'IL-6', 'TNF-$\alpha$', 'IL-1$\beta$', 'VEGF-A','ROS$_{ec}$', 'NO', 'eNOS'}, 'Location', 'northeast')
 %savefig("FirstOrderSobol_fulln_ode23s.fig")
 
+end

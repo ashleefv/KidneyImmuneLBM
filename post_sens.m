@@ -13,10 +13,11 @@ s_FD_Ym = zeros(30,SP,1); % Sensitivity index
 s_FD_W = zeros(30,RP,1);
 s_FD_k = zeros(30,RP,1);
 
-sens_change = 15;
+% sens_change = 15;
 percent = sens_change; % percent perturbation
 options=[];
 [t, y] = ode23s(@networkODE,tspan,y0,options,params);
+y = real(y);
 
 % y = y(:,[12, 20, 23, 24, 25, 27, 29, 30]);
 % AUC_y = trapz(t, y(:,[12, 18, 20, 23, 25, 27, 29, 30]));
@@ -74,8 +75,8 @@ t = toc-tic;
 reac_names = {'=> GLU','=> LPS','LPS => TLR4','GLU => AGE', 'AGE => RAGE','RAGE => NADPH','TLR4 & ROS => NFKB', 'TLR4 => PI3K','NADPH => ROS', 'PI3K => AKT', 'PI3K => ROS', 'NFKBec => TNFa','AKT => NFKB','NFKB => IL6','NFKB => TNFa','NFKB => VEGFamRNA', 'VEGFamRNA => VEGFa','NFKB => IL1b','VEGFa => VEGFRec1','VEGFa => VEGFRec2','AGE => RAGEec','RAGEec => NADPHec','VEGFRec2 => PI3Kec','VEGFRec1 => PI3Kec', 'NADPHec => ROSec', 'PI3Kec => AKTec', 'AKTec => eNOS' , 'VEGFRec1 => PLC' ,'PLC => NFKBec' , 'ROSec => NFKBec','NFKBec => IL6', 'NFKBec => IL1b', 'eNOS  => NO', 'eNOS => ROSec' ,'ROSec & NO => ONOO','!NO => Calcium','PLC => Calcium', 'Calcium => pJunc','pJunc => GapWidth', 'Calcium => NO'};
 
 
-figure(82); heatmap(s_FD_Ym(:,:,1), 'Colormap', jet); ax = gca; ax.YData = params{4}(:); ax.XData = params{4}(:);
-figure(90); heatmap(s_FD_W(:,:,1), 'Colormap', jet); ax = gca; ax.YData = params{4}(:); ax.XData = reac_names(:);
+figure(16); heatmap(s_FD_Ym(:,:,1), 'Colormap', jet); ax = gca; ax.YData = params{4}(:); ax.XData = params{4}(:);
+figure(17); heatmap(s_FD_W(:,:,1), 'Colormap', jet); ax = gca; ax.YData = params{4}(:); ax.XData = reac_names(:);
 %figure(100); heatmap(s_FD_k(:,:,1), 'Colormap', jet); ax = gca; ax.YData = params{4}(:); ax.XData =  reac_names(:);
 
 
@@ -97,7 +98,7 @@ Ym_pert = [4,7,17,26,27,28,29];
 Y_spec = [30];
 linest = ["-", "--", "-.", ":", "--.",'-','--'];
 
-figure(5)
+figure(18)
 hold on
 for j = 1:length(Ym_pert)
             dp = params;
@@ -124,7 +125,7 @@ end
 hold on
 legend(params{4}(Ym_pert))
 
-figure(5)
+figure(18)
 hold on
 for j = 1:length(W_pert)
             dp = params;

@@ -62,7 +62,7 @@ options=[];
 
 if mode==1
 
-            figure(13)
+            figure(11)
             hold on
             vars = [23, 24, 25, 6, 13, 22, 20, 12, 27, 28];
 
@@ -234,7 +234,7 @@ if mode==1
                   for t = 1:length(Time)
                       credible(t,:) = quantile(abs(Yp(:,t,vars(v))), [0.025 0.975]);
                   end
-                  figure(13)
+                  figure(11)
                   hold on
                   subplot(2,4,v)
                   hold on
@@ -250,7 +250,7 @@ elseif mode==2
 
     
 
-    figure(14)
+    figure(12)
 
     if GLU>0 && LPS==0
 
@@ -325,7 +325,7 @@ elseif mode==2
          
              subplot(2,3,4);
              % --- Prediction
-             plot(T_best, Y_best(:,vars(9)), 'color', 'k', 'LineWidth', 1.2)
+             plot(T_best, Y_best(:,vars(4)), 'color', 'k', 'LineWidth', 1.2)
              hold on
              %plot(Time, mean_y(:,9), 'color', purp, 'LineWidth', 0.8)
              %hold on
@@ -347,7 +347,7 @@ elseif mode==2
 
              subplot(2,3,5)
              % --- Prediction
-             plot(T_best, Y_best(:,vars(8)), 'color', 'k', 'LineWidth', 1.2)
+             plot(T_best, Y_best(:,vars(5)), 'color', 'k', 'LineWidth', 1.2)
              hold on
              %plot(Time, mean_y(:,8), 'color', purp, 'LineWidth', 0.8)
              %hold on
@@ -370,7 +370,7 @@ elseif mode==2
 
               subplot(2,3,6)
               % --- Prediction
-              plot(T_best, Y_best(:,vars(7)), 'color', 'k', 'LineWidth', 1.2)
+              plot(T_best, Y_best(:,vars(6)), 'color', 'k', 'LineWidth', 1.2)
               hold on             
               %plot(Time, mean_y(:,7), 'color', purp, 'LineWidth', 0.8)
               %hold on
@@ -395,7 +395,7 @@ elseif mode==2
                 for t = 1:length(Time)
                     credible(t,:) = quantile(abs(Yp(:,t,vars(v))), [0.025 0.975]);
                 end
-                figure(14)
+                figure(12)
                 grid off
                 hold on
                 subplot(2,3,v)
@@ -550,7 +550,7 @@ elseif mode==2
                 for t = 1:length(Time)
                     credible(t,:) = quantile(abs(Yp(:,t,vars(v))), [0.025 0.975]);
                 end
-                figure(14)
+                figure(12)
                 grid off
                 hold on
                 subplot(2,3,v)
@@ -629,25 +629,23 @@ elseif mode==2
              set(gca,'FontName','Arial','FontSize',18);
              hold on
              t = title('Yang et al. (2008)'); t.FontSize = 14;
-             lgd = legend('model', 'model (mean)', 'CI-95%', 'data', '',  'Location', 'SouthEast');
-             lgd.FontSize = 14;
              grid off
 
              
-              for v = 1:length(vars)
+             for v = 1:length(vars)
                 for t = 1:length(Time)
                     credible(t,:) = quantile(abs(Yp(:,t,vars(v))), [0.025 0.975]);
                 end
-                figure(14)
+                figure(12)
                 grid off
                 hold on
                 subplot(2,3,v)
                 hold on
                 [ph,msg] = jbfill(Time,credible(:,1)', credible(:,2)',purp, purp,1,0.2);
                 hold on
-              end
-            lgd = legend('model prediction', 'data', 'error bar', '95% credible interval',  'Location', 'SouthEast');
-            lgd.FontSize = 14;
+             end
+             lgd = legend('model prediction', 'data', 'error bar', '95% credible interval',  'Location', 'SouthEast');
+             lgd.FontSize = 14;
     end
 
 elseif  mode == 3
@@ -655,7 +653,7 @@ elseif  mode == 3
 
     linest = ["-", "--", "-.", ":", "--."];
     
-    figure(10);
+    figure(13);
     
     var = [3,8,10];
     for j = 1:length(var)

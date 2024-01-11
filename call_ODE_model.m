@@ -21,7 +21,6 @@ choice = "both";
     % LS = 1                % local sensitivity
     % LS = 0                % user-defined methods
     % sens_change           % float, percent change in parameter
-%%%% step = 'pub_plot_step'     % recreates publication plots (ONLY PUT THIS PART IN BITBUCKET  - save('data/prediction_posterior_both.mat', 'Yp'))
 % step = 'multistart_opt_step'  % Multi-start optimization, runs in parallel
     % repeats = 100             % integer, number of optimization runs
 % step = 'MC_sim_step'          % Monte Carlo Simulation
@@ -119,7 +118,6 @@ elseif strcmp(step,"plot_step")
         'Please provide a valid mode of "1", "2", or "3"'
     end
 
-% elseif strcmp(step,"pub_plot_step")
 
 elseif strcmp(step, "sensitivity_step")
 
@@ -174,7 +172,7 @@ elseif strcmp(step,"MC_sim_step")
 
 else
     beep
-    'Please provide a valid mode of "sim_step", "plot_step", "pub_plot_step", "multistart_opt_step", or "MC_sim_step"'
+    'Please provide a valid mode of "sim_step", "plot_step", "multistart_opt_step", or "MC_sim_step"'
 
 end
 

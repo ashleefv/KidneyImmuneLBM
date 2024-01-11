@@ -88,7 +88,7 @@ error_column = 1; % first column stores error_fitted
 [sorted_Params_error, index] = sortrows(Params_error,error_column);
 accep_id = find(sorted_Params_error(:,1)<1.2*min(sorted_Params_error(:,1)));
 
-figure(21)
+figure(20)
 %-- generate figure to show the error of all the parameter values from LHS
 for i = 1:size(p_fitted, 2)
     plot(1:length(index),sorted_Params_error(:,error_column),'o')
@@ -99,7 +99,7 @@ end
 
 % Monte Carlo Method
 p_posterior = sorted_Params_error(accep_id,[2:end]); % acceptable parameters within 1.2*min(SSE)
-Ns = 1; % number of samples
+Ns = 5000; % number of samples
 population = zeros(1,length(global_p_best));         % initialize population
 %population = zeros(1,size(p_fitted,2));
 s = RandStream('mlfg6331_64');
@@ -177,7 +177,7 @@ for v = 1:8
        credible(t,:) = quantile(abs(Yp(:,t,vars(v))), [0.025 0.975]);
     end
     
-    figure(22)
+    figure(21)
     grid on
     hold on
     subplot(2,4,v)
@@ -198,14 +198,14 @@ end
 
 accep_mean = mean(p_posterior(:,[1:end]));
 
-figure(23)
+figure(22)
 
 hold on
 for i=1:size_tau
 subplot(3,5,i)
 grid on
 hold on
-histogram(population(:,i), 'FaceColor', '#00FFFF')
+histogram(population(:,i), 'FaceColor', '#020259')
 hold on
 xline(accep_mean(:,i), 'LineWidth', 2, 'color', 'r')
 hold on
@@ -217,7 +217,7 @@ legend('\tau', 'mean', 'FontSize', 10)
 
 if GLU>0 && LPS==0
 
-figure(24)
+figure(23)
 hold on
 for i=1:size_W
 subplot(3,5,i)
@@ -233,42 +233,75 @@ hold on
 legend('W', 'mean', 'FontSize', 10)
 
 
+figure(24)
+hold on
+    for i=1:size_W
+        subplot(3,5,i)
+        grid on
+        hold on
+        histogram(population(:,i+size_tau), 'FaceColor', '#00FFFF')
+        hold on
+        xline(accep_mean(:,i+size_tau), 'LineWidth', 2, 'color', 'r')
+        hold on
+        title([num2str(W_index(i)) + ": " + reac_names(W_index(i))])
+    end
+    hold on
+    legend('W', 'mean', 'FontSize', 10)
+
+
 figure(25)
 hold on
-for i=1:size_n
-subplot(4,8,i)
-grid on
-hold on
-histogram(population(:,i+size_tau+size_W), 'FaceColor', '#EDB120')
-hold on
-xline(accep_mean(i+size_tau+size_W), 'LineWidth', 2, 'color', 'r')
-hold on
-title([num2str(n_index(i)) + ": " + reac_names(n_index(i))])
-end
-hold on
-legend('n', 'mean', 'FontSize', 10)
+    for i=1:size_n
+        subplot(4,8,i)
+        grid on
+        hold on
+        histogram(population(:,i+size_tau+size_W), 'FaceColor', '#EDB120')
+        hold on
+        xline(accep_mean(i+size_tau+size_W), 'LineWidth', 2, 'color', 'r')
+        hold on
+        title([num2str(n_index(i)) + ": " + reac_names(n_index(i))])
+    end
+    hold on
+    legend('n', 'mean', 'FontSize', 10)
 
-figure(26)
+figure(26)  
 hold on
-for i=1:size_k
-subplot(4,6,i)
-grid on
-hold on
-histogram(population(:,i+size_tau+size_W+size_n), 'FaceColor', '#77AC30')
-hold on
-xline(accep_mean(i+size_tau+size_W+size_n), 'LineWidth', 2, 'color', 'r')
-hold on
-title([num2str(k_index(i)) + ": " + reac_names(k_index(i))])
+    for i=1:size_k
+        subplot(4,6,i)
+        grid on
+        hold on
+        histogram(population(:,i+size_tau+size_W+size_n), 'FaceColor', '#77AC30')
+        hold on
+        xline(accep_mean(i+size_tau+size_W+size_n), 'LineWidth', 2, 'color', 'r')
+        hold on
+        title([num2str(k_index(i)) + ": " + reac_names(k_index(i))])
+    end
+    hold on
+    legend('EC_{50}', 'mean', 'FontSize', 10)
 end
-hold on
-legend('EC_{50}', 'mean', 'FontSize', 10)
+%% posterior prediction at 12 hours
 
-end
+% figure(27)
+% vars = [23, 24, 25, 6, 13, 22, 20, 12, 27, 28];
+%hold on
+%for i=1:9
+%    subplot(3,3,i)
+%    grid on
+%    hold on
+%    histogram(abs(Yp(:,12,vars(i))), 'FaceColor', '#7E2F8E')
+%    hold on
+%    title([num2str(vars(i)) + ": " + params{4}(vars(i))])
+%end
+%hold on
+%legend('prediction at 12 hours', 'FontSize', 10)
+
+
+
 %%
 
 if mode==1
 
-            figure(27)
+            figure(28)
             hold on
             vars = [23, 24, 25, 6, 13, 22, 20, 12, 27, 28];
 
@@ -440,7 +473,7 @@ if mode==1
                   for t = 1:length(Time)
                       credible(t,:) = quantile(abs(Yp(:,t,vars(v))), [0.025 0.975]);
                   end
-                  figure(13)
+                  figure(28)
                   hold on
                   subplot(2,4,v)
                   hold on
@@ -456,7 +489,7 @@ elseif mode==2
 
     
 
-    figure(27)
+    figure(29)
 
     if GLU>0 && LPS==0
 
@@ -601,7 +634,7 @@ elseif mode==2
                 for t = 1:length(Time)
                     credible(t,:) = quantile(abs(Yp(:,t,vars(v))), [0.025 0.975]);
                 end
-                figure(14)
+                figure(29)
                 grid off
                 hold on
                 subplot(2,3,v)
@@ -756,7 +789,7 @@ elseif mode==2
                 for t = 1:length(Time)
                     credible(t,:) = quantile(abs(Yp(:,t,vars(v))), [0.025 0.975]);
                 end
-                figure(14)
+                figure(29)
                 grid off
                 hold on
                 subplot(2,3,v)
@@ -844,7 +877,7 @@ elseif mode==2
                 for t = 1:length(Time)
                     credible(t,:) = quantile(abs(Yp(:,t,vars(v))), [0.025 0.975]);
                 end
-                figure(14)
+                figure(29)
                 grid off
                 hold on
                 subplot(2,3,v)
