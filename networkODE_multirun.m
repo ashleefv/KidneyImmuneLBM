@@ -86,7 +86,7 @@ options = [];
 Params_error = [error_fitted p_fitted]; % coef_fitted is the parameter output from all the LHS fmincon runs
 error_column = 1; % first column stores error_fitted
 [sorted_Params_error, index] = sortrows(Params_error,error_column);
-accep_id = find(sorted_Params_error(:,1)<1.2*min(sorted_Params_error(:,1)));
+accep_id = find(sorted_Params_error(:,1) < 1.2*min(sorted_Params_error(:,1)));
 
 figure(20)
 %-- generate figure to show the error of all the parameter values from LHS
@@ -183,8 +183,8 @@ for v = 1:8
     subplot(2,4,v)
     hold on
     % --- Prediction
-    %plot(Time, mean_y(:,v), 'color', 'b', 'LineWidth', 0.8)            % mean of prediction posterior
-    %hold on
+    % plot(Time, mean_y(:,v), 'color', 'b', 'LineWidth', 0.8)            % mean of prediction posterior
+    % hold on
     plot(T_gb, Y_gb(:,vars(v)), '--', 'color', 'b', 'LineWidth', 0.8)   % global best estimates
     hold on
     plot(T_best, Y_best(:,v), 'color', 'k', 'LineWidth', 1)             % mean of acceptable estimates
@@ -283,7 +283,7 @@ end
 
 % figure(27)
 % vars = [23, 24, 25, 6, 13, 22, 20, 12, 27, 28];
-%hold on
+% hold on
 %for i=1:9
 %    subplot(3,3,i)
 %    grid on

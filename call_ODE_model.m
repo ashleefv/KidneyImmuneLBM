@@ -1,15 +1,16 @@
 % call_ODE_model script to perform the below listed tasks.
 % Author: Krutika Patidar
-% Description: This call file calls various functions to run networkODE
+% Description: This file calls various functions to run networkODE
 % immune response model between macrophages and endothelial cells,
-% estimates unknown parameters, optimizes model against experimental
-% data from multiple sources, and plots the response variables. 
+% identify sensitive parameters, optimizes model parameters using experimental
+% data from multiple sources, estimates parameter uncertainty,
+% and plots the response variables. 
 
 % Most supporting file names for this model begin with networkODE_###.m
 %% User-defined input
-
+clear all;
 % Choose treatment condition: "GLU", "LPS", "both" 
-choice = "both"; 
+choice = "GLU"; 
 
 % Run the model for different steps
 % step = 'sim_step'   % Model simulation, No plots
@@ -18,17 +19,19 @@ choice = "both";
     % mode = 2               % Validation plots
     % mode = 3               % Regulatory plots
 % step = 'sensitivity_step'    % run sensitivity analysis
-    % LS = 1                % local sensitivity
-    % LS = 0                % user-defined methods
+    % LS = 1                % local sensitivity (finite difference method)
+    % LS = 0                % other user-defined methods
     % sens_change           % float, percent change in parameter
 % step = 'multistart_opt_step'  % Multi-start optimization, runs in parallel
     % repeats = 100             % integer, number of optimization runs
 % step = 'MC_sim_step'          % Monte Carlo Simulation
-
-step = 'sim_step';
+    % mode = 0               % No plots
+    % mode = 1               % Fitting plots
+    % mode = 2               % Validation plots
+step = 'sensitivity_step';
 
 % choose mode with 'plot_step'
-mode = 1;               % specify either 1, 2, or 3
+mode = 1;           % specify either 1, 2, or 3
 
 % choose LS, sens_change with 'sensitivity_step'
 LS = 1;             % specify either 0 or 1 
@@ -38,7 +41,7 @@ sens_change = 0.01; % percent
 repeats = 100;      % must be greater than 0
 
 % choose with 'MC_sim_step'
-mode = 0;               % specify mode ~ 1: fitted plots or 2: validation plots
+mode = 0;           % specify mode ~ 1: fitted plots or 2: validation plots
 %%
 
 % Initialize parameters, initial value, and simulation time
@@ -52,7 +55,7 @@ tspan = [0:1:48];  % Time in hours
 % params: dictionary of parameters
     % params{1}(1,:): W
     % params{1}(2,:): n
-    % params{1}(3,:): EC50
+    % params{1}(3,:): k or EC50
     % params{2}(:): tau
     % params{3}(:): ymax
     % params{4}(:): speciesNames
@@ -61,13 +64,13 @@ tspan = [0:1:48];  % Time in hours
 % tau_index: index of sensitive time constant (tau) parameters    
 % W_index: index of sensitive reaction weight parameter (W)
 % n_index: index of sensitive Hill coeff. (n) parameter
-% k_index: index of sensitive Half effect (EC_50) parameter 
+% k_index: index of sensitive Half effect (EC50) parameter 
 
 if strcmp(choice,"GLU")
     params{1}(1,1) = 1; % change whether GLUCOSE present or absent (either 0 or 1)
     params{1}(1,2) = 0; % change whether LPS present or absent (either 0 or 1)
 
-    % array of parametersindices obtained from global sensitivity analysis (UQLab)
+    % array of parameters indices obtained from global sensitivity analysis (UQLab)
     tau_index = []; tau_index = [ 2     6     9    12    13    14    16    17    19    20    22    23    24    25    27]; 
     W_index = []; W_index = [6     8     9    11    12    14    15    16    17    18    22    25    31    32];
     n_index = []; n_index = [3     4     5     6      7     8     9    10    11    12    13    14    15    16    17    18    19    20    21    22    23    24    25    26    27    30    31    32    33    34    36]; 
@@ -80,7 +83,7 @@ elseif strcmp(choice,"LPS")
 
     % array of parametersindices obtained from global sensitivity analysis (UQLab)
     tau_index = []; tau_index = [ 2     6     9    12    13    14    16    17    19    20    22    23    24    25    27]; 
-     W_index = []; n_index = []; k_index = []; 
+    W_index = []; n_index = []; k_index = []; 
 
 elseif strcmp(choice,"both")
     params{1}(1,1) = 1; % change whether GLUCOSE present or absent (either 0 or 1)
@@ -103,7 +106,7 @@ elseif strcmp(step,"plot_step")
     % Plots from Fitted Model
     if mode==1
         
-       
+        
         [Time, Y_pred] = networkODE_run(tspan, y0, params, tau_index, k_index, n_index, W_index, mode);
     elseif mode==2
         
@@ -122,16 +125,19 @@ elseif strcmp(step,"plot_step")
 elseif strcmp(step, "sensitivity_step")
 
     % LS = 1 (local)
-    % LS = 0 (global)
+    % LS = 0 (other)
     % s_FD_tau returns sensitivity coefficients for tau parameter
+    % s_FD_W returns sensitivity coefficients for W parameter 
     % s_FD_n returns sensitivity coefficients for n parameter 
-    % s_FD_k returns sensitivity coefficients for k parameter (EC_50)
+    % s_FD_k returns sensitivity coefficients for k parameter (EC50)
    
 if LS == 1
-    [s_FD_tau, s_FD_n, s_FD_k, tau_index, n_index, k_index] = sens(params, y0, tspan, sens_change);
-    disp(tau_index);
-    disp(n_index);
-    disp(k_index);
+    [s_FD_tau, s_FD_W, s_FD_n, s_FD_k, tau_index, W_index, n_index, k_index] = networkODE_sens(params, y0, tspan, sens_change);
+    sprintf('tau_index: %s', num2str(tau_index));
+    sprintf('W_index: %s', num2str(W_index))
+    sprintf('n_index: %s', num2str(n_index))
+    sprintf('k_index (EC50): %s', num2str(k_index))
+ 
 else
     disp("Run UQ Lab global sensitivity analysis scripts")
 end
@@ -142,31 +148,31 @@ elseif strcmp(step,"multistart_opt_step")
     % global_p_best: returns 1xn best parameter set
     % p_fitted: returns 100xn fitted parameter sets
     % error_fitted: returns nx1 fitted sum of squared error
-    % *n is the number of parameters in each treatment condition
+    % *n is the number of parameters for each treatment condition
 
-    % specify parallel loop
-    % pLOOP = parpool(8);
-    % pLOOP.IdleTimeout = 60*8;
+    % Run parallel specifications
+    pLOOP = parpool(8);
+    pLOOP.IdleTimeout = 60*8;
     
 
     [global_p_best, p_fitted, error_fitted] = multistart_param_opt(params, y0, tspan, tau_index, n_index, k_index, W_index, repeats);    
     disp(global_p_best);
 
-    % delete(pLOOP);
+    delete(pLOOP);
 
-    % Calculate minimum RMSE for best set of parameters
+    % Uncomment to calculate minimum RMSE for best set of parameters
 
     % min_error returns Sum of Sqared Error (SSE)
     % [min_error] = networkODE_error(global_p_best, params, y0, tspan, tau_index, n_index, k_index, W_index);
-    % disp (min_error);
+    % disp(min_error);
 
    
 
 elseif strcmp(step,"MC_sim_step")
     % p_posterior: acceptable set of parameters (1xn)
     % population:  randomly sampled parameter distribution
-    % Yp: posteriors of prediction using Monte Carlo
-    % credible:    credible (95%) intervals
+    % Yp:          posteriors of prediction using Monte Carlo
+    % credible:    2.5 and 97.5 quantiles (credible (95%) intervals)
 
     [p_posterior,population, Yp, credible] = networkODE_multirun(tspan, y0, params, p_fitted, error_fitted, global_p_best, tau_index, k_index, n_index, W_index, mode);
 

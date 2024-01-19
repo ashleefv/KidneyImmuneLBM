@@ -1,6 +1,6 @@
 % Author: Krutika Patidar
 % Dated: August 30th 2021
-% Description: The function evaluates minimum root mean squared error
+% Description: The function evaluates minimum sum of squared error for the network model
 
 function [min_error] = networkODE_error(p, params, y0, tspan, tau_index, n_index, k_index, W_index)
 

@@ -26,6 +26,7 @@ if GLU>0 && LPS==0                                   % condition (GLU = 1, LPS =
     timedata = time_data([2,6,10,14,18,22],:);       % Time points for training set
     timev = vtime([2,6,10,14,18],:);                 % Time points for validation set
 
+    % load posteriors of prediction
     load data/prediction_posterior_GLU.mat
 end 
 
@@ -38,6 +39,7 @@ if GLU==0 && LPS>0                                   % condition (LPS = 1, GLU =
     timedata = time_data([3,7,11,15,19,23],:);       % Time points for training set
     timev = vtime([3,7,11,15,19],:);                 % Time points for validation set
 
+    % load posteriors of prediction
     load data/prediction_posterior_LPS.mat
 end
 
@@ -48,7 +50,8 @@ if GLU>0 && LPS>0                                    % condition (GLU = 1, LPS =
     ev_data = Verror([4,8,12,16,20],:);              % Error bars for validation
     timedata = time_data([4,8,12,16,20,24],:);       % Time points for training set
     timev = vtime([4,8,12,16,20],:);                 % Time points for validation set
-
+    
+    % load posteriors of prediction
     load data/prediction_posterior_both.mat
 end
 
@@ -57,8 +60,8 @@ options=[];
 [T_best, Y_best] = ode23s(@networkODE,tspan,y0,options,params);
 
 
-%% plot global best-fit parameters for each treatment condition
-
+%% plot mean (acceptable) parameters for each treatment condition
+% fitting plots
 
 if mode==1
 
@@ -246,8 +249,9 @@ if mode==1
               lgd.FontSize = 12;
 
 elseif mode==2
-    purp = [0.4940    0.1840    0.5560]; % color
+    % validation plots
 
+    purp = [0.4940    0.1840    0.5560]; % color
     
 
     figure(12)
