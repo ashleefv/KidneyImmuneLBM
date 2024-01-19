@@ -72,6 +72,7 @@ end
 
 toc;
 t = toc-tic;
+
 %% HEATMAP
 % name2 = {'ROSec', 'NO', 'IL-6', 'TNF-\alpha', 'IL-1\beta', 'VEGF-A', 'Calcium', 'Gap Width'};
 % reac_names = {'=> GLU','=> LPS','LPS => TLR4','GLU => AGE', 'AGE => RAGE','RAGE => NADPH','TLR4 & ROS => NFKB', 'TLR4 => PI3K','NADPH => ROS', 'PI3K => AKT', 'PI3K => ROS', 'NFKBec => TNFa','AKT => NFKB','NFKB => IL6','NFKB => TNFa','NFKB => VEGFamRNA', 'VEGFamRNA => VEGFa','NFKB => IL1b','VEGFa => VEGFRec1','VEGFa => VEGFRec2','AGE => RAGEec','RAGEec => NADPHec','VEGFRec2 => PI3Kec','VEGFRec1 => PI3Kec', 'NADPHec => ROSec', 'PI3Kec => AKTec', 'AKTec => eNOS' , 'VEGFRec1 => PLC' ,'PLC => NFKBec' , 'ROSec => NFKBec','NFKBec => IL6', 'NFKBec => IL1b', 'eNOS  => NO', 'eNOS => ROSec' ,'ROSec & NO => ONOO','!NO => Calcium','PLC => Calcium', 'Calcium => pJunc','pJunc => GapWidth', 'Calcium => NO'};
@@ -94,8 +95,11 @@ reac_names = {'\Rightarrow GLU','\Rightarrow LPS','LPS \Rightarrow TLR4','GLU \R
 % Ym_pert = [4,7,17,26,27,28,29]; 
 
 % Indices for rules (W) and species (Ym_pert) that affect Gap Width (except 30: Gap Width)
-W_pert = unique(find(abs(s_FD_W(30,:,1))>0.1*limit_W));
-Ym_pert = unique(find(abs(s_FD_Ym(30,[1:29],1))>0.1*limit_Ym));
+W_pert = unique(find(abs(s_FD_W(30,:,1))>0.2*limit_W));
+Ym_pert = unique(find(abs(s_FD_Ym(30,[1:29],1))>0.2*limit_Ym));
+
+% disp(W_pert)
+% disp(Ym_pert)
 
 Y_spec = [30];
 linest = ["-", "--", "-.", ":", "--.",'-','--','-.'];
@@ -115,7 +119,7 @@ for j = 1:length(Ym_pert)
             hold on
             subplot(1,2,2)
             plot(dt, dy(:,Y_spec(1)), linest(j), 'LineWidth', 2), xlabel('Time (hour)'),  ylabel(append('Change in ',params{4}(Y_spec(1))))
-            set(gca,'FontName','Arial','FontSize',12);
+            set(gca,'FontName','Arial','FontSize',16);
             ylim([0,1.05])
             yticks([0,0.2,0.4,0.6,0.8,1])
             xlim([0,48])
@@ -128,7 +132,7 @@ for j = 1:length(Ym_pert)
                         
 end
 hold on
-legend(params{4}(Ym_pert))
+legend(params{4}(Ym_pert), 'Location', 'SouthEast')
 
 figure(18)
 hold on
@@ -143,7 +147,7 @@ for j = 1:length(W_pert)
             hold on
             subplot(1,2,1)
             plot(dt, dy(:,Y_spec(1)), linest(j), 'LineWidth', 2), xlabel('Time (hour)'),  ylabel(append('Change in ',params{4}(Y_spec(1))))
-            set(gca,'FontName','Arial','FontSize',12);
+            set(gca,'FontName','Arial','FontSize',16);
             ylim([0,1.05])
             yticks([0,0.2,0.4,0.6,0.8,1])
             xlim([0,48])
@@ -153,7 +157,7 @@ for j = 1:length(W_pert)
                         
 end
 hold on
-legend(reac_names(W_pert))
+legend(reac_names(W_pert), 'Location', 'SouthEast')
 end
 
 

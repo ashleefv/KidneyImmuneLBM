@@ -25,10 +25,11 @@ choice = "GLU";
 % step = 'multistart_opt_step'  % Multi-start optimization, runs in parallel
     % repeats = 100             % integer, number of optimization runs
 % step = 'MC_sim_step'          % Monte Carlo Simulation
-    % mode = 0               % No plots
-    % mode = 1               % Fitting plots
-    % mode = 2               % Validation plots
-step = 'sensitivity_step';
+    % MCmode = 0               % No plots
+    % MCmode = 1               % Fitting plots
+    % MCmode = 2               % Validation plots
+
+step = 'MC_sim_step';
 
 % choose mode with 'plot_step'
 mode = 1;           % specify either 1, 2, or 3
@@ -41,7 +42,7 @@ sens_change = 0.01; % percent
 repeats = 100;      % must be greater than 0
 
 % choose with 'MC_sim_step'
-mode = 0;           % specify mode ~ 1: fitted plots or 2: validation plots
+MCmode = 0;           % specify MCmode ~ 1: fitted plots or 2: validation plots
 %%
 
 % Initialize parameters, initial value, and simulation time
@@ -174,7 +175,7 @@ elseif strcmp(step,"MC_sim_step")
     % Yp:          posteriors of prediction using Monte Carlo
     % credible:    2.5 and 97.5 quantiles (credible (95%) intervals)
 
-    [p_posterior,population, Yp, credible] = networkODE_multirun(tspan, y0, params, p_fitted, error_fitted, global_p_best, tau_index, k_index, n_index, W_index, mode);
+    [p_posterior,population, Yp, credible] = networkODE_multirun(tspan, y0, params, p_fitted, error_fitted, global_p_best, tau_index, k_index, n_index, W_index, MCmode);
 
 else
     beep

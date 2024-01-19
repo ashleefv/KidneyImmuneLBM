@@ -8,7 +8,8 @@ LPS = params{1}(1,2);
 Time = [0:1:48]; % time span
 
 speciesNames = params{4};
-reac_names = {'=> GLU','=> LPS','LPS => TLR4','GLU => AGE', 'AGE => RAGE','RAGE => NADPH','TLR4 & ROS => NF\kappaB', 'TLR4 => PI3K','NADPH => ROS', 'PI3K => AKT', 'PI3K => ROS', 'NF\kappaB_e_c => TNF-\alpha','AKT => NF\kappaB','NF\kappaB => IL-6','NF\kappaB => TNF-\alpha','NF\kappaB => VEGF-A_m_R_N_A', 'VEGF-A_m_R_N_A => VEGF-A','NF\kappaB => IL-1\beta','VEGF-A => VEGFR1','VEGF-A => VEGFR2','AGE => RAGE_e_c','RAGE_e_c => NADPH_e_c','VEGFR2 => PI3K_e_c','VEGFR1 => PI3K_e_c', 'NADPH_e_c => ROS_e_c', 'PI3K_e_c => AKT_e_c', 'AKT_e_c => eNOS' , 'VEGFR1 => PLC-\gamma' ,'PLC-\gamma => NF\kappaB_e_c' , 'ROS_e_c => NF\kappaB_e_c','NF\kappaB_e_c => IL-6', 'NF\kappaB_e_c => IL-1\beta', 'eNOS  => NO', 'eNOS => ROS_e_c' ,'ROS_e_c & NO => ONOO','!NO => Ca','PLC-\gamma => Ca', 'Ca => pJunction','pJunction => Gap Width', 'Ca => NO'};
+% reac_names = {'=> GLU','=> LPS','LPS => TLR4','GLU => AGE', 'AGE => RAGE','RAGE => NADPH','TLR4 & ROS => NF\kappaB', 'TLR4 => PI3K','NADPH => ROS', 'PI3K => AKT', 'PI3K => ROS', 'NF\kappaB_e_c => TNF-\alpha','AKT => NF\kappaB','NF\kappaB => IL-6','NF\kappaB => TNF-\alpha','NF\kappaB => VEGF-A_m_R_N_A', 'VEGF-A_m_R_N_A => VEGF-A','NF\kappaB => IL-1\beta','VEGF-A => VEGFR1','VEGF-A => VEGFR2','AGE => RAGE_e_c','RAGE_e_c => NADPH_e_c','VEGFR2 => PI3K_e_c','VEGFR1 => PI3K_e_c', 'NADPH_e_c => ROS_e_c', 'PI3K_e_c => AKT_e_c', 'AKT_e_c => eNOS' , 'VEGFR1 => PLC-\gamma' ,'PLC-\gamma => NF\kappaB_e_c' , 'ROS_e_c => NF\kappaB_e_c','NF\kappaB_e_c => IL-6', 'NF\kappaB_e_c => IL-1\beta', 'eNOS  => NO', 'eNOS => ROS_e_c' ,'ROS_e_c & NO => ONOO','!NO => Ca','PLC-\gamma => Ca', 'Ca => pJunction','pJunction => Gap Width', 'Ca => NO'};
+reac_names = {'\Rightarrow GLU','\Rightarrow LPS','LPS \Rightarrow TLR4','GLU \Rightarrow AGE', 'AGE \Rightarrow RAGE','RAGE \Rightarrow NADPH', 'TLR4 & ROS \Rightarrow NF\kappaB', 'TLR4 \Rightarrow PI3K','NADPH \Rightarrow ROS', 'PI3K \Rightarrow AKT', 'PI3K \Rightarrow ROS', 'NF\kappaB_e_c \Rightarrow TNF-\alpha','AKT \Rightarrow NF\kappaB','NF\kappaB \Rightarrow IL-6','NF\kappaB \Rightarrow TNF-\alpha','NF\kappaB \Rightarrow VEGF-A_m_R_N_A', 'VEGF-A_m_R_N_A \Rightarrow VEGF-A','NF\kappaB \Rightarrow IL-1\beta','VEGF-A \Rightarrow VEGFR1','VEGF-A \Rightarrow VEGFR2','AGE \Rightarrow RAGE_e_c','RAGE_e_c \Rightarrow NADPH_e_c','VEGFR2 \Rightarrow PI3K_e_c','VEGFR1 \Rightarrow PI3K_e_c', 'NADPH_e_c \Rightarrow ROS_e_c', 'PI3K_e_c \Rightarrow AKT_e_c', 'AKT_e_c \Rightarrow eNOS' , 'VEGFR1 \Rightarrow PLC-\gamma' ,'PLC-\gamma \Rightarrow NF\kappaB_e_c' , 'ROS_e_c \Rightarrow NF\kappaB_e_c','NF\kappaB_e_c \Rightarrow IL-6', 'NF\kappaB_e_c \Rightarrow IL-1\beta', 'eNOS  \Rightarrow NO', 'eNOS \Rightarrow ROS_e_c' ,'ROS_e_c & NO \Rightarrow ONOO','!NO \Rightarrow Ca','PLC-\gamma \Rightarrow Ca', 'Ca \Rightarrow pJunction','pJunction \Rightarrow Gap Width', 'Ca \Rightarrow NO'};
 
 size_tau = size(tau_index,2);
 size_n = size(n_index,2);
@@ -98,6 +99,8 @@ for i = 1:size(p_fitted, 2)
 end
 
 % Monte Carlo Method
+disp('Starting Monte Carlo Simulations ...')
+
 p_posterior = sorted_Params_error(accep_id,[2:end]); % acceptable parameters within 1.2*min(SSE)
 Ns = 5000; % number of samples
 population = zeros(1,length(global_p_best));         % initialize population
