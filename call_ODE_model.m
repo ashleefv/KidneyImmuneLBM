@@ -4,24 +4,27 @@
 % immune response model between macrophages and endothelial cells,
 % identify sensitive parameters, optimizes model parameters using experimental
 % data from multiple sources, estimates parameter uncertainty,
-% and plots the response variables. 
+% and plots the response variables, and publication plots.
 
 % Most supporting file names for this model begin with networkODE_###.m
 %% User-defined input
 clear all;
+
 % Choose treatment condition: "GLU", "LPS", "both" 
-choice = "GLU"; 
+choice = "both"; 
 
 % Run the model for different steps
+
 % step = 'sim_step'   % Model simulation, No plots
 % step = 'plot_step'         % Creates plots
     % mode = 1               % Fitting plots
     % mode = 2               % Validation plots
     % mode = 3               % Regulatory plots
 % step = 'sensitivity_step'    % run sensitivity analysis
-    % LS = 1                % local sensitivity (finite difference method)
-    % LS = 0                % other user-defined methods
+    % LS = 1                % local sensitivity
+    % LS = 0                % user-defined methods
     % sens_change           % float, percent change in parameter
+% step = 'pub_plot_step'     % recreates publication plots (ONLY PUT THIS PART IN BITBUCKET  - save('data/prediction_posterior_both.mat', 'Yp'))
 % step = 'multistart_opt_step'  % Multi-start optimization, runs in parallel
     % repeats = 100             % integer, number of optimization runs
 % step = 'MC_sim_step'          % Monte Carlo Simulation
@@ -29,14 +32,14 @@ choice = "GLU";
     % MCmode = 1               % Fitting plots
     % MCmode = 2               % Validation plots
 
-step = 'MC_sim_step';
+step = 'pub_plot_step';
 
 % choose mode with 'plot_step'
 mode = 1;           % specify either 1, 2, or 3
 
 % choose LS, sens_change with 'sensitivity_step'
 LS = 1;             % specify either 0 or 1 
-sens_change = 0.01; % percent
+sens_change = -0.01; % percent decrease
 
 % choose with 'multistart_opt_step'
 repeats = 100;      % must be greater than 0
@@ -71,7 +74,7 @@ if strcmp(choice,"GLU")
     params{1}(1,1) = 1; % change whether GLUCOSE present or absent (either 0 or 1)
     params{1}(1,2) = 0; % change whether LPS present or absent (either 0 or 1)
 
-    % array of parameters indices obtained from global sensitivity analysis (UQLab)
+    % array of parametersindices obtained from global sensitivity analysis (UQLab)
     tau_index = []; tau_index = [ 2     6     9    12    13    14    16    17    19    20    22    23    24    25    27]; 
     W_index = []; W_index = [6     8     9    11    12    14    15    16    17    18    22    25    31    32];
     n_index = []; n_index = [3     4     5     6      7     8     9    10    11    12    13    14    15    16    17    18    19    20    21    22    23    24    25    26    27    30    31    32    33    34    36]; 
@@ -84,7 +87,7 @@ elseif strcmp(choice,"LPS")
 
     % array of parametersindices obtained from global sensitivity analysis (UQLab)
     tau_index = []; tau_index = [ 2     6     9    12    13    14    16    17    19    20    22    23    24    25    27]; 
-    W_index = []; n_index = []; k_index = []; 
+     W_index = []; n_index = []; k_index = []; 
 
 elseif strcmp(choice,"both")
     params{1}(1,1) = 1; % change whether GLUCOSE present or absent (either 0 or 1)
@@ -93,9 +96,13 @@ elseif strcmp(choice,"both")
     % array of parametersindices obtained from global sensitivity analysis (UQLab)
     tau_index = []; tau_index = [ 2     6     9    12    13    14    16    17    19    20    22    23    24    25    27]; 
     W_index = []; n_index = []; k_index = []; 
+elseif strcmp(choice, "OFF")
+    params{1}(1,1) = 0;
+    params{1}(1,2) = 0;
+    tau_index = []; W_index = []; n_index = []; k_index = []; 
 else
     beep
-    'Please provide a valid choice of "GLU", "LPS", or "both"'
+    'Please provide a valid choice of "GLU", "LPS", "both", or "OFF"'
 end
 
 %%
@@ -107,7 +114,7 @@ elseif strcmp(step,"plot_step")
     % Plots from Fitted Model
     if mode==1
         
-        
+       
         [Time, Y_pred] = networkODE_run(tspan, y0, params, tau_index, k_index, n_index, W_index, mode);
     elseif mode==2
         
@@ -122,13 +129,15 @@ elseif strcmp(step,"plot_step")
         'Please provide a valid mode of "1", "2", or "3"'
     end
 
+elseif strcmp(step,"pub_plot_step")
+    [Time, Y_pred] = networkODE_pub_plot(tspan, y0, params, tau_index, k_index, n_index, W_index);
 
 elseif strcmp(step, "sensitivity_step")
 
     % LS = 1 (local)
-    % LS = 0 (other)
+    % LS = 0 (global)
     % s_FD_tau returns sensitivity coefficients for tau parameter
-    % s_FD_W returns sensitivity coefficients for W parameter 
+    % s_FD_W returns sensitivity coefficients for W parameter
     % s_FD_n returns sensitivity coefficients for n parameter 
     % s_FD_k returns sensitivity coefficients for k parameter (EC50)
    
@@ -138,7 +147,7 @@ if LS == 1
     sprintf('W_index: %s', num2str(W_index))
     sprintf('n_index: %s', num2str(n_index))
     sprintf('k_index (EC50): %s', num2str(k_index))
- 
+    
 else
     disp("Run UQ Lab global sensitivity analysis scripts")
 end
@@ -149,9 +158,9 @@ elseif strcmp(step,"multistart_opt_step")
     % global_p_best: returns 1xn best parameter set
     % p_fitted: returns 100xn fitted parameter sets
     % error_fitted: returns nx1 fitted sum of squared error
-    % *n is the number of parameters for each treatment condition
+    % *n is the number of parameters in each treatment condition
 
-    % Run parallel specifications
+    % specify parallel loop
     pLOOP = parpool(8);
     pLOOP.IdleTimeout = 60*8;
     
@@ -165,7 +174,7 @@ elseif strcmp(step,"multistart_opt_step")
 
     % min_error returns Sum of Sqared Error (SSE)
     % [min_error] = networkODE_error(global_p_best, params, y0, tspan, tau_index, n_index, k_index, W_index);
-    % disp(min_error);
+    % disp (min_error);
 
    
 
@@ -179,7 +188,7 @@ elseif strcmp(step,"MC_sim_step")
 
 else
     beep
-    'Please provide a valid mode of "sim_step", "plot_step", "multistart_opt_step", or "MC_sim_step"'
+    'Please provide a valid mode of "sim_step", "plot_step", "pub_plot_step", "multistart_opt_step", or "MC_sim_step"'
 
 end
 

@@ -67,11 +67,13 @@ dydt(IL1b) = (OR(act(y(NFKB),rpar(:,18)),act(y(NFKBec),rpar(:,32)))*ymax(IL1b) -
 dydt(PLC) = (act(y(VEGFRec1),rpar(:,28))*ymax(PLC) - y(PLC))/tau(PLC); 
 dydt(VEGFa) = (act(y(VEGFamRNA),rpar(:,17))*ymax(VEGFa) - y(VEGFa))/tau(VEGFa);
 dydt(Calcium) = (OR(inhib(y(NO),rpar(:,36)),act(y(PLC),rpar(:,37)))*ymax(Calcium) - y(Calcium))/tau(Calcium);
-dydt(pJunc) = (act(y(Calcium),rpar(:,38))*ymax(pJunc) - y(pJunc))/tau(pJunc); 
+
   
 if params{1}(1,1) == 0 && params{1}(1,2) == 0
+    dydt(pJunc) = 0;
     dydt(GapWidth) = 0;
 else
+    dydt(pJunc) = (act(y(Calcium),rpar(:,38))*ymax(pJunc) - y(pJunc))/tau(pJunc); 
     dydt(GapWidth) = (act(y(pJunc),rpar(:,39))*ymax(GapWidth) - y(GapWidth))/(tau(GapWidth));
     
 end
