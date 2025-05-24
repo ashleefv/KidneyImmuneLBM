@@ -40,7 +40,7 @@ options = [];
 
     [To, Yo] = ode23s(@networkODE,tspan,Y0new,options,params);
 
-    figure(14)
+    figure(13)
     xlim([0,49])
     
     subplot(2,2,1)
@@ -93,7 +93,7 @@ for i = [2:length(R1)]
     options = [];
     [To, Yo] = ode23s(@networkODE,tspan,y0,options,params);
 
-    figure(14)
+    figure(13)
     xlim([0,49])
     
     hold on
@@ -151,7 +151,7 @@ for i = [1:length(R1)]
     options = [];
     [To, Yo] = ode23s(@networkODE,tspan,y0,options,params);
 
-    figure(15)
+    figure(14)
 
     subplot(2,2,1)
     plot(To, Yo(:,24),  linest(i), 'LineWidth', 2)
@@ -218,7 +218,7 @@ if strcmp(UQLab_plt, 'ON')
     disp('(3) Run UQLab_Sobolplots_networkmodel() in UQLab_scripts folder.')
 end
 
-%% Histograms 
+%% Histograms (FIG )
 
 if GLU>0 && LPS==0
     load data/pub_plot_GLU.mat
@@ -235,7 +235,7 @@ else
     disp('"insufficient initialization", choose a treatment condition.');
 end
 
-figure(23)
+figure(54) % fig S4
 
 hold on
 for i=1:size_tau
@@ -255,7 +255,7 @@ legend('\tau', 'mean', 'FontSize', 10)
 
 if GLU>0 && LPS==0
 
-    figure(24)
+    figure(531) % Fig S3 (1)
     hold on
     for i=1:size_W
         subplot(3,5,i)
@@ -271,7 +271,7 @@ if GLU>0 && LPS==0
     legend('W', 'mean', 'FontSize', 10)
 
 
-    figure(25)
+    figure(532) % Fig S3 (2)
     hold on
     for i=1:size_n
         subplot(4,8,i)
@@ -286,7 +286,7 @@ if GLU>0 && LPS==0
     hold on
     legend('n', 'mean', 'FontSize', 10)
 
-    figure(26)  
+    figure(533) % fig S3 (3)  
     hold on
     for i=1:size_k
         subplot(4,6,i)
@@ -305,7 +305,7 @@ end
 
 % posterior prediction at 12 hours
 
-figure(27)
+figure(55) % Fig S5
 vars = [23, 24, 25, 6, 13, 22, 20, 12, 27, 28]; % edited 30 -> 28
 hold on
 for i=1:10

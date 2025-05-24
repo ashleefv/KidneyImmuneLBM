@@ -65,7 +65,15 @@ options=[];
 
 if mode==1
 
-            figure(11)
+            % matching figure numbers to main article
+            if GLU>0 && LPS==0
+                figure(4)
+            elseif GLU==0 && LPS>0
+                figure(5)
+            else
+                figure(6)
+            end
+
             hold on
             vars = [23, 24, 25, 6, 13, 22, 20, 12, 27, 28];
 
@@ -237,7 +245,7 @@ if mode==1
                   for t = 1:length(Time)
                       credible(t,:) = quantile(abs(Yp(:,t,vars(v))), [0.025 0.975]);
                   end
-                  figure(11)
+                  
                   hold on
                   subplot(2,4,v)
                   hold on
@@ -254,9 +262,11 @@ elseif mode==2
     purp = [0.4940    0.1840    0.5560]; % color
     
 
-    figure(12)
+    
 
     if GLU>0 && LPS==0
+             figure(7)
+
 
              vars = [23,24,25,27,12,20];
 
@@ -399,7 +409,7 @@ elseif mode==2
                 for t = 1:length(Time)
                     credible(t,:) = quantile(abs(Yp(:,t,vars(v))), [0.025 0.975]);
                 end
-                figure(12)
+                figure(7)
                 grid off
                 hold on
                 subplot(2,3,v)
@@ -411,6 +421,7 @@ elseif mode==2
             lgd.FontSize = 14;
     end
     if GLU==0 && LPS>0
+        figure(8)
 
         vars = [23,24,25,27,28,20];
 
@@ -554,7 +565,7 @@ elseif mode==2
                 for t = 1:length(Time)
                     credible(t,:) = quantile(abs(Yp(:,t,vars(v))), [0.025 0.975]);
                 end
-                figure(12)
+                figure(8)
                 grid off
                 hold on
                 subplot(2,3,v)
@@ -567,6 +578,7 @@ elseif mode==2
 
     end
     if GLU>0 && LPS>0
+             figure(9)
 
              vars = [23,24,27];
 
@@ -640,7 +652,7 @@ elseif mode==2
                 for t = 1:length(Time)
                     credible(t,:) = quantile(abs(Yp(:,t,vars(v))), [0.025 0.975]);
                 end
-                figure(12)
+                figure(9)
                 grid off
                 hold on
                 subplot(2,3,v)
@@ -655,9 +667,15 @@ elseif mode==2
 elseif  mode == 3
 % regulatory nodes
 
-    linest = ["-", "--", "-.", ":", "--."];
+    linest = ["-", "--", "-.", ":", "--.", "-", "--", "-.", ":"];
     
-    figure(13);
+    if GLU>0 && LPS==0
+        figure(10)
+    elseif GLU==0 && LPS>0
+        figure(11)
+    elseif GLU>0 && LPS>0
+        figure(12)
+    end
     
     var = [3,8,10];
     for j = 1:length(var)
@@ -690,7 +708,7 @@ elseif  mode == 3
         lgd.FontSize = 14;
         
     end
-    var = [7,11,18];
+    var = [7,11,12, 18];
     for j=1:length(var)
         subplot(2,3,3)
         plot(T_best, Y_best(:,var(j)), linest(j), 'LineWidth', 2); 
@@ -701,7 +719,7 @@ elseif  mode == 3
         xticks([0 12 24 36 48])
         ylabel("Activity"); xlabel('Time (hour)')
         set(gca,'FontName','Arial','FontSize',18);
-        lgd = legend(params{4}([7,11,18]), 'Location', 'SouthEast');
+        lgd = legend(params{4}([7,11,12,18]), 'Location', 'SouthEast');
         lgd.FontSize = 14;
     end
     var = [4,5,26,16,17];
@@ -719,7 +737,7 @@ elseif  mode == 3
         lgd = legend(params{4}([4,5,26,16,17]), 'Location', 'SouthEast');
         lgd.FontSize = 14;
     end
-    var = [28,29,30];
+    var = [28,29];
     for j=1:length(var)
         subplot(2,3,5)
         plot(T_best, Y_best(:,var(j)), linest(j), 'LineWidth', 2)
@@ -730,7 +748,7 @@ elseif  mode == 3
         xticks([0 12 24 36 48])
         ylabel("Activity"); xlabel('Time (hour)')
         set(gca,'FontName','Arial','FontSize',18);
-        lgd = legend(params{4}([28,29,30]), 'Location', 'SouthEast');
+        lgd = legend(params{4}([28,29]), 'Location', 'SouthEast');
         lgd.FontSize = 14;
     end
 

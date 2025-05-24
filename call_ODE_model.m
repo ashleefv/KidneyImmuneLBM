@@ -11,7 +11,7 @@
 clear all;
 
 % Choose treatment condition: "GLU", "LPS", "both" 
-choice = "both"; 
+choice = "LPS"; 
 
 % Run the model for different steps
 
