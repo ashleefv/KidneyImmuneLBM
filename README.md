@@ -27,6 +27,7 @@ K. Patidar and A. N. Ford Versypt, Logic-Based Modeling of Inflammatory Macropha
 * networkODE_sens.m This file performs a local sensitivity analysis on the time constant (tau), reaction weight (W), Hill coefficient (n), and Half effect (EC50) parameter.
 * multistart_param_opt.m This file performs a multi-start parameter estimation using a nonlinear optimizer to estimate values for the sensitive parameters in the model. This file also scales the parameters, samples parameter subsets in a given range using Latin hypercube sampling, and provides the standard deviation of the estimates in each run.
 * post_sens.m This file performs local sensitivity analysis on the validated model to identify influential species and interactions in the network for further analyses.
+* networkODE_pub_plot.m This file reproduces all publication plots except global sensitivity analyses results (see UQLab scripts).
 * LHS_Call.m This supporting function uses Latin hypercube sampling to create sample subsets of parameters within a given range.
 * jbfill.m This supporting function will fill a region with a color between the two vectors.
 * normalizeCNO_file.R This R script can be used to normalize user-provided experimental data.
