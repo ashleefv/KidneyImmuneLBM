@@ -42,6 +42,7 @@ options = [];
 
     figure(13)
     xlim([0,49])
+     labelstring = {'a', 'b', 'c', 'd'};
     
     subplot(2,2,1)
     plot(To, Yo(:,23),  linest(1), 'LineWidth', 2)
@@ -139,9 +140,20 @@ for i = [2:length(R1)]
     hold on
     
     legendI{i} = ['W_G_L_U = ' num2str(R1(i))];
-    legend(legendI)
+    
     hold on
 end
+subplot(2,2,4)
+legend(legendI,'Location','SouthEast')
+for v = 1:4
+    subplot(2,2,v)
+    hold on
+    text(-0.2, 1.1, labelstring(v)', 'Units', 'normalized', 'FontWeight', 'bold','FontSize', 12)
+end
+hold on
+filename = 'Fig13';
+widthInches = 10;
+ScriptForExportingImagesForAJP
 
 for i = [1:length(R1)]
 
@@ -152,7 +164,7 @@ for i = [1:length(R1)]
     [To, Yo] = ode23s(@networkODE,tspan,y0,options,params);
 
     figure(14)
-
+labelstring = {'a', 'b', 'c', 'd'};
     subplot(2,2,1)
     plot(To, Yo(:,24),  linest(i), 'LineWidth', 2)
     hold on
@@ -199,7 +211,17 @@ for i = [1:length(R1)]
 
 end
 hold on
-legend(legendInfo)
+subplot(2,2,2)
+legend(legendInfo,'Location','southeast')
+
+for v = 1:4
+    subplot(2,2,v)
+    hold on
+    text(-0.2, 1.1, labelstring(v)', 'Units', 'normalized', 'FontWeight', 'bold','FontSize', 12)
+end
+filename = 'Fig14';
+widthInches = 10;
+ScriptForExportingImagesForAJP
 
 end
 %% Prediction plots (Fig. 15)
@@ -210,9 +232,10 @@ if GLU>0 && LPS>0
 end
 %% UQLab plots
 % 8 plots
-
+% For Figures S2 and S3
 UQLab_plt = 'ON';
 if strcmp(UQLab_plt, 'ON')
+    disp('To generate Figures S2 and S3:')
     disp('(1) Install UQLab.')
     disp('(2) addpath("~/UQLab_Rel2.0.0/UQLab_Rel2.0.0/core")')
     disp('(3) Run UQLab_Sobolplots_networkmodel() in UQLab_scripts folder.')
@@ -235,7 +258,7 @@ else
     disp('"insufficient initialization", choose a treatment condition.');
 end
 
-figure(54) % fig S4
+figure(55) % fig S5
 
 hold on
 for i=1:size_tau
@@ -255,7 +278,7 @@ legend('\tau', 'mean', 'FontSize', 10)
 
 if GLU>0 && LPS==0
 
-    figure(531) % Fig S3 (1)
+    figure(541) % Fig S4A (1)
     hold on
     for i=1:size_W
         subplot(3,5,i)
@@ -271,7 +294,7 @@ if GLU>0 && LPS==0
     legend('W', 'mean', 'FontSize', 10)
 
 
-    figure(532) % Fig S3 (2)
+    figure(542) % Fig S4B (2)
     hold on
     for i=1:size_n
         subplot(4,8,i)
@@ -286,7 +309,7 @@ if GLU>0 && LPS==0
     hold on
     legend('n', 'mean', 'FontSize', 10)
 
-    figure(533) % fig S3 (3)  
+    figure(543) % fig S4C (3)  
     hold on
     for i=1:size_k
         subplot(4,6,i)
@@ -305,7 +328,7 @@ end
 
 % posterior prediction at 12 hours
 
-figure(55) % Fig S5
+figure(56) % Fig S6
 vars = [23, 24, 25, 6, 13, 22, 20, 12, 27, 28]; % edited 30 -> 28
 hold on
 for i=1:10

@@ -68,12 +68,16 @@ if mode==1
             % matching figure numbers to main article
             if GLU>0 && LPS==0
                 figure(4)
+                filename = 'Fig4';
             elseif GLU==0 && LPS>0
                 figure(5)
+                filename = 'Fig5';
             else
                 figure(6)
+                filename = 'Fig6';
             end
 
+            orange = [245 119 41]./256; % color
             hold on
             vars = [23, 24, 25, 6, 13, 22, 20, 12, 27, 28];
 
@@ -83,9 +87,9 @@ if mode==1
              plot(T_best, Y_best(:,23), 'color', 'k',  'LineWidth', 1.2)
              hold on
              % --- Training data
-             scatter(timedata(:,1), t_data(:,1), 50, 'filled')
+             scatter(timedata(:,1), t_data(:,1), 30, 'o', 'MarkerFaceColor', orange,'MarkerEdgeColor',orange)
              yerr = abs(e_data(:,1)-t_data(:,1));
-             errorbar(timedata(:,1), t_data(:,1), yerr, 'o');
+             errorbar(timedata(:,1), t_data(:,1), yerr, 'o','MarkerEdgeColor',orange);
              hold on            
              xlabel('Time (hour)');
              ylabel(append(speciesNames([23]), ' activity'));
@@ -103,9 +107,9 @@ if mode==1
              plot(T_best, Y_best(:,24) ,'color', 'k', 'LineWidth', 1.2)
              hold on
              % --- Training data
-             scatter(timedata(:,3), t_data(:,3),  50, 'filled')
+             scatter(timedata(:,3), t_data(:,3),  30, 'o', 'MarkerFaceColor', orange,'MarkerEdgeColor',orange)
              yerr = abs(e_data(:,3)-t_data(:,3));
-             errorbar(timedata(:,3), t_data(:,3),  yerr, 'o');
+             errorbar(timedata(:,3), t_data(:,3),  yerr, 'o','MarkerEdgeColor',orange);
              hold on
              grid off
              ylim([0,1.05])
@@ -124,9 +128,9 @@ if mode==1
              plot(T_best, Y_best(:,25),  'color', 'k', 'LineWidth', 1.2)
              hold on
              % --- Training data
-             scatter(timedata(:,2), t_data(:,2),  50, 'filled')
+             scatter(timedata(:,2), t_data(:,2),  30, 'o', 'MarkerFaceColor', orange,'MarkerEdgeColor',orange)
              yerr = abs(e_data(:,2)-t_data(:,2));
-             errorbar(timedata(:,2), t_data(:,2), yerr, 'o');
+             errorbar(timedata(:,2), t_data(:,2), yerr, 'o','MarkerEdgeColor',orange);
              hold on
              grid off
              ylim([0,1.05])
@@ -145,9 +149,9 @@ if mode==1
              plot(T_best, Y_best(:,6),  'color', 'k', 'LineWidth', 1.2)
              hold on
              % --- Training data
-             scatter(timedata(:,4), t_data(:,4), 50, 'filled')
+             scatter(timedata(:,4), t_data(:,4), 30, 'o', 'MarkerFaceColor', orange,'MarkerEdgeColor',orange)
              yerr = abs(e_data(:,4)-t_data(:,4));
-             errorbar(timedata(:,4), t_data(:,4), yerr, 'o');
+             errorbar(timedata(:,4), t_data(:,4), yerr, 'o','MarkerEdgeColor',orange);
              hold on
              grid off
              ylim([0,1.05])
@@ -165,9 +169,9 @@ if mode==1
              plot(T_best, Y_best(:,13),  'color', 'k', 'LineWidth', 1.2)
              hold on
              % --- Training data
-             scatter(timedata(:,5), t_data(:,5),  50, 'filled')
+             scatter(timedata(:,5), t_data(:,5),  30, 'o', 'MarkerFaceColor', orange,'MarkerEdgeColor',orange)
              yerr = abs(e_data(:,5)-t_data(:,5));
-             errorbar(timedata(:,5), t_data(:,5), yerr, 'o');
+             errorbar(timedata(:,5), t_data(:,5), yerr, 'o','MarkerEdgeColor',orange);
              hold on 
              grid off
              ylim([0,1.05])
@@ -185,9 +189,9 @@ if mode==1
              plot(T_best, Y_best(:,22),   'color', 'k', 'LineWidth', 1.2)
              hold on
              % --- Training data
-             scatter(timedata(:,6), t_data(:,6),  50, 'filled')
+             scatter(timedata(:,6), t_data(:,6),  30, 'o', 'MarkerFaceColor', orange,'MarkerEdgeColor',orange)
              yerr = abs(e_data(:,6)-t_data(:,6));
-             errorbar(timedata(:,6), t_data(:,6), yerr, 'o');
+             errorbar(timedata(:,6), t_data(:,6), yerr, 'o','MarkerEdgeColor',orange);
              hold on
              grid off
              ylim([0,1.05])
@@ -206,9 +210,9 @@ if mode==1
               plot(T_best, Y_best(:,20),   'color', 'k', 'LineWidth', 1.2)
               hold on
               % --- Training data
-              scatter(timedata(:,7),  t_data(:,7), 50, 'filled')
+              scatter(timedata(:,7),  t_data(:,7), 30, 'o', 'MarkerFaceColor', orange,'MarkerEdgeColor',orange)
               yerr = abs(e_data(:,7)-t_data(:,7));
-              errorbar(timedata(:,7),  t_data(:,7), yerr, 'o');
+              errorbar(timedata(:,7),  t_data(:,7), yerr, 'o','MarkerEdgeColor',orange);
               hold on
               grid off
               ylim([0,1.05])
@@ -226,9 +230,9 @@ if mode==1
               plot(T_best, Y_best(:,12),  'color', 'k', 'LineWidth', 1.2)
               hold on
               % --- Training data
-              scatter(timedata(:,9),  t_data(:,9), 50, 'filled')
+              scatter(timedata(:,9),  t_data(:,9), 30, 'o', 'MarkerFaceColor', orange,'MarkerEdgeColor',orange)
               yerr = abs(e_data(:,9)-t_data(:,9));
-              errorbar(timedata(:,9),  t_data(:,9), yerr, 'o');
+              errorbar(timedata(:,9),  t_data(:,9), yerr, 'o','MarkerEdgeColor',orange);
               hold on
               grid off
               ylim([0,1.05])
@@ -241,6 +245,8 @@ if mode==1
               t = title('Yang et al. (2008)'); t.FontSize = 14;
 
               blue = 	[0 0.4470 0.7410];
+              labelstring = {'a', 'b', 'c', 'd', 'e','f','g','h'};
+
               for v = 1:8
                   for t = 1:length(Time)
                       credible(t,:) = quantile(abs(Yp(:,t,vars(v))), [0.025 0.975]);
@@ -250,11 +256,17 @@ if mode==1
                   subplot(2,4,v)
                   hold on
                   [ph,msg] = jbfill(Time,credible(:,1)', credible(:,2)',blue,blue,1,0.2);
+
+                  text(-0.2, 1.1, labelstring(v)', 'Units', 'normalized', 'FontWeight', 'bold','FontSize', 12)
                   hold on    
 
               end
+              subplot(2,4,1)
               lgd = legend('model prediction', 'data', 'error bar', '95% credible interval',  'Location', 'SouthEast');
               lgd.FontSize = 12;
+                
+widthInches = 20;
+ScriptForExportingImagesForAJP
 
 elseif mode==2
     % validation plots
@@ -262,12 +274,12 @@ elseif mode==2
     purp = [0.4940    0.1840    0.5560]; % color
     
 
-    
+    labelstring = {'a', 'b', 'c', 'd', 'e','f'};
 
     if GLU>0 && LPS==0
              figure(7)
-
-
+            filename = 'Fig7';
+ labelstring = {'a', 'b', 'c', 'd', 'e','f'};
              vars = [23,24,25,27,12,20];
 
              subplot(2,3,1)
@@ -416,13 +428,18 @@ elseif mode==2
                 hold on
                 [ph,msg] = jbfill(Time,credible(:,1)', credible(:,2)',purp, purp,1,0.2);
                 hold on
+                text(-0.2, 1.1, labelstring(v)', 'Units', 'normalized', 'FontWeight', 'bold','FontSize', 12)
             end
+            subplot(2,3,1)
             lgd = legend('model prediction', 'data', 'error bar', '95% credible interval',  'Location', 'SouthEast');
             lgd.FontSize = 14;
+
+            
     end
     if GLU==0 && LPS>0
         figure(8)
-
+filename = 'Fig8';
+ labelstring = {'a', 'b', 'c', 'd', 'e','f'};
         vars = [23,24,25,27,28,20];
 
         subplot(2,3,1)
@@ -572,14 +589,17 @@ elseif mode==2
                 hold on
                 [ph,msg] = jbfill(Time,credible(:,1)', credible(:,2)',purp, purp,1,0.2);
                 hold on
-              end
+                text(-0.2, 1.1, labelstring(v)', 'Units', 'normalized', 'FontWeight', 'bold','FontSize', 12)
+            end
+            subplot(2,3,1)
             lgd = legend('model prediction', 'data', 'error bar', '95% credible interval',  'Location', 'SouthEast');
             lgd.FontSize = 14;
 
     end
     if GLU>0 && LPS>0
              figure(9)
-
+             filename = 'Fig9';
+              labelstring = {'a', 'b', 'c'};
              vars = [23,24,27];
 
              subplot(2,3,1)
@@ -659,11 +679,14 @@ elseif mode==2
                 hold on
                 [ph,msg] = jbfill(Time,credible(:,1)', credible(:,2)',purp, purp,1,0.2);
                 hold on
-             end
+                text(-0.2, 1.1, labelstring(v)', 'Units', 'normalized', 'FontWeight', 'bold','FontSize', 12)
+            end
+            subplot(2,3,1)
              lgd = legend('model prediction', 'data', 'error bar', '95% credible interval',  'Location', 'SouthEast');
              lgd.FontSize = 14;
     end
-
+widthInches = 15;
+ScriptForExportingImagesForAJP
 elseif  mode == 3
 % regulatory nodes
 
@@ -671,10 +694,16 @@ elseif  mode == 3
     
     if GLU>0 && LPS==0
         figure(10)
+        filename = 'Fig10';
+         labelstring = {'a', 'b', 'c', 'd', 'e'};
     elseif GLU==0 && LPS>0
         figure(11)
+        filename = 'Fig11';
+         labelstring = {'a', 'b', 'c', 'd', 'e'};
     elseif GLU>0 && LPS>0
         figure(12)
+        filename = 'Fig12';
+         labelstring = {'a', 'b', 'c', 'd', 'e'};
     end
     
     var = [3,8,10];
@@ -752,4 +781,11 @@ elseif  mode == 3
         lgd.FontSize = 14;
     end
 
+for v = 1:5
+    subplot(2,3,v)
+    hold on
+    text(-0.2, 1.1, labelstring(v)', 'Units', 'normalized', 'FontWeight', 'bold','FontSize', 12)
+end
+widthInches = 15;
+ScriptForExportingImagesForAJP
 end

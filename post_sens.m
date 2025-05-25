@@ -73,14 +73,14 @@ end
 toc;
 t = toc-tic;
 
-%% HEATMAP (FIG S6(1) and S6(2) from supplemental)
+%% HEATMAP (FIG S7A(1) and S7B(2) from supplemental)
 % name2 = {'ROSec', 'NO', 'IL-6', 'TNF-\alpha', 'IL-1\beta', 'VEGF-A', 'Calcium', 'Gap Width'};
 % reac_names = {'=> GLU','=> LPS','LPS => TLR4','GLU => AGE', 'AGE => RAGE','RAGE => NADPH','TLR4 & ROS => NFKB', 'TLR4 => PI3K','NADPH => ROS', 'PI3K => AKT', 'PI3K => ROS', 'NFKBec => TNFa','AKT => NFKB','NFKB => IL6','NFKB => TNFa','NFKB => VEGFamRNA', 'VEGFamRNA => VEGFa','NFKB => IL1b','VEGFa => VEGFRec1','VEGFa => VEGFRec2','AGE => RAGEec','RAGEec => NADPHec','VEGFRec2 => PI3Kec','VEGFRec1 => PI3Kec', 'NADPHec => ROSec', 'PI3Kec => AKTec', 'AKTec => eNOS' , 'VEGFRec1 => PLC' ,'PLC => NFKBec' , 'ROSec => NFKBec','NFKBec => IL6', 'NFKBec => IL1b', 'eNOS  => NO', 'eNOS => ROSec' ,'ROSec & NO => ONOO','!NO => Calcium','PLC => Calcium', 'Calcium => pJunc','pJunc => GapWidth', 'Calcium => NO'};
 reac_names = {'\Rightarrow GLU','\Rightarrow LPS','LPS \Rightarrow TLR4','GLU \Rightarrow AGE', 'AGE \Rightarrow RAGE','RAGE \Rightarrow NADPH', 'TLR4 & ROS \Rightarrow NF\kappaB', 'TLR4 \Rightarrow PI3K','NADPH \Rightarrow ROS', 'PI3K \Rightarrow AKT', 'PI3K \Rightarrow ROS', 'NF\kappaB_e_c \Rightarrow TNF-\alpha','AKT \Rightarrow NF\kappaB','NF\kappaB \Rightarrow IL-6','NF\kappaB \Rightarrow TNF-\alpha','NF\kappaB \Rightarrow VEGF-A_m_R_N_A', 'VEGF-A_m_R_N_A \Rightarrow VEGF-A','NF\kappaB \Rightarrow IL-1\beta','VEGF-A \Rightarrow VEGFR1','VEGF-A \Rightarrow VEGFR2','AGE \Rightarrow RAGE_e_c','RAGE_e_c \Rightarrow NADPH_e_c','VEGFR2 \Rightarrow PI3K_e_c','VEGFR1 \Rightarrow PI3K_e_c', 'NADPH_e_c \Rightarrow ROS_e_c', 'PI3K_e_c \Rightarrow AKT_e_c', 'AKT_e_c \Rightarrow eNOS' , 'VEGFR1 \Rightarrow PLC-\gamma' ,'PLC-\gamma \Rightarrow NF\kappaB_e_c' , 'ROS_e_c \Rightarrow NF\kappaB_e_c','NF\kappaB_e_c \Rightarrow IL-6', 'NF\kappaB_e_c \Rightarrow IL-1\beta', 'eNOS  \Rightarrow NO', 'eNOS \Rightarrow ROS_e_c' ,'ROS_e_c & NO \Rightarrow ONOO','!NO \Rightarrow Ca','PLC-\gamma \Rightarrow Ca', 'Ca \Rightarrow pJunction','pJunction \Rightarrow Gap Width', 'Ca \Rightarrow NO'};
 
 
-figure(562); heatmap(s_FD_Ym([1:29],[1:29],1), 'Colormap', hot, 'CellLabelColor', 'None'); ax = gca; ax.YData = params{4}([1:29]); ax.XData = params{4}([1:29]);
-figure(561); heatmap(s_FD_W([1:29],[1:38,40],1), 'Colormap', hot, 'CellLabelColor', 'None'); ax = gca; ax.YData = params{4}([1:29]); ax.XData = reac_names([1:38,40]);
+figure(572); heatmap(s_FD_Ym([1:29],[1:29],1), 'Colormap', hot, 'CellLabelColor', 'None'); ax = gca; ax.YData = params{4}([1:29]); ax.XData = params{4}([1:29]);
+figure(571); heatmap(s_FD_W([1:29],[1:38,40],1), 'Colormap', hot, 'CellLabelColor', 'None'); ax = gca; ax.YData = params{4}([1:29]); ax.XData = reac_names([1:38,40]);
 %figure(100); heatmap(s_FD_k(:,:,1), 'Colormap', jet); ax = gca; ax.YData = params{4}(:); ax.XData =  reac_names(:);
 
 % limit is set at maximum of each parameter set
@@ -111,7 +111,7 @@ figure(15)
 options = [];
 [T, Y] = ode23s(@networkODE,tspan,y0,options,params);
 Y = real(Y);
-
+labelstring = {'a', 'b', 'c', 'd'};
 
 hold on
 
@@ -158,9 +158,14 @@ for j = 1:length(Ym_pert)
 end
 hold on
 subplot(2,2,2); plot(T, Y(:,28), 'LineWidth', 2, 'Color', 'k')
+legend([params{4}(Ym_pert), 'no inhibition'], 'Location', 'SouthEast')
 subplot(2,2,4); plot(T, Y(:,28), 'LineWidth', 2, 'Color', 'k')
 
-legend([params{4}(Ym_pert), 'no inhibition'], 'Location', 'SouthEast')
+for v = 1:4
+    subplot(2,2,v)
+    hold on
+    text(-0.2, 1.1, labelstring(v)', 'Units', 'normalized', 'FontWeight', 'bold','FontSize', 12)
+end
 
 figure(15)
 hold on
@@ -204,10 +209,13 @@ hold on
 
 
 subplot(2,2,1); plot(T, Y(:,28), 'LineWidth', 2, 'Color', 'k')
+legend([reac_names(W_pert), 'no inhibition'], 'Location', 'SouthEast')
 subplot(2,2,3); plot(T, Y(:,28), 'LineWidth', 2, 'Color', 'k')
 
-legend([reac_names(W_pert), 'no inhibition'], 'Location', 'SouthEast')
 
+filename = 'Fig15';
+widthInches = 10;
+ScriptForExportingImagesForAJP
 end
 
 

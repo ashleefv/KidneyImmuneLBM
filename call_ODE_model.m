@@ -9,9 +9,11 @@
 % Most supporting file names for this model begin with networkODE_###.m
 %% User-defined input
 clear all;
+close all;
 
 % Choose treatment condition: "GLU", "LPS", "both" 
-choice = "LPS"; 
+choice = "GLU"; 
+
 
 % Run the model for different steps
 
@@ -24,7 +26,7 @@ choice = "LPS";
     % LS = 1                % local sensitivity
     % LS = 0                % user-defined methods
     % sens_change           % float, percent change in parameter
-% step = 'pub_plot_step'     % recreates publication plots (ONLY PUT THIS PART IN BITBUCKET  - save('data/prediction_posterior_both.mat', 'Yp'))
+% step = 'pub_plot_step'     % recreates publication plots
 % step = 'multistart_opt_step'  % Multi-start optimization, runs in parallel
     % repeats = 100             % integer, number of optimization runs
 % step = 'MC_sim_step'          % Monte Carlo Simulation
@@ -33,6 +35,14 @@ choice = "LPS";
     % MCmode = 2               % Validation plots
 
 step = 'pub_plot_step';
+if strcmp(step, 'pub_plot_step')
+    disp('To generate Figures 4, 7, 10, 13, 14, S4A-C (MATLAB Figs 541, 542, 543), S5A (MATLAB Fig 55), S6A (MATLAB Fig 56),')
+    disp('set GLU treatment condition for choice on line 15.')
+    disp('To generate Figures 5, 8, 11, S5B (MATLAB Fig 55), S6B (MATLAB Fig 56)')
+    disp('set LPS treatment condition for choice on line 15.')
+    disp('To generate Figures 6, 9, 12, 15, S5C (MATLAB Fig 55), S6C (MATLAB Fig 56), S7A-B (MATLAB Fig 571 and Fig 572),')
+    disp('set both treatment condition for choice on line 15.')
+end
 
 % choose mode with 'plot_step'
 mode = 1;           % specify either 1, 2, or 3
@@ -132,6 +142,21 @@ elseif strcmp(step,"plot_step")
 elseif strcmp(step,"pub_plot_step")
     [Time, Y_pred] = networkODE_pub_plot(tspan, y0, params, tau_index, k_index, n_index, W_index);
 
+    % to circumvent some exportgraphics issue with the tiff files for Figs
+    % 13 and 14, we export them here
+    if strcmp(choice,"GLU")
+        figure(13)
+        filename = 'Fig13';
+        hold on
+        fig = gcf;
+        exportgraphics(fig,[filename, 'big.tiff'],'Resolution',1200)
+
+        figure(14)
+        filename = 'Fig14';
+        hold on
+        fig = gcf;
+        exportgraphics(fig,[filename, 'big.tiff'],'Resolution',1200)
+    end
 elseif strcmp(step, "sensitivity_step")
 
     % LS = 1 (local)
