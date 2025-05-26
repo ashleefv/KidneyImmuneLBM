@@ -26,7 +26,7 @@ set(fig, 'PaperSize', [widthInches, heightInches]);
 figPos = get(fig, 'Position');
 set(fig, 'PaperPositionMode', 'manual');
 fig = gcf;
-git 
+
 
 % Apply to all subplots
 ax = findall(gcf, 'Type', 'axes');
