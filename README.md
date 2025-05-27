@@ -4,7 +4,7 @@ Code for Logic-Based Modeling of Inflammatory Macrophage Crosstalk with Glomerul
 [![DOI](https://zenodo.org/badge/642046465.svg)](https://zenodo.org/badge/latestdoi/642046465)
 
 ## Overview
-This logic-based ODE model predicts the effects of glucose and inflammatory stimulus on pro-inflammatory macrophages and glomerular endothelial cells in diabetic kidney disease. A protein signaling network describes the crosstalk between macrophages and glomerular endothelial cells stimulated by glucose and LPS, and it consists of 30 species and 40 interactions. The model inputs (glucose or LPS) are 0 or 1 when the input is inactive or fully active. The model species hold a value between 0 and 1. A set of 30 differential equations define the activation or inhibition of a species using normalized Hill functions. The model was used to explore the possible mechanisms for dysregulated signaling in both macrophages and glomerular endothelial cells during diabetic kidney disease progression. The model simulations were trained and validated against in vitro experimental data.
+This logic-based ODE model predicts the effects of glucose and inflammatory stimulus on pro-inflammatory macrophages and glomerular endothelial cells in diabetic kidney disease. A protein signaling network describes the crosstalk between macrophages and glomerular endothelial cells stimulated by glucose and LPS, and it consists of 29 species and 39 interactions. The model inputs (glucose or LPS) are 0 or 1 when the input is inactive or fully active. The model species hold a value between 0 and 1. A set of 29 differential equations define the activation or inhibition of a species using normalized Hill functions. The model was used to explore the possible mechanisms for dysregulated signaling in both macrophages and glomerular endothelial cells during diabetic kidney disease progression. The model simulations were trained and validated against in vitro experimental data.
 
 ## Authors
 Krutika Patidar<sup>a</sup>,  Ashlee N. Ford Versypt<sup>a,b,c</sup>
@@ -34,9 +34,10 @@ K. Patidar and A. N. Ford Versypt, Logic-Based Modeling of Inflammatory Macropha
 
 ## Data
 * invitro_data.mat This data file provides an ordered list of normalized data points from published in vitro experiments. The mat file must be loaded to plot model predictions against data.
-* model_training_data.csv and model_training_errors.csv This MIDAS-formatted CSV file contains normalized training/fitting data and data errors, respectively.
-* model_validation_data.csv and model_validation_errors.csv This MIDAS-formatted CSV file contains normalized validation data and data errors, respectively.
-
+* model_training_data.csv and model_training_errors.csv These MIDAS-formatted CSV files contains normalized training/fitting data and data errors, respectively.
+* model_validation_data.csv and model_validation_errors.csv These MIDAS-formatted CSV files contains normalized validation data and data errors, respectively.
+* prediction_posterior_GLU.mat, prediction_posterior_LPS.mat, prediction_posterior_both.mat are Matlab files with saved prediction posteriors for GLU, LPS, and GLU and LPS treatment, respectively.
+* pub_plot_GLU.mat, pub_plot_LPS.mat, pub_plot_both.mat are Matlab files with saved output from each Monte Carlo run for GLU, LPS, and GLU and LPS treatment, respectively.
 
 ## STRIKEGOLDD Scripts
 * STRIKE_GOLDD.m and options.m These files are provided as part of the STRIKE-GOLDD package. These two scripts are obtained from [STRIKE-GOLDD GitHub Repo](https://github.com/afvillaverde/strike-goldd). These files are used to run the structure identifiability and observability analysis.
