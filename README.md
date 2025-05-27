@@ -38,6 +38,7 @@ K. Patidar and A. N. Ford Versypt, Logic-Based Modeling of Inflammatory Macropha
 * model_validation_data.csv and model_validation_errors.csv These MIDAS-formatted CSV files contains normalized validation data and data errors, respectively.
 * prediction_posterior_GLU.mat, prediction_posterior_LPS.mat, prediction_posterior_both.mat are Matlab files with saved prediction posteriors for GLU, LPS, and GLU and LPS treatment, respectively.
 * pub_plot_GLU.mat, pub_plot_LPS.mat, pub_plot_both.mat are Matlab files with saved output from each Monte Carlo run for GLU, LPS, and GLU and LPS treatment, respectively.
+* model_fitting_conc.csv and model_val_conc.csv These are MIDAS-formatted CSV files with raw concentration-time data before normalization.
 
 ## STRIKEGOLDD Scripts
 * STRIKE_GOLDD.m and options.m These files are provided as part of the STRIKE-GOLDD package. These two scripts are obtained from [STRIKE-GOLDD GitHub Repo](https://github.com/afvillaverde/strike-goldd). These files are used to run the structure identifiability and observability analysis.
