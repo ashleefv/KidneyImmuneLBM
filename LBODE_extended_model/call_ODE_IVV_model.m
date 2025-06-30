@@ -32,7 +32,7 @@ glucose_lee = G.glucose_lee;
 
 
 state = "diab_mice"; % "diab_mice" for diabetic mice, "norm_mice" for WT mice
-prompt = "Choice an option from {""plot_step"", ""MultiStart_NLS"", ""Variability"", ""Predictions"", ""Publication_plots""}: ";
+prompt = "Choose an option from {""plot_step"", ""MultiStart_NLS"", ""Variability"", ""Predictions"", ""Publication_plots""}: ";
 step = input(prompt, 's');
 
 % To run multi-start non-linear least sq optimization, select
@@ -111,9 +111,8 @@ elseif strcmp(step,"Publication_plots")
         glu_sampled(i) = unifrnd(GC_LB(:,i), GC_UB(:,i)); % 
     end
     pub_plots(tspan, y0, params, p_params, mode, state, glu_sampled, tau_index, k_index, n_index, W_index);
-    disp('Main-text figure: {2,3,4,5,6}, 5upplemenrary figures start with {51, 52, 53,54} ');
+    disp('Main-text figures: {2,3,4,5,6}. 5upplementary figures start with {51, 52, 53,54} for B, C, D, E, F, G, H, respectively.');
     disp('Fig 1344, 1680, 3360 correspond to in silico test at 8, 10, 20 weeks');
-   
 
 elseif strcmp(step, "Predictions")
     disp('1: test_knockout, 2: LSA-based perturbation, 3: time-dependent intervention, 4: Glucose-intervention')
