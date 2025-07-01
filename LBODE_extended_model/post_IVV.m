@@ -516,7 +516,7 @@ if task == 4
     
  %%   
 
-    figure(4); box;  
+    figure(3); box;  
     subplot(1,2,1)
     plot(T/(24*7), GLU_p([336:3360],:), 'LineWidth', 1.5); hold on;
     hold on;

@@ -9,25 +9,26 @@ size_n = size(n_index,2);
 size_k = size(k_index,2); % EC50
 size_W = size(W_index, 2);
 %% Fitted plots
-% mode=1;
-% % Figs 2, 4, B
-% [T, Y] = coupledODE_IVV_run(tspan, y0, params, p_params, mode, state, GC_conc');
+mode=1;
+% Figs 2, 4, B (51)
+[T, Y] = coupledODE_IVV_run(tspan, y0, params, p_params, mode, state, GC_conc');
 
 
-% %% Regulatory plots
-% 
+%% Regulatory plots
+
 % global_p_best = []; p_fitted = []; error_fitted = [];
 % mode = 3;
+% % Figs 2, 4, C (52)
 % if mode == 3
 %     [T, Y] = coupledODE_IVV_multirun(tspan, y0, params, p_params, mode, state, global_p_best, p_fitted, error_fitted);
 % end
-% 
-% 
-% %% Predictions (Fig - 5, 6, 7, S3, S4, S5, S6)
-% 
+
+
+%% Predictions (Fig - 3, 5, 6, 7, D (53), E (54), F (55), G (F6) )
+
 % task = 1; Tstop = 3360; % placeholder
 % [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
-% 
+
 % task = 2; Tstop = 3360; % placeholder
 % [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
 % 
