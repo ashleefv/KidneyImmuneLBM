@@ -121,25 +121,25 @@ if state == 'diab_mice'
     yyaxis left
     co = orderedcolors("gem");
     color5 = co(5, :);
-    plot([start_time_h:length(GLU_p(:,1))]/(24*7), GLU_p(start_time_h:end_time_h,1), 'LineWidth', 1.2, 'Color',color5, 'LineStyle','--'); 
+    plot([start_time_h:length(GLU_p(:,1))]/(24*7), GLU_p(start_time_h:end_time_h,1), 'LineWidth', 1.2, 'Color','k', 'LineStyle','--'); 
     %hold on; scatter(time_lee/(7*24), glucose_lee, 'MarkerFaceColor',[0  0  1],'Marker','o','MarkerEdgeColor',[0  0  1])
-    hold on; errorbar(time_lee/(7*24), glucose_lee, abs(glucose_lee - LB_lee), abs(glucose_lee - UB_lee), 'o', 'Color',color5,'MarkerFaceColor',color5);
+    hold on; errorbar(time_lee/(7*24), glucose_lee, abs(glucose_lee - LB_lee), abs(glucose_lee - UB_lee), 'o', 'Color',[0  0  1],'MarkerFaceColor',[0  0  1]);
     %hold on; scatter(time_finch/(7*24), glu_finch, 'MarkerFaceColor',[1 0 0],'Marker','^','MarkerEdgeColor',[1 0 0])
-    hold on; errorbar(time_finch/(7*24), glu_finch, abs(glu_finch - glu_LB), abs(glu_finch - glu_UB), '^', 'Color',color5,'MarkerFaceColor',color5);
+    hold on; errorbar(time_finch/(7*24), glu_finch, abs(glu_finch - glu_LB), abs(glu_finch - glu_UB), '^', 'Color',[1 0 0],'MarkerFaceColor',[1 0 0]);
     xlabel('Time (weeks)'); xlim([0,21]);
     ylabel('Glucose (mmol/l)'); 
     ax = gca; ax.FontSize = 8;
-    ax.YAxis(1).Color = color5; 
+    ax.YAxis(1).Color = 'k'; 
     hold on
     
-    leftymin = 7;
-    leftymax = 52;
+    leftymin = 5;
+    leftymax = 55;
     ylim([leftymin,leftymax]);
 
     % need to convert the y axis to normalized units to get the scaling
     % perfect
-    rightymin = (leftymin - Gp0) / (max(glu_UB) - Gp0)
-    rightymax = (leftymax - Gp0) / (max(glu_UB) - Gp0)
+    rightymin = (leftymin - Gp0) / (max(glu_UB) - Gp0);
+    rightymax = (leftymax - Gp0) / (max(glu_UB) - Gp0);
     % x0=10;
     % y0=10;
     % width=800;
@@ -147,19 +147,22 @@ if state == 'diab_mice'
     % set(gcf,'position',[x0,y0,width,height])
     ax = gca; ax.FontSize = 8;
 
+    % abs(glucose_lee - LB_lee), abs(glucose_lee - UB_lee)
+    % 
+    % abs(glu_finch - glu_LB), abs(glu_finch - glu_UB)
 
     yyaxis right
     %plot(Tout/(24*7), Yout(:,1), 'k-','LineWidth', 1.2);
     hold on
-    plot([start_time_h:length(GLU_p(:,1))]/(24*7), W_GLU(start_time_h:end_time_h,1), 'LineWidth', 1.2, 'Color','k', 'LineStyle','--')
+    plot([start_time_h:length(GLU_p(:,1))]/(24*7), W_GLU(start_time_h:end_time_h,1), 'LineWidth', 1.2, 'Color','k', 'LineStyle',':')
     ax = gca; ax.FontSize = 8;
     ax.YAxis(2).Color = 'k'; 
-    ylabel('Normalized Glucose Activity');% xlim([0,22]);
+    ylabel('Normalized Glucose Units');% xlim([0,22]);
     % rightymin = 0;
     % rightymax = 1.6;
     ylim([rightymin,rightymax]);
     box on
-    legend('Simulated Glucose Input G(t)',   'Lee et al. (2018)', 'Finch et al. (2022)', 'Simulated Glucose Activity GLU(t)','Location','southeast');
+    legend('Simulated Glucose Input $G(t)$',   'Lee et al. (2018)', 'Finch et al. (2022)', "Normalized Glucose Reaction Weight $W^{'}_\mathrm{GLU}(t)$",'Location','southeast','interpreter','latex');
     % 
     % norm_glu(:) = (glu_finch(:) - 10) / (max(glu_UB) - 10);
     % norm_UB(:) = (glu_UB(:) - 10)/(max(glu_UB) - 10);

@@ -53,7 +53,11 @@ load data/GLU_data.mat
 
 
 % Time (long-term mice sim.)
-tspan = [336:1:3360]; % hours
+    start_time = 2; %weeks
+    start_time_h = start_time*7*24;
+    end_time = 20; %weeks
+    end_time_h = end_time*7*24;
+    tspan = [start_time_h:1:end_time_h]; % hours
 % 8000 hours ~ 12 month ~ 48 weeks 
 
 % params: dictionary of parameters

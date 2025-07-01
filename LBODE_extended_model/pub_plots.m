@@ -9,9 +9,9 @@ size_n = size(n_index,2);
 size_k = size(k_index,2); % EC50
 size_W = size(W_index, 2);
 %% Fitted plots
-mode=1;
-% Figs 2, 4, B
-[T, Y] = coupledODE_IVV_run(tspan, y0, params, p_params, mode, state, GC_conc');
+% mode=1;
+% % Figs 2, 4, B
+% [T, Y] = coupledODE_IVV_run(tspan, y0, params, p_params, mode, state, GC_conc');
 
 
 % %% Regulatory plots
