@@ -8,13 +8,20 @@ blue = 	[0 0.4470 0.7410];
 
 intv = "none";
 
+% Time (long-term mice sim.)
+    start_time = 2; %weeks
+    start_time_h = start_time*7*24;
+    end_time = 20; %weeks
+    end_time_h = end_time*7*24;
+    tspan = [start_time_h:1:end_time_h]; % hours
+
 if mode == 3
     MC = load('data/MC_25_fen_multirun.mat');
     credible = MC.credible;
     opts=[];
     Nn = 25;
     if state == 'diab_mice'
-        
+        rng("twister") % Default random number generator algorithm with seed = 0 to ensure that we generate the same sequence of draws
         glu_sampled = zeros(11,Nn);
 
         for Nstep = 1:Nn
@@ -39,7 +46,7 @@ if mode == 3
 
         for Nstep=1:Nn
             %Gp = step_function(glu_sampled(:,Nstep));
-            for Tt = [336:1:tspan(end)]
+            for Tt = [start_time_h:1:tspan(end)]
                 if (Tt >= time_lee(1) && Tt <= time_lee(5))
                     GLU_p(Tt,Nstep) =  0.051*(Tt)  - 9.38;
                 else
@@ -61,7 +68,7 @@ if mode == 3
         Tout = t;
     end
 
-time_g = [336:length(GLU_p(:,1))];
+time_g = [start_time_h:length(GLU_p(:,1))];
 
    
 % gap width node 30 removed
@@ -69,7 +76,9 @@ var = [1:29, 31:36];
 
 %%
 
-figure(52)
+fig = figure(52);
+figname = 'FigC';
+
 for i=var
     if i<=29
      subplot(5,8,i)
@@ -84,10 +93,18 @@ for i=var
 %     
      hold on
      ylabel(params{4}(i))
-     xlabel('Time (week)')
+     %xlabel('Time (week)')
+     ax = gca; ax.FontSize = 8;
 end
 
-hold off;
+% Common x-axis label
+han = axes(fig, 'visible', 'off'); 
+han.XLabel.Visible = 'on';
+xlabel(han, 'Time (weeks)','FontName','Arial','FontSize',8);
+
+widthInches = 9.5;
+heightInches = 5;
+run('ScriptForExportingImages.m')   
 
 
 %% Calculate p-value between s.s. protein activity of control and diabetic mice
@@ -247,7 +264,7 @@ pop_density = load("data\dbmice_density_population.csv");
 
 
 figure(101)
-time_g = [336:1:3360];
+time_g = tspan;
 
 hold on
 plot(time_g/(24*7), Ybest(:,38), 'color', 'k', 'LineWidth', 1)             % mean of acceptable estimates

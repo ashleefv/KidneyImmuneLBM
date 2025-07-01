@@ -2,9 +2,16 @@ function [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, 
 
 global number_ctrl time_ctrl density diameter GC_conc GC_time GC_LB GC_UB time_lee glu_UB glu_LB time_finch glu_finch LB_lee UB_lee glucose_lee
 
+% Time (long-term mice sim.)
+    start_time = 2; %weeks
+    start_time_h = start_time*7*24;
+    end_time = 20; %weeks
+    end_time_h = end_time*7*24;
+    tspan = [start_time_h:1:end_time_h]; % hours
+
 intv = 'none';
 glu_sampled = zeros(11,1);
-
+rng("twister") % Default random number generator algorithm with seed = 0 to ensure that we generate the same sequence of draws
 for i = 1:length(GC_time)
            glu_sampled(i) = unifrnd(GC_LB(:,i), GC_UB(:,i)); % 
 end
@@ -17,11 +24,11 @@ s_FD_Ym = []; s_FD_W = [];
 %% 1: test_knockout
 if task == 1
     opts=[];
-    Nn = 10;
+    Nn = 25;
     state = 'diab_mice';
     
     glu_sampled = zeros(11,Nn);
-
+    rng("twister") % Default random number generator algorithm with seed = 0 to ensure that we generate the same sequence of draws
     for Nstep = 1:Nn
         for i = 1:length(GC_time)
             glu_sampled(i,Nstep) = unifrnd(GC_LB(:,i), GC_UB(:,i)); %
@@ -33,6 +40,7 @@ if task == 1
         disp(size(YstepP))
     end
 
+    %% NEED data sets for healthy and diabetes at 20 weeks with the samples from Finch
     s_ctrl_n([1:Nn],1,1) = 5.8; % reference is set for initial data value for healthy case
     s_ctrl_d([1:Nn],1,1) = 50;  % reference is set for initial data value for healthy case
     test_i = [29,33,32,35,2]; % inhibitors: KN93, ML7, Y27632, CalA, CytB
@@ -63,16 +71,21 @@ if task == 1
         s_FC(:,inh+1,:) = YstepP_new(:,:);
 
    
-       
-        [h, p_n(1,inh+1)] = ttest2(s_FC(:,inh+1,37), s_FC(:,1,37), 'Alpha', 0.05);
-        [h, p_d(1,inh+1)] = ttest2(s_FC(:,inh+1,38), s_FC(:,1,38), 'Alpha', 0.05);
-        [h, p_c_n(1,inh)] = ttest2(s_FC(:,inh,37), s_ctrl_n(1,1,:), 'Alpha', 0.05);
-        [h, p_c_d(1,inh)] = ttest2(s_FC(:,inh,38), s_ctrl_d(1,1,:), 'Alpha', 0.05);
+      %p-values for number relative to the diseased condition no treatment
+        [h, p_n(1,inh+1)] = ttest2(s_FC(:,inh+1,37), s_FC(:,1,37), 'Alpha', 0.05,'Vartype','unequal');
+        %p-values for diameter relative to the diseased condition no treatment
+        [h, p_d(1,inh+1)] = ttest2(s_FC(:,inh+1,38), s_FC(:,1,38), 'Alpha', 0.05,'Vartype','unequal');
+        %p-values for number relative to the healty condition no treatment
+        [h, p_c_n(1,inh)] = ttest2(s_FC(:,inh+1,37), s_ctrl_n(:,1,1), 'Alpha', 0.05,'Vartype','unequal');
+        %p-values for diameter relative to the healty condition no treatment
+        [h, p_c_d(1,inh)] = ttest2(s_FC(:,inh+1,38), s_ctrl_d(:,1,1), 'Alpha', 0.05,'Vartype','unequal');
         z_params = params;
         
     end
-    
-
+p_n
+p_d
+p_c_n
+p_c_d
     s_FC_d = squeeze(s_FC(:,:,38));
     s_FC_n = squeeze(s_FC(:,:,37));
 
@@ -82,36 +95,90 @@ if task == 1
     CI_number_ub = mean(s_FC_n,1) + std(s_FC_n,1)*1.96; % upper-bound for number predicted
     CI_number_lb = mean(s_FC_n,1) - std(s_FC_n,1)*1.96; 
 
-    % disp(mean(s_FC_d,1)); disp(std(s_FC_d,1));
-    % disp(mean(s_FC_n,1)); disp(std(s_FC_n,1));
+    disp(mean(s_FC_d,1)); disp(std(s_FC_d,1));
+    disp(mean(s_FC_n,1)); disp(std(s_FC_n,1));
 
 %%
-     
-     figure(6); subplot(2,1,1); b = bar([mean(s_ctrl_n), mean(s_FC([1:Nn],:,37))], 'white'); xticks([1:length(test_i)+2]); xticklabels({'healthy', 'diseased (no treatment)', 'KN93', 'ML7', 'Y27632', 'CalA', 'CytB'}); ylabel('Fenestration Number');
+     s_FC([1:Nn],:,37)
+     size(s_FC)
+     figure(6)
+     figname = 'Fig6';
+     subplot(2,1,2); b = bar([mean(s_ctrl_n), mean(s_FC([1:Nn],:,37))], 'white'); xticks([1:length(test_i)+2]); xticklabels({'healthy', 'diseased (no treatment)', 'KN93', 'ML7', 'Y27632', 'CalA', 'CytB'}); ylabel('Fenestration Number');
      b.FaceColor = 'flat';
      b.CData(1,:) = [0 0 1];
      b.CData(2,:) = [0 0 0];
      b.CData(3,:) = [1 1 1]; b.CData(4,:) = [1 1 1]; b.CData(5,:) = [1 1 1]; b.CData(6,:) = [1 1 1]; b.CData(7,:) = [1 1 1];
-   hold on; subplot(2,1,1); er = errorbar([2:7], [mean(s_FC([1:Nn],:,37))], (CI_number_lb-CI_number_ub)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;  
+   hold on;  
+   %er = errorbar([2:7], [mean(s_FC([1:Nn],:,37))], (CI_number_lb-CI_number_ub)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;  
+   er = errorbar([2:7], [mean(s_FC([1:Nn],:,37))], [std(s_FC([1:Nn],:,37))]); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;  
 
 
      
      groups1 = {[2,5],[2,6],[2,7]}; H=sigstar(groups1,[0,0,0]);
      groupsc = {[1,2], [1,3], [1,4], [1,5], [1,6], [1,7]}; H=sigstar(groupsc,[0,0,0,0,0.0002,0.189]*1e-14); set(H,'color','b')
-%    subplot(2,1,1); legend('','*** p_{value}<1E-3', '', '', '*** p_{value}<1E-3')
-     set(gca,'FontSize',12)
+     set(gca,'FontSize',8)
 
-     figure(6); subplot(2,1,2); B = bar([mean(s_ctrl_d), mean(s_FC([1:Nn],:,38))], 'white'); xticks([1:length(test_i)+2]); xticklabels({'healthy', 'diseased (no treatment)', 'KN93', 'ML7', 'Y27632', 'CalA', 'CytB'}); ylabel('Fenestration Diameter (nm)')
+     figure(6); subplot(2,1,1); B = bar([mean(s_ctrl_d), mean(s_FC([1:Nn],:,38))], 'white'); xticks([1:length(test_i)+2]); xticklabels({'healthy', 'diseased (no treatment)', 'KN93', 'ML7', 'Y27632', 'CalA', 'CytB'}); ylabel('Fenestration Diameter (nm)')
      B.FaceColor = 'flat';
      B.CData(1,:) = [0 0 1];
      B.CData(2,:) = [0 0 0];
      B.CData(3,:) = [1 1 1]; B.CData(4,:) = [1 1 1]; B.CData(5,:) = [1 1 1]; B.CData(6,:) = [1 1 1]; B.CData(7,:) = [1 1 1];
-
-     hold on; subplot(2,1,2); er = errorbar([2:7], [mean(s_FC([1:Nn],:,38))], (CI_diameter_lb - CI_diameter_ub)); er.Color = 'r';  er.LineStyle = 'none'; er.LineWidth=2; 
+     hold on;  %er = errorbar([2:7], [mean(s_FC([1:Nn],:,38))], (CI_diameter_lb - CI_diameter_ub)); er.Color = 'r';  er.LineStyle = 'none'; er.LineWidth=2; 
+    er = errorbar([2:7], [mean(s_FC([1:Nn],:,38))],[std(s_FC([1:Nn],:,38))]); er.Color = 'r';  er.LineStyle = 'none'; er.LineWidth=2; %standard deviation instead of CI as the error
      groups2 = {[2,5]}; H=sigstar(groups2,[0]);
      groupsC = {[1,2], [1,3], [1,4], [1,5], [1,6], [1,7]}; H=sigstar(groupsC,[0,0.0061, 0.1679, 0, 0.0662, 0.0007]*1e-11); set(H,'color','b')
 
-     set(gca,'FontSize',12)
+     set(gca,'FontSize',8)
+    labelstring = {'A', 'B'};
+    for v = 1:2
+        subplot(2,1,v)
+        hold on
+        text(-0.1, 1.1, labelstring(v)', 'Units', 'normalized', 'FontWeight', 'bold','FontSize',8)
+        set(gca,'FontName','Arial','FontSize',8)
+    end
+
+    widthInches = 5.5;
+    heightInches = 4.23;
+    run('ScriptForExportingImages.m')   
+
+    [std(s_FC([1:Nn],:,37))]
+    [std(s_FC([1:Nn],:,38))]
+   
+    %% Generate Table E
+    % Define chemical agent names
+chemical_agents = {'no treatment', 'KN93', 'ML7', 'Y27632', 'Calyculin A', 'Cytochalasin B'};
+
+% Initialize LaTeX table string
+latex_table = "\\begin{table}[htbp]\n ";
+latex_table = [latex_table, "\\caption{Mean and standard deviation (SD) of predicted fenestration number and diameter after \\textit{in silico} protein knockdown (Fig 6).}\n "];
+latex_table = [latex_table, "\\centering\n\\begin{tabular}{lll}\n\\toprule\n "];
+latex_table = [latex_table, " & Fenestration Diameter & Fenestration Number \\\\\n "];
+latex_table = [latex_table, "Chemical agent & Mean (SD) & Mean (SD) \\\\\n\\midrule\n "];
+
+% Loop through each chemical agent
+for i = 1:length(chemical_agents)
+    mean_diam = mean(s_FC(:, i, 38), 'all');
+    std_diam = std(s_FC(:, i, 38), 0, 'all');
+    mean_num = mean(s_FC(:, i, 37), 'all');
+    std_num = std(s_FC(:, i, 37), 0, 'all');
+
+    % Format values in scientific notation
+    diam_str = sprintf('%.2f ($%.1e$)', mean_diam, std_diam);
+    num_str = sprintf('%.3f ($%.1e$)', mean_num, std_num);
+
+    % Append row to LaTeX table
+    latex_table = [latex_table, sprintf('%s & %s & %s \\\\\n', chemical_agents{i}, diam_str, num_str)];
+end
+
+% Close LaTeX table
+latex_table = [latex_table, "\\bottomrule\n\\end{tabular}\n\\label{test_knock_table}\n\\end{table}"];
+
+% Display or write to file
+disp(latex_table);
+% Optionally write to file:
+fid = fopen('fenestration_table.tex', 'w');
+fprintf(fid, '%s', latex_table);
+fclose(fid);
 
 
      %%
@@ -121,7 +188,7 @@ if task == 1
      % b.CData(2,:) = [1 1 1];
      % b.CData(3,:) = [1 1 1]; b.CData(4,:) = [1 1 1]; b.CData(5,:) = [1 1 1]; b.CData(6,:) = [1 1 1]; 
      % 
-     % set(gca,'FontSize',12)
+     % set(gca,'FontSize',8)
      % 
      % figure(6); subplot(2,1,2); B = bar([mean(s_FC([1:Nn],:,38))], 'white'); xticks([1:length(test_i)+2]); xticklabels({'healthy',  'KN93', 'ML7', 'Y27632', 'CalA', 'CytB'}); ylabel('Fenestration Diameter (nm)')
      % B.FaceColor = 'flat';
@@ -129,7 +196,7 @@ if task == 1
      % B.CData(2,:) = [1 1 1];
      % B.CData(3,:) = [1 1 1]; B.CData(4,:) = [1 1 1]; B.CData(5,:) = [1 1 1]; B.CData(6,:) = [1 1 1]; 
      % 
-     % set(gca,'FontSize',12)
+     % set(gca,'FontSize',8)
 
 
 end
@@ -143,7 +210,7 @@ s_FD_W = zeros(SP, RP, 1);
 
 linest = ["--", "-.", ":", "--", "-.", ":",  "--", "-.", ":", "--", "-.", ":", "--", "-.", ":"];
 
-tspan = [336:1:3360];
+tspan = [start_time_h:end_time_h];
 percent = 50; opts=[];
 
 
@@ -324,13 +391,13 @@ if task == 3
     
     linest = ["--", "-.", ":", "--", "-.", ":",  "--", "-.", ":", "--", "-.", ":", "--", "-.", ":"];
     
-    tspan = [336:1:Tstop];
+    tspan = [start_time_h:1:Tstop];
     percent = 50; opts=[];
     
     [t, y] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,params,p_params, state, GC_conc', intv); 
     y = abs(y);
 
-    [tfull, yfull] = ode15s(@coupledODE_IVV_step,[336:5000],y0,opts,params,p_params, state, GC_conc', intv); 
+    [tfull, yfull] = ode15s(@coupledODE_IVV_step,[start_time_h:5000],y0,opts,params,p_params, state, GC_conc', intv); 
     yfull = abs(yfull);
     
     
@@ -417,14 +484,14 @@ if task == 4
     opts=[];
     % no intervention step
     intv = 'none';
-    t1 = [336:3360];
+    t1 = [start_time_h:end_time_h];
     %[T, Y] = ode15s(@coupledODE_IVV_step,t1,y0,opts,params,p_params, state, GC_conc', intv);
     %Y = real(Y);
 
     opts=[];
     Nn = 25;
     glu_sampled = zeros(11,Nn);
-
+    rng("twister") % Default random number generator algorithm with seed = 0 to ensure that we generate the same sequence of draws
     for Nstep = 1:Nn
         for i = 1:length(GC_time)
             glu_sampled(i,Nstep) = unifrnd(GC_LB(:,i), GC_UB(:,i)); %
@@ -443,7 +510,7 @@ if task == 4
 
     for Nstep=1:Nn
         %Gp = step_function(glu_sampled(:,Nstep));
-        for Tt = [336:1:tspan(end)]
+        for Tt = [start_time_h:1:tspan(end)]
             if (Tt >= time_lee(1) && Tt <= time_lee(5))
                 GLU_p(Tt,Nstep) =  0.051*(Tt)  - 9.38;
             else
@@ -464,11 +531,11 @@ if task == 4
 
     
        % Gp = step_function(glu_sampled);
-        for Tt = [336:1:tspan(end)]
+        for Tt = [start_time_h:1:tspan(end)]
             if (Tt >= time_lee(1) && Tt <= time_lee(3))
                 GLU_p4(Tt,1) = 0.051*(Tt)  - 9.38;
             else
-                GLU_p4(Tt,1) = 0.051*(336)  - 9.38;
+                GLU_p4(Tt,1) = 0.051*(start_time_h)  - 9.38;
             end
         end
     
@@ -481,9 +548,9 @@ if task == 4
     Y10 = real(Y10);
 
     opts=[];
-    Nn = 25;
+    Nn ;
     glu_sampled = zeros(11,Nn);
-
+    rng("twister") % Default random number generator algorithm with seed = 0 to ensure that we generate the same sequence of draws
     for Nstep = 1:Nn
         for i = 1:length(GC_time)
             glu_sampled(i,Nstep) = unifrnd(GC_LB(:,i), GC_UB(:,i)); %
@@ -501,14 +568,14 @@ if task == 4
     
     for Nstep=1:Nn
         %Gp = step_function(glu_sampled(:,Nstep));
-        for Tt = [336:1:tspan(end)]
+        for Tt = [start_time_h:1:tspan(end)]
             if (Tt >= time_lee(1) && Tt <= time_lee(5))
                 GLU_p10(Tt,Nstep) =  0.051*(Tt)  - 9.38;
             elseif (Tt>time_lee(5) && Tt<=time_lee(9))
            
                 GLU_p10(Tt,Nstep) = step_function(Tt, glu_sampled(:,Nstep));
             else
-                GLU_p10(Tt,Nstep) = 0.051*(336)  - 9.38;
+                GLU_p10(Tt,Nstep) = 0.051*(start_time_h)  - 9.38;
             end
         end
     end
@@ -518,7 +585,7 @@ if task == 4
 
     figure(3); box;  
     subplot(1,2,1)
-    plot(T/(24*7), GLU_p([336:3360],:), 'LineWidth', 1.5); hold on;
+    plot(T/(24*7), GLU_p([start_time_h:end_time_h],:), 'LineWidth', 1.5); hold on;
     hold on;
     
     xlabel('Time (weeks)'); xlim([0,21]);
@@ -526,18 +593,18 @@ if task == 4
     ax = gca; ax.FontSize = 20;
 
     subplot(1,2,2)
-    plot(T/(24*7), mean(GLU_p([336:3360],:)'), 'LineWidth', 3, 'Color', 'k'); 
+    plot(T/(24*7), mean(GLU_p([start_time_h:end_time_h],:)'), 'LineWidth', 3, 'Color', 'k'); 
     hold on; scatter(time_finch/(7*24), glu_finch, 'MarkerFaceColor',[1 0 0],'Marker','^','Color',[1 0 0])
     hold on; errorbar(time_finch/(7*24), glu_finch, abs(glu_finch - glu_LB), abs(glu_finch - glu_UB), '^', 'Color',[1  0  0]);
     hold on; scatter(time_lee/(7*24), glucose_lee, 'MarkerFaceColor',[0  0  1],'Marker','o','Color',[0  0  1])
     hold on; errorbar(time_lee/(7*24), glucose_lee, abs(glucose_lee - LB_lee), abs(glucose_lee - UB_lee), 'o', 'Color',[0  0  1]);
     
 %     hold on
-%     jbfill([336:3360]/24/7, min(GLU_p([336:3360],:)'), max(GLU_p([336:3360],:)'), [.7 .7 .7], [.7 .7 .7], 1, 0.2);
+%     jbfill([start_time_h:end_time_h]/24/7, min(GLU_p([start_time_h:end_time_h],:)'), max(GLU_p([start_time_h:end_time_h],:)'), [.7 .7 .7], [.7 .7 .7], 1, 0.2);
     hold on
-    plot(T4/(24*7), GLU_p4([336:3360],1), 'LineWidth', 3, 'Color', 'k', 'LineStyle', ':'); 
+    plot(T4/(24*7), GLU_p4([start_time_h:end_time_h],1), 'LineWidth', 3, 'Color', 'k', 'LineStyle', ':'); 
     hold on;
-    plot(T10/(24*7), mean(GLU_p10([336:3360],:)'), 'LineWidth', 3, 'Color', [0.7 0.7 0.7], 'LineStyle', '--'); 
+    plot(T10/(24*7), mean(GLU_p10([start_time_h:end_time_h],:)'), 'LineWidth', 3, 'Color', [0.7 0.7 0.7], 'LineStyle', '--'); 
 
     hold on;
     xlabel('Time (weeks)'); xlim([0,21]);

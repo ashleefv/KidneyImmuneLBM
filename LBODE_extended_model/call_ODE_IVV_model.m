@@ -83,6 +83,7 @@ if strcmp(step,"plot_step")
         if state == 'norm_mice'
             
             y0(31) = mean(ctrl_finch);
+            rng("twister") % Default random number generator algorithm with seed = 0 to ensure that we generate the same sequence of draws
             glu_sampled = zeros(11,1);
             for i = 1:length(time_finch)
                 glu_sampled(i) = unifrnd(ctrl_LB(:,i), ctrl_UB(:,i)); % 
@@ -91,7 +92,7 @@ if strcmp(step,"plot_step")
 
         end
         if state == 'diab_mice'
-    
+            rng("twister") % Default random number generator algorithm with seed = 0 to ensure that we generate the same sequence of draws
             glu_sampled = zeros(11,1);
             for i = 1:length(GC_time)
                 glu_sampled(i) = unifrnd(GC_LB(:,i), GC_UB(:,i)); 
@@ -110,6 +111,7 @@ elseif strcmp(step,"Publication_plots")
     % Plots from Fitted Model
     state = 'diab_mice';
     tau_index = []; W_index = []; n_index = []; k_index = [];
+    rng("twister") % Default random number generator algorithm with seed = 0 to ensure that we generate the same sequence of draws
     glu_sampled = zeros(11,1);
     for i = 1:length(GC_time)
         glu_sampled(i) = unifrnd(GC_LB(:,i), GC_UB(:,i)); % 
@@ -163,6 +165,7 @@ elseif strcmp(step,"Multistart_NLS")
     repeats = 25;               % integer, number of optimization runs, must be greater than 0
     mode = 0;
     tau_index = []; W_index = []; n_index = []; k_index = [];
+    rng("twister") % Default random number generator algorithm with seed = 0 to ensure that we generate the same sequence of draws
     % glu_sampled = zeros(11,1);
     for i = 1:length(GC_time)
             glu_sampled(i) = GC_conc(i); %unifrnd(glu_LB(:,i), glu_UB(:,i)); % 
