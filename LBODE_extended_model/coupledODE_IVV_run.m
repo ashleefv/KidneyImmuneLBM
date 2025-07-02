@@ -47,21 +47,41 @@ if mode == 1
   
     purple = [    0.4940    0.1840    0.5560];
 
- 
+    %FINCH figure 2 data for time series
     pop_diameter = load("data\dbmice_diameter_population.csv");
     pop_density = load("data\dbmice_density_population.csv");
     time_g = [start_time_h:1:end_time_h];
 
-    
+    % use the FINCH data to determine the standard deviations rather than
+    % digitizing the error bars
+    pop_time_vector = [6,10,15,20]; % weeks
+    pop_diameter_mean = zeros(size(pop_time_vector));
+    pop_diameter_sd = zeros(size(pop_time_vector));
+    pop_density_mean = zeros(size(pop_time_vector));
+    pop_density_sd = zeros(size(pop_time_vector));
+    for i = 1:length(pop_time_vector)
+        time = pop_time_vector(i);
+        matching_rows = pop_diameter(:,1) == time;
+        diameters_at_time = pop_diameter(matching_rows, 2);      
+        pop_diameter_mean(i) = mean(diameters_at_time);
+        pop_diameter_sd(i) = std(diameters_at_time);
+        matching_rows = pop_density(:,1) == time;
+        density_at_time = pop_density(matching_rows, 2);
+        pop_density_mean(i) = mean(density_at_time);
+        pop_density_sd(i) = std(density_at_time);
+    end
     figure(4) 
     figname = 'Fig4';
     subplot(2,2,1); box;
     hold on
-    scatter([6], [47.91], 100, 's', 'filled', 'r');
+    
+    scatter(pop_time_vector(1), [47.91], 100, 's', 'filled', 'r');
     hold on 
     % scatter([6,10,15,20], [50.74, 60.19, 73.65, 74.63], 50, 'filled', 'k')
     % hold on
-    errorbar([6,10,15,20], [50.74, 60.19, 73.65, 74.63], abs([50.74, 60.19, 73.65, 74.63] - [55.12,63.9,80.48,80]), abs([50.74, 60.19, 73.65, 74.63] - [55.12,63.9,80.48,80]), 'ko', 'MarkerFaceColor', 'k', 'LineWidth', 0.75);
+    %errorbar(pop_time_vector, diameter', abs([50.74, 60.19, 73.65, 74.63] - [55.12,63.9,80.48,80]), 'ko', 'MarkerFaceColor', 'k', 'LineWidth', 0.75);
+    errorbar(pop_time_vector, diameter', pop_diameter_sd, 'ko', 'MarkerFaceColor', 'k', 'LineWidth', 0.75);
+
     hold on
     scatter(pop_diameter(:,1), pop_diameter(:,2), 'o',  'k')
     hold on
@@ -71,16 +91,21 @@ if mode == 1
     ylabel('Fenestration Diameter (nm)'); xlabel('Time (weeks)')
 %    legend('Model', '95% credible interval', 'Control data', 'Diabetes data', 'Diabetes population')
     ax = gca;  ax.FontSize = 8;    
+    xlim([0 21])
+    ylim([40 100])
 %     t = title(['Finch et al., JASN (2022)']); t.FontSize = 8;
 
     subplot(2,2,2); box;
     
     hold on 
-    scatter([6], [6.3], 100, 's', 'filled', 'r');
+    % means of control data in FINCH fig. 2
+    scatter(pop_time_vector(1), number_ctrl(1), 100, 's', 'filled', 'r');
     hold on 
     % scatter([6,10,15,20], [5.65, 4.50, 4.08, 4.14], 50, 'filled', 'k')
     % hold on
-    errorbar([6,10,15,20], [5.65, 4.50, 4.08, 4.14], abs([5.65, 4.50, 4.08, 4.14] - [6.6, 4.96,4.98,5.41]), abs([5.65, 4.50, 4.08, 4.14] - [4.98, 4.11, 3.15, 2.95]), 'ko', 'MarkerFaceColor', 'k',  'LineWidth', 0.75);
+    %errorbar(pop_time_vector, density, abs([5.65, 4.50, 4.08, 4.14] - [6.6, 4.96,4.98,5.41]), abs([5.65, 4.50, 4.08, 4.14] - [4.98, 4.11, 3.15, 2.95]), 'ko', 'MarkerFaceColor', 'k',  'LineWidth', 0.75);
+    errorbar(pop_time_vector, density, pop_density_sd, 'ko', 'MarkerFaceColor', 'k',  'LineWidth', 0.75);
+
     hold on
     scatter(pop_density(:,1), pop_density(:,2), 'o', 'k')
     hold on
@@ -89,7 +114,8 @@ if mode == 1
     [ph,msg] = jbfill(time_g/(24*7), credible(:,1,37)', credible(:,2,37)', blue, blue, 1, 0.2);
     xlabel('Time (weeks)');
     ylabel('Fenestration Number');
-    
+    xlim([0 21])
+    ylim([2 7])
     ax = gca;  ax.FontSize = 8;    
 %     t = title(['Finch et al., JASN (2022)']); t.FontSize = 8;
 
@@ -103,7 +129,7 @@ if mode == 1
     end
 
         % overall legend
-    legend( 'Control data', 'Diabetes data (mean)',  'Diabetes data (individual)','Model', '95% credible interval')
+    legend( 'Control data', 'Diabetes data (mean+/-SD)',  'Diabetes data (individual)','Model', '95% credible interval')
     h = legend('Location','southoutside', 'Orientation', 'horizontal');
     h.NumColumns = 3;
     p = [0.5 0.45 0.03 0.03];
@@ -123,16 +149,20 @@ if state == 'diab_mice'
     color5 = co(5, :);
     plot([start_time_h:length(GLU_p(:,1))]/(24*7), GLU_p(start_time_h:end_time_h,1), 'LineWidth', 1.2, 'Color','k', 'LineStyle','--'); 
     %hold on; scatter(time_lee/(7*24), glucose_lee, 'MarkerFaceColor',[0  0  1],'Marker','o','MarkerEdgeColor',[0  0  1])
-    hold on; errorbar(time_lee/(7*24), glucose_lee, abs(glucose_lee - LB_lee), abs(glucose_lee - UB_lee), 'o', 'Color',[0  0  1],'MarkerFaceColor',[0  0  1]);
+    glucose_data_Lee_sd = abs(glucose_lee - LB_lee);
+    glucose_data_Finch_sd = abs(glu_finch - glu_UB); 
+    hold on; errorbar(time_lee/(7*24), glucose_lee, glucose_data_Lee_sd, 'o', 'Color',[0  0  1],'MarkerFaceColor',[0  0  1]);
+    % hold on; errorbar(time_lee/(7*24), glucose_lee, abs(glucose_lee - LB_lee), abs(glucose_lee - UB_lee), 'o', 'Color',[0  0  1],'MarkerFaceColor',[0  0  1]);
     %hold on; scatter(time_finch/(7*24), glu_finch, 'MarkerFaceColor',[1 0 0],'Marker','^','MarkerEdgeColor',[1 0 0])
-    hold on; errorbar(time_finch/(7*24), glu_finch, abs(glu_finch - glu_LB), abs(glu_finch - glu_UB), '^', 'Color',[1 0 0],'MarkerFaceColor',[1 0 0]);
+    hold on; errorbar(time_finch/(7*24), glu_finch, glucose_data_Finch_sd, '^', 'Color',[1 0 0],'MarkerFaceColor',[1 0 0]);
+    %hold on; errorbar(time_finch/(7*24), glu_finch, abs(glu_finch - glu_LB), abs(glu_finch - glu_UB), '^', 'Color',[1 0 0],'MarkerFaceColor',[1 0 0]);
     xlabel('Time (weeks)'); xlim([0,21]);
     ylabel('Glucose (mmol/l)'); 
     ax = gca; ax.FontSize = 8;
     ax.YAxis(1).Color = 'k'; 
     hold on
     
-    leftymin = 5;
+    leftymin = 4;
     leftymax = 55;
     ylim([leftymin,leftymax]);
 

@@ -9,7 +9,7 @@ w = warning ('off','all');
 % Global data variables
 N_ctrl = load('data/finch_density_ctrl.mat');           % Fenestration density for control mice Finch et al. 2022
 F_diab = load('data/finch_fenestration_disease.mat');   % Fenestration width/density from Finch et al. 2022
-G = load('data/GLU_data.mat');                          % Glucose concentration from Finch et al. 2022
+G = load('data/GLU_data.mat');                          % Glucose concentration from Finch et al. 2022 (12-20 weeks) and Lee et al. 2018 (2-11 weeks). Fig 1b male ob-/ob- from both sources
 
 global number_ctrl time_ctrl density diameter GC_conc GC_time GC_LB GC_UB time_lee glu_UB glu_LB time_finch glu_finch LB_lee UB_lee glucose_lee
 
@@ -85,6 +85,8 @@ if strcmp(step,"plot_step")
             y0(31) = mean(ctrl_finch);
             rng("twister") % Default random number generator algorithm with seed = 0 to ensure that we generate the same sequence of draws
             glu_sampled = zeros(11,1);
+            glucose_data_Lee_sd = abs(glucose_lee - LB_lee);
+            glucose_data_Finch_sd = abs(glu_finch - glu_UB); 
             for i = 1:length(time_finch)
                 glu_sampled(i) = unifrnd(ctrl_LB(:,i), ctrl_UB(:,i)); % 
             end
@@ -94,6 +96,8 @@ if strcmp(step,"plot_step")
         if state == 'diab_mice'
             rng("twister") % Default random number generator algorithm with seed = 0 to ensure that we generate the same sequence of draws
             glu_sampled = zeros(11,1);
+            glucose_data_Lee_sd = abs(glucose_lee - LB_lee);
+            glucose_data_Finch_sd = abs(glu_finch - glu_UB); 
             for i = 1:length(GC_time)
                 glu_sampled(i) = unifrnd(GC_LB(:,i), GC_UB(:,i)); 
             end
@@ -113,6 +117,8 @@ elseif strcmp(step,"Publication_plots")
     tau_index = []; W_index = []; n_index = []; k_index = [];
     rng("twister") % Default random number generator algorithm with seed = 0 to ensure that we generate the same sequence of draws
     glu_sampled = zeros(11,1);
+    glucose_data_Lee_sd = abs(glucose_lee - LB_lee);
+    glucose_data_Finch_sd = abs(glu_finch - glu_UB); 
     for i = 1:length(GC_time)
         glu_sampled(i) = unifrnd(GC_LB(:,i), GC_UB(:,i)); % 
     end

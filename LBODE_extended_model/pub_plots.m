@@ -16,7 +16,7 @@ size_W = size(W_index, 2);
     end_time_h = end_time*7*24;
     tspan = [start_time_h:1:end_time_h]; % hours
 
-% %% Fitted plots
+%% Fitted plots
 % mode=1;
 % % Figs 2, 4, B (51)
 % [T, Y] = coupledODE_IVV_run(tspan, y0, params, p_params, mode, state, GC_conc');

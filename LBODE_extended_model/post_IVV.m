@@ -12,6 +12,8 @@ global number_ctrl time_ctrl density diameter GC_conc GC_time GC_LB GC_UB time_l
 intv = 'none';
 glu_sampled = zeros(11,1);
 rng("twister") % Default random number generator algorithm with seed = 0 to ensure that we generate the same sequence of draws
+glucose_data_Lee_sd = abs(glucose_lee - LB_lee);
+glucose_data_Finch_sd = abs(glu_finch - glu_UB); 
 for i = 1:length(GC_time)
            glu_sampled(i) = unifrnd(GC_LB(:,i), GC_UB(:,i)); % 
 end
@@ -29,6 +31,8 @@ if task == 1
     
     glu_sampled = zeros(11,Nn);
     rng("twister") % Default random number generator algorithm with seed = 0 to ensure that we generate the same sequence of draws
+        glucose_data_Lee_sd = abs(glucose_lee - LB_lee);
+    glucose_data_Finch_sd = abs(glu_finch - glu_UB); 
     for Nstep = 1:Nn
         for i = 1:length(GC_time)
             glu_sampled(i,Nstep) = unifrnd(GC_LB(:,i), GC_UB(:,i)); %
@@ -40,9 +44,15 @@ if task == 1
         disp(size(YstepP))
     end
 
-    %% NEED data sets for healthy and diabetes at 20 weeks with the samples from Finch
-    s_ctrl_n([1:Nn],1,1) = 5.8; % reference is set for initial data value for healthy case
-    s_ctrl_d([1:Nn],1,1) = 50;  % reference is set for initial data value for healthy case
+    %% read data sets for healthy and diabetes at 20 weeks with the samples from Finch
+    % FINCH figure 1 E & F
+    s_ref=readmatrix('data/FINCH_FENESTRATION_20wk.csv');
+    s_ctrl_n = s_ref(:,2); % number data for healthy case
+    s_ctrl_d = s_ref(:,3); % diameter data for healthy case
+    s_ctrl_db_n = s_ref(1:8,4); % number data for diabetic case
+    s_ctrl_db_d = s_ref(1:8,5); % diameter data for diabetic case
+    % s_ctrl_n([1:Nn],1,1) = 5.8; % reference is set for initial data value for healthy case
+    % s_ctrl_d([1:Nn],1,1) = 50;  % reference is set for initial data value for healthy case
     test_i = [29,33,32,35,2]; % inhibitors: KN93, ML7, Y27632, CalA, CytB
     z_params = params;
     p_n = zeros(1,6); p_d = zeros(1,6); p_c_n = zeros(1,7); p_c_d = zeros(1,7);
@@ -76,9 +86,9 @@ if task == 1
         %p-values for diameter relative to the diseased condition no treatment
         [h, p_d(1,inh+1)] = ttest2(s_FC(:,inh+1,38), s_FC(:,1,38), 'Alpha', 0.05,'Vartype','unequal');
         %p-values for number relative to the healty condition no treatment
-        [h, p_c_n(1,inh)] = ttest2(s_FC(:,inh+1,37), s_ctrl_n(:,1,1), 'Alpha', 0.05,'Vartype','unequal');
+        [h, p_c_n(1,inh)] = ttest2(s_FC(:,inh+1,37), s_ctrl_n, 'Alpha', 0.05,'Vartype','unequal');
         %p-values for diameter relative to the healty condition no treatment
-        [h, p_c_d(1,inh)] = ttest2(s_FC(:,inh+1,38), s_ctrl_d(:,1,1), 'Alpha', 0.05,'Vartype','unequal');
+        [h, p_c_d(1,inh)] = ttest2(s_FC(:,inh+1,38), s_ctrl_d, 'Alpha', 0.05,'Vartype','unequal');
         z_params = params;
         
     end
@@ -492,6 +502,8 @@ if task == 4
     Nn = 25;
     glu_sampled = zeros(11,Nn);
     rng("twister") % Default random number generator algorithm with seed = 0 to ensure that we generate the same sequence of draws
+    glucose_data_Lee_sd = abs(glucose_lee - LB_lee);
+    glucose_data_Finch_sd = abs(glu_finch - glu_UB); 
     for Nstep = 1:Nn
         for i = 1:length(GC_time)
             glu_sampled(i,Nstep) = unifrnd(GC_LB(:,i), GC_UB(:,i)); %
@@ -551,6 +563,8 @@ if task == 4
     Nn ;
     glu_sampled = zeros(11,Nn);
     rng("twister") % Default random number generator algorithm with seed = 0 to ensure that we generate the same sequence of draws
+    glucose_data_Lee_sd = abs(glucose_lee - LB_lee);
+    glucose_data_Finch_sd = abs(glu_finch - glu_UB); 
     for Nstep = 1:Nn
         for i = 1:length(GC_time)
             glu_sampled(i,Nstep) = unifrnd(GC_LB(:,i), GC_UB(:,i)); %
