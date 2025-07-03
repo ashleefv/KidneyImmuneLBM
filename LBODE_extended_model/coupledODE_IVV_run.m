@@ -72,7 +72,7 @@ if mode == 1
     end
     figure(4) 
     figname = 'Fig4';
-    subplot(2,2,1); box;
+    subplot(2,2,2); box;
     hold on
     
     scatter(pop_time_vector(1), [47.91], 100, 's', 'filled', 'r');
@@ -95,7 +95,7 @@ if mode == 1
     ylim([40 100])
 %     t = title(['Finch et al., JASN (2022)']); t.FontSize = 8;
 
-    subplot(2,2,2); box;
+    subplot(2,2,1); box;
     
     hold on 
     % means of control data in FINCH fig. 2

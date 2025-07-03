@@ -41,8 +41,9 @@ if task == 1
 
         [t, y] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,params,p_params, state, glu_sampled(:,Nstep), intv);
         YstepP(Nstep,:) = real(y(end,:));
-        disp(size(YstepP))
+        %disp(size(YstepP))
     end
+    s_FC(:,1,:) = YstepP(:,:); % no treatment case
 
     %% read data sets for healthy and diabetes at 20 weeks with the samples from Finch
     % FINCH figure 1 E & F
@@ -55,9 +56,44 @@ if task == 1
     % s_ctrl_d([1:Nn],1,1) = 50;  % reference is set for initial data value for healthy case
     test_i = [29,33,32,35,2]; % inhibitors: KN93, ML7, Y27632, CalA, CytB
     z_params = params;
-    p_n = zeros(1,6); p_d = zeros(1,6); p_c_n = zeros(1,7); p_c_d = zeros(1,7);
+    % we plot 3 additional columns before test_i: healthy data, diabetes
+    % data, no treatment
 
-    for inh = [1:length(test_i)]
+    % run t-tests for comparison of number and diameter to each of these
+    % three columns
+    testColumns = 3;
+    p_c_n = zeros(1,length(test_i)+testColumns); 
+    p_c_d = zeros(1,length(test_i)+testColumns);
+    p_n_data = zeros(1,length(test_i)+testColumns);
+    p_d_data = zeros(1,length(test_i)+testColumns);
+    p_n = zeros(1,length(test_i)+testColumns);
+    p_d = zeros(1,length(test_i)+testColumns);
+    offset = 2;
+    % compare diabetes data to control data and store in the offset column
+    %p-values for number relative to the healty condition no treatment simulation
+    [h, p_c_n(1,offset)] = ttest2(s_ctrl_db_n, s_ctrl_n, 'Alpha', 0.05,'Vartype','unequal');
+    %p-values for diameter relative to the healty condition no treatment
+    [h, p_c_d(1,offset)] = ttest2(s_ctrl_db_d, s_ctrl_d, 'Alpha', 0.05,'Vartype','unequal');
+    
+
+    inh = 0; % no treatment case
+        %p-values for number relative to the healty condition no treatment simulation
+        [h, p_c_n(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,37), s_ctrl_n, 'Alpha', 0.05,'Vartype','unequal');
+        %p-values for diameter relative to the healty condition no treatment
+        [h, p_c_d(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,38), s_ctrl_d, 'Alpha', 0.05,'Vartype','unequal');
+
+         %p-values for number relative to the diseased condition no treatment DATA
+        [h, p_n_data(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,37), s_ctrl_db_n, 'Alpha', 0.05,'Vartype','unequal');
+        %p-values for diameter relative to the diseased condition no treatment DATA
+        [h, p_d_data(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,38), s_ctrl_db_d, 'Alpha', 0.05,'Vartype','unequal');
+        [h, p_n(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,37), s_FC(:,1,37), 'Alpha', 0.05,'Vartype','unequal');
+        %p-values for diameter relative to the diseased condition no treatment simulation
+        [h, p_d(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,38), s_FC(:,1,38), 'Alpha', 0.05,'Vartype','unequal');
+        
+       
+
+    for inh = 1:length(test_i)
+        % treatment knocks out a pathway via its parameter
         z_params{3}(test_i(inh)) = 0;
         
 
@@ -65,37 +101,48 @@ if task == 1
             
             [tn, yn] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,z_params,p_params, state, glu_sampled(:,Nstep), intv);
             YstepP_new(Nstep,:) = real(yn(end,:));
-            fprintf('run %i finished\n', Nstep)
+            %fprintf('run %i finished\n', Nstep)
 
         end
-        
-        disp(size(YstepP_new))
-
-    
-%        figure(29); hold on;
-%        subplot(2,1,1); hold on; plot(tn/(24*7), yn(:,37), 'LineWidth', 2, 'LineStyle', linest(inh)); xlabel('Time (week)'); ylabel('Fenestration Number')
-%        subplot(2,1,2); hold on; plot(tn/(24*7), yn(:,38), 'LineWidth', 2, 'LineStyle', linest(inh)); xlabel('Time (week)'); ylabel('Fenestration Diameter') 
-        
-        s_FC(:,1,:) = YstepP(:,:); % decide what should be control
+        fprintf('finished treatment %i \n', inh)
+       
        
         s_FC(:,inh+1,:) = YstepP_new(:,:);
 
-   
-      %p-values for number relative to the diseased condition no treatment
-        [h, p_n(1,inh+1)] = ttest2(s_FC(:,inh+1,37), s_FC(:,1,37), 'Alpha', 0.05,'Vartype','unequal');
-        %p-values for diameter relative to the diseased condition no treatment
-        [h, p_d(1,inh+1)] = ttest2(s_FC(:,inh+1,38), s_FC(:,1,38), 'Alpha', 0.05,'Vartype','unequal');
-        %p-values for number relative to the healty condition no treatment
-        [h, p_c_n(1,inh)] = ttest2(s_FC(:,inh+1,37), s_ctrl_n, 'Alpha', 0.05,'Vartype','unequal');
+        %p-values for number relative to the healty condition no treatment simulation
+        [h, p_c_n(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,37), s_ctrl_n, 'Alpha', 0.05,'Vartype','unequal');
         %p-values for diameter relative to the healty condition no treatment
-        [h, p_c_d(1,inh)] = ttest2(s_FC(:,inh+1,38), s_ctrl_d, 'Alpha', 0.05,'Vartype','unequal');
+        [h, p_c_d(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,38), s_ctrl_d, 'Alpha', 0.05,'Vartype','unequal');
+         %p-values for number relative to the diseased condition no treatment DATA
+        [h, p_n_data(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,37), s_ctrl_db_n, 'Alpha', 0.05,'Vartype','unequal');
+        %p-values for diameter relative to the diseased condition no treatment DATA
+        [h, p_d_data(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,38), s_ctrl_db_d, 'Alpha', 0.05,'Vartype','unequal');
+        [h, p_n(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,37), s_FC(:,1,37), 'Alpha', 0.05,'Vartype','unequal');
+        %p-values for diameter relative to the diseased condition no treatment simulation
+        [h, p_d(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,38), s_FC(:,1,38), 'Alpha', 0.05,'Vartype','unequal');
+        
+
+      % %p-values for number relative to the diseased condition no treatment
+      %   [h, p_n(1,inh+1)] = ttest2(s_FC(:,inh+1,37), s_FC(:,1,37), 'Alpha', 0.05,'Vartype','unequal');
+      %   %p-values for diameter relative to the diseased condition no treatment
+      %   [h, p_d(1,inh+1)] = ttest2(s_FC(:,inh+1,38), s_FC(:,1,38), 'Alpha', 0.05,'Vartype','unequal');
+      %   %p-values for number relative to the healty condition no treatment
+      %   [h, p_c_n(1,inh)] = ttest2(s_FC(:,inh+1,37), s_ctrl_n, 'Alpha', 0.05,'Vartype','unequal');
+      %   %p-values for diameter relative to the healty condition no treatment
+      %   [h, p_c_d(1,inh)] = ttest2(s_FC(:,inh+1,38), s_ctrl_d, 'Alpha', 0.05,'Vartype','unequal');
+
+
+%reset the params before the next knockout
         z_params = params;
         
     end
-p_n
-p_d
 p_c_n
 p_c_d
+    p_n_data
+p_d_data
+    p_n
+p_d
+
     s_FC_d = squeeze(s_FC(:,:,38));
     s_FC_n = squeeze(s_FC(:,:,37));
 
@@ -105,38 +152,50 @@ p_c_d
     CI_number_ub = mean(s_FC_n,1) + std(s_FC_n,1)*1.96; % upper-bound for number predicted
     CI_number_lb = mean(s_FC_n,1) - std(s_FC_n,1)*1.96; 
 
-    disp(mean(s_FC_d,1)); disp(std(s_FC_d,1));
-    disp(mean(s_FC_n,1)); disp(std(s_FC_n,1));
-
-%%
-     s_FC([1:Nn],:,37)
-     size(s_FC)
+%     disp(mean(s_FC_d,1)); disp(std(s_FC_d,1));
+%     disp(mean(s_FC_n,1)); disp(std(s_FC_n,1));
+% 
+% %%
+%      s_FC([1:Nn],:,37)
+%      size(s_FC)
      figure(6)
      figname = 'Fig6';
-     subplot(2,1,2); b = bar([mean(s_ctrl_n), mean(s_FC([1:Nn],:,37))], 'white'); xticks([1:length(test_i)+2]); xticklabels({'healthy', 'diseased (no treatment)', 'KN93', 'ML7', 'Y27632', 'CalA', 'CytB'}); ylabel('Fenestration Number');
+     subplot(2,1,1); b = bar([mean(s_ctrl_n),mean(s_ctrl_db_n), mean(s_FC([1:Nn],:,37))], 'white'); xticks([1:length(test_i)+3]); 
+    xticklabels({'Healthy Data', 'Diabetes Data','No Treatment', 'KN93', 'ML7', 'Y27632', 'CalA', 'CytB'}); 
+     ylabel('Fenestration Number');
      b.FaceColor = 'flat';
      b.CData(1,:) = [0 0 1];
      b.CData(2,:) = [0 0 0];
-     b.CData(3,:) = [1 1 1]; b.CData(4,:) = [1 1 1]; b.CData(5,:) = [1 1 1]; b.CData(6,:) = [1 1 1]; b.CData(7,:) = [1 1 1];
+     b.CData(3,:) = [.7 .7 .7];
+     for inh = 1:length(test_i)
+        b.CData(3+inh,:) = [1 1 1]; 
+     end
    hold on;  
    %er = errorbar([2:7], [mean(s_FC([1:Nn],:,37))], (CI_number_lb-CI_number_ub)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;  
-   er = errorbar([2:7], [mean(s_FC([1:Nn],:,37))], [std(s_FC([1:Nn],:,37))]); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;  
+   er = errorbar(1, mean(s_ctrl_n), std(s_ctrl_n)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2; 
+   er = errorbar(2, mean(s_ctrl_db_n), std(s_ctrl_db_n)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;
+   er = errorbar([3:8], [mean(s_FC([1:Nn],:,37))], [std(s_FC([1:Nn],:,37))]); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;  
+   
+   
+     callsigstar(2,p_n_data,'k')
+     callsigstar(1,p_c_n,'b')
 
-
-     
-     groups1 = {[2,5],[2,6],[2,7]}; H=sigstar(groups1,[0,0,0]);
-     groupsc = {[1,2], [1,3], [1,4], [1,5], [1,6], [1,7]}; H=sigstar(groupsc,[0,0,0,0,0.0002,0.189]*1e-14); set(H,'color','b')
      set(gca,'FontSize',8)
 
-     figure(6); subplot(2,1,1); B = bar([mean(s_ctrl_d), mean(s_FC([1:Nn],:,38))], 'white'); xticks([1:length(test_i)+2]); xticklabels({'healthy', 'diseased (no treatment)', 'KN93', 'ML7', 'Y27632', 'CalA', 'CytB'}); ylabel('Fenestration Diameter (nm)')
+     figure(6); subplot(2,1,2); B = bar([mean(s_ctrl_d), mean(s_ctrl_db_d), mean(s_FC([1:Nn],:,38))], 'white'); xticks([1:length(test_i)+3]); xticklabels({'Healthy Data', 'Diabetes Data','No Treatment', 'KN93', 'ML7', 'Y27632', 'CalA', 'CytB'});  ylabel('Fenestration Diameter (nm)')
      B.FaceColor = 'flat';
      B.CData(1,:) = [0 0 1];
      B.CData(2,:) = [0 0 0];
-     B.CData(3,:) = [1 1 1]; B.CData(4,:) = [1 1 1]; B.CData(5,:) = [1 1 1]; B.CData(6,:) = [1 1 1]; B.CData(7,:) = [1 1 1];
+     B.CData(3,:) = [.7 .7 .7];
+     for inh = 1:length(test_i)
+        B.CData(3+inh,:) = [1 1 1]; 
+     end
      hold on;  %er = errorbar([2:7], [mean(s_FC([1:Nn],:,38))], (CI_diameter_lb - CI_diameter_ub)); er.Color = 'r';  er.LineStyle = 'none'; er.LineWidth=2; 
-    er = errorbar([2:7], [mean(s_FC([1:Nn],:,38))],[std(s_FC([1:Nn],:,38))]); er.Color = 'r';  er.LineStyle = 'none'; er.LineWidth=2; %standard deviation instead of CI as the error
-     groups2 = {[2,5]}; H=sigstar(groups2,[0]);
-     groupsC = {[1,2], [1,3], [1,4], [1,5], [1,6], [1,7]}; H=sigstar(groupsC,[0,0.0061, 0.1679, 0, 0.0662, 0.0007]*1e-11); set(H,'color','b')
+     er = errorbar(1, mean(s_ctrl_d), std(s_ctrl_d)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;  
+     er = errorbar(2, mean(s_ctrl_db_d), std(s_ctrl_db_d)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;
+     er = errorbar([3:8], [mean(s_FC([1:Nn],:,38))],[std(s_FC([1:Nn],:,38))]); er.Color = 'r';  er.LineStyle = 'none'; er.LineWidth=2; %standard deviation instead of CI as the error
+     callsigstar(2,p_d_data,'k')
+     callsigstar(1,p_c_d,'b')
 
      set(gca,'FontSize',8)
     labelstring = {'A', 'B'};
@@ -151,12 +210,12 @@ p_c_d
     heightInches = 4.23;
     run('ScriptForExportingImages.m')   
 
-    [std(s_FC([1:Nn],:,37))]
-    [std(s_FC([1:Nn],:,38))]
+    % [std(s_FC([1:Nn],:,37))]
+    % [std(s_FC([1:Nn],:,38))]
    
     %% Generate Table E
     % Define chemical agent names
-chemical_agents = {'no treatment', 'KN93', 'ML7', 'Y27632', 'Calyculin A', 'Cytochalasin B'};
+chemical_agents = {'No treatment', 'KN93', 'ML7', 'Y27632', 'Calyculin A', 'Cytochalasin B'};
 
 % Initialize LaTeX table string
 latex_table = "\\begin{table}[htbp]\n ";
@@ -184,7 +243,7 @@ end
 latex_table = [latex_table, "\\bottomrule\n\\end{tabular}\n\\label{test_knock_table}\n\\end{table}"];
 
 % Display or write to file
-disp(latex_table);
+% disp(latex_table);
 % Optionally write to file:
 fid = fopen('fenestration_table.tex', 'w');
 fprintf(fid, '%s', latex_table);
@@ -249,9 +308,11 @@ for m = 1:SP
 %     subplot(5,7,m);
 %     plot(time/(24*7), dy_modelR(:,37)); hold on; legend(params{4}(m))
 end
-% gap width removed from plotting (node 30)
-figure(53); subplot(2,1,1); heatmap(real(s_FD_Ym([37],[1:29,31:36],1)), 'Colormap', jet); ax = gca; ax.XData = params{4}([1:29,31:36]); ax.YData = params{4}([37])  ; ax.FontSize = 12; 
-figure(54); subplot(2,1,1); heatmap(real(s_FD_Ym([38],[1:29,31:36],1)), 'Colormap', jet); ax = gca; ax.XData = params{4}([1:29,31:36]); ax.YData = params{4}([38])  ; ax.FontSize = 12; 
+% gap width removed from plotting (node 30 in legacy model)
+figure(53); subplot(2,1,1); h1=heatmap(real(s_FD_Ym([37],[1:29,31:36],1)), 'Colormap', jet); ax = gca; ax.XData = params{4}([1:29,31:36]); ax.YData = params{4}([37])  ; set(gca,'FontName','Arial','FontSize',8)
+h1.Title = 'A';
+figure(54); subplot(2,1,1); h1=heatmap(real(s_FD_Ym([38],[1:29,31:36],1)), 'Colormap', jet); ax = gca; ax.XData = params{4}([1:29,31:36]); ax.YData = params{4}([38])  ; set(gca,'FontName','Arial','FontSize',8)
+h1.Title = 'A';
 
 
 %%
@@ -272,122 +333,32 @@ for m = 1:RP
     end
 end
 
-figure(53); subplot(2,1,2); heatmap(real(s_FD_W([37],[2:29,31:36],1)), 'Colormap', jet); ax = gca; ax.XData = params{5}([2:29,31:36]);  ax.YData = params{4}([37]);   ax.FontSize = 12; 
+figure(53); subplot(2,1,2); h2=heatmap(real(s_FD_W([37],[2:29,31:36],1)), 'Colormap', jet); ax = gca; ax.XData = params{5}([2:29,31:36]);  ax.YData = params{4}([37]);  set(gca,'FontName','Arial','FontSize',8)
+h2.Title = 'B';
+figure(54); subplot(2,1,2); h2=heatmap(real(s_FD_W([38],[2:29,31:36],1)), 'Colormap', jet); ax = gca; ax.XData = params{5}([2:29,31:36]);  ax.YData = params{4}([38]); set(gca,'FontName','Arial','FontSize',8)
+h2.Title = 'B';
 
-figure(54); subplot(2,1,2); heatmap(real(s_FD_W([38],[2:29,31:36],1)), 'Colormap', jet); ax = gca; ax.XData = params{5}([2:29,31:36]);  ax.YData = params{4}([38]);  ax.FontSize = 12; 
-% figure(19); bar(real(s_FD_W(37,:,1)));
-% set(gca, 'XTick',1:length(RP), 'XTickLabel',params{5}(:))
-% grid on;
-
-% z_params = params;
-% Pin = [0:0.1:1];
-% inhib_prod = [2,4,17,20,21,22,25,30,32,43,45,48]; %[4,16,17,20,21,26,27,28,37,41,42,43,45]; 3,16 removed
-% inhib_knock =  [1,3,5,6,7,11,12,18,19,27,32,34]; % [2,31,33,34,35,36]; %9,25 removed
-% 
-%     for inh=[1:length(inhib_knock)]
-%         z_params = params;
-%         
-%         for pinh = [1:length(Pin)]
-%         
-%             z_params{3}(inhib_knock(inh)) = Pin(pinh);
-%         
-%             opts=[];
-%             [T, Y] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,z_params,p_params, state, glu_sampled, intv);
-%             Y = real(Y);
-%             
-%         
-%             Y_fc(inh,pinh) = real(Y(end,37));
-%             Y_d(inh,pinh)  = real(Y(end,38));
-%     
-%             
-%         end
-%         perc(inh,1) = (1 - Pin(find(Y_d(inh,:)<50,1,'last')))*100;
-%         perc(inh,2) = (1 - Pin(find(Y_fc(inh,:)>6,1,'last')))*100;
-% 
-%         
-%         %subplot(3,5,inh); scatter(Pin, Y_d(inh,:), '*'); xlabel(append('y_{max}(', params{4}(inh), ')')); ylabel('Diameter')
-%     end
-%     figure(21)
-%     bar(perc(:,:)); xticks([1:length(inhib_knock)]); xticklabels(params{4}(inhib_knock))
-% 
-% 
-% 
-% 
-% 
-% z_params = params;
-% 
-% for inh=[1:length(inhib_knock)]
-%     z_params = params;
-%     for pinh = [1:length(Pin)]
-%     
-%     %z_params{3}(inhib_knock(inh)) = 0;
-%     z_params{3}(inhib_knock(inh)) = Pin(pinh);
-% 
-%     opts=[];
-%     [T, Y] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,z_params,p_params, state, glu_sampled, intv);
-%     Y = real(Y);
-%     FenC(1) =  y0(37);
-%     for Tt = [2:1:length(T)]
-%         FenC(Tt) = (1/(1 + Y(Tt,2))) + (Y(Tt,31)/(1 + Y(Tt,31))) - (1/(1 + Y(Tt,2)))*(Y(Tt,31)/(1 + Y(Tt,31)));
-%     
-%     end
-%     Y(:,37) = FenC(:);
-% 
-%     %disp(real(Y(end,37)) - real(y(end,37)));
-%     %z_params{3}(inh) = params{3}(inh);
-%  
-%     Y_fc(inh,pinh) = real(Y(end,37));
-%     Y_d(inh,pinh)  = real(Y(end,38));
-% 
-% 
-% %     figure(28); hold on;
-% %     subplot(2,2,1); hold on; plot(T/(24*7), real(Y(:,37)), linest(inh), 'LineWidth', 2); 
-% %     subplot(2,2,2); hold on; plot(T/(24*7), real(Y(:,38)), linest(inh), 'LineWidth', 2); 
-% 
-%     
-%     end
-%     
-% %     figure(21)
-% %     subplot(3,5,inh); scatter(Pin, Y_d(inh,:), '*'); xlabel(append('y_{max}(', params{4}(inh), ')')); ylabel('Diameter')
+figure(53)
+figname = 'FigD';
+labelstring = {'A', 'B'};
+% for v = 1:2
+%     subplot(2,1,v)
+%     %hold on
+%     text(-0.1, 1.1, labelstring(v)', 'Units', 'normalized', 'FontWeight', 'bold','FontSize',8)
 % end
-%
-% figure(28); hold on; subplot(2,2,1); lgd = legend(['default', params{4}(inhib_knock)], 'Location', 'NorthEast'); xlabel('Time (weeks)'); ylabel('Normalized Change in Fenestration Number');
-% figure(28); hold on; subplot(2,2,2); lgd = legend(['default', params{4}(inhib_knock)], 'Location', 'NorthEast'); xlabel('Time (weeks)'); ylabel('Normalized Change in Fenestration Diameter');
-% lgd.FontSize = 14;
-% 
-% z_params = params;
-% for inh=[1:length(inhib_prod)]
-%     z_params = params;
-% %     for pinh = [1:length(Pin)]
-%     
-%     z_params{1}(1, inhib_prod(inh)) = 0;
-% %     z_params{1}(1,inhib_prod(inh)) = Pin(pinh);
-% 
-%     opts=[];
-%     [T, Y] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,z_params,p_params, state, glu_sampled, intv);
-%     Y = real(Y);
-%     FenC(1) =  y0(37); 
-%     A = 2.06;
-%     for Tt = [2:1:length(T)]
-%         FenC(Tt) = (1/(1 + A*Y(Tt,2))) + (Y(Tt,31)/(1 + Y(Tt,31))) - 2*(1/(1 + A*Y(Tt,2)))*(Y(Tt,31)/(1 + Y(Tt,31)));
-%     end
-%     Y(:,37) = FenC(:);
-% 
-% %     Y_fc(inh,pinh) = real(Y(end,37));
-% %     Y_d(inh,pinh)  = real(Y(end,38));
-%     figure(28); hold on;
-%     subplot(2,2,3); hold on; plot(T/(24*7), real(Y(:,37)), linest(inh), 'LineWidth', 2); 
-%     subplot(2,2,4); hold on; plot(T/(24*7), real(Y(:,38)), linest(inh), 'LineWidth', 2); 
-%     %z_params{1}(1, inh) = params{1}(1, inh);
-%   
-% %     end
-% %     figure(21)
-% %     subplot(3,5,inh); scatter(Pin, Y_d(inh,:), '*'); xlabel(append('W(', params{5}(inh), ')')); ylabel('Diameter')
-% end
-% figure(28); hold on; subplot(2,2,3); lgd = legend(['default', params{5}(inhib_prod)], 'Location', 'NorthEast'); xlabel('Time (weeks)'); ylabel('Normalized Change in Fenestration Number');
-% figure(28); hold on; subplot(2,2,4); lgd = legend(['default', params{5}(inhib_prod)], 'Location', 'NorthEast'); xlabel('Time (weeks)'); ylabel('Normalized Change in Fenestration Diameter');
-% lgd.FontSize = 14;
+widthInches = 5.5;
+heightInches = 4.23;
+run('ScriptForExportingImages.m') 
 
+figure(54)
+figname = 'FigE';
+% verticalposition = [0.2 0.8];
+% for v = 1:2
+%     text(-0.1, verticalposition(v), labelstring(v)', 'Units', 'normalized', 'FontWeight', 'bold','FontSize',8)
+% end
+widthInches = 5.5;
+heightInches = 4.23;
+run('ScriptForExportingImages.m') 
 
 end
 
@@ -688,3 +659,24 @@ figure(5);
     bar((Ymean10(end,[37:38]) - Ymean10(1,[37:38])), 'k'); title('Glucose intervention at 10 weeks')
     xticks([1:2]); xticklabels(params{4}([37:38])); ylabel('Change relative to baseline')
 end
+
+
+
+end
+   function output = callsigstar(ctrlgroupBarNumber,pvalues,color)
+       % call sigstart for simulation groups that are significant based on
+       % input p-value but don't create overbars for non-significant values
+
+       % don't do self comparisons or comparisons to the left that have already been done
+       pvalues = pvalues(ctrlgroupBarNumber+1:end);
+       pvalues < 0.05
+       pvalues < 0.01
+       pvalues < 0.001
+       pvalues < 0.0001
+       significant_indices = find(pvalues < 0.05);
+
+       Groups = arrayfun(@(x) [ctrlgroupBarNumber, x+ctrlgroupBarNumber], significant_indices, 'UniformOutput', false)
+
+       H = sigstar(Groups,pvalues(significant_indices),1);
+       set(H,'color',color)
+   end

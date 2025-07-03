@@ -16,30 +16,31 @@ size_W = size(W_index, 2);
     end_time_h = end_time*7*24;
     tspan = [start_time_h:1:end_time_h]; % hours
 
-%% Fitted plots
+% %% Fitted plots
 % mode=1;
 % % Figs 2, 4, B (51)
 % [T, Y] = coupledODE_IVV_run(tspan, y0, params, p_params, mode, state, GC_conc');
-
-
-%% Regulatory plots
-
+% 
+% 
+% %% Regulatory plots
+% 
 % global_p_best = []; p_fitted = []; error_fitted = [];
 % mode = 3;
 % % Fig C (52)
 % if mode == 3
 %     [T, Y] = coupledODE_IVV_multirun(tspan, y0, params, p_params, mode, state, global_p_best, p_fitted, error_fitted);
 % end
-
-
-%% Predictions (Fig - 3, 5, 6, 7, D (53), E (54), F (55), G (56) )
-
-% Fig 6
-task = 1; Tstop = end_time_h; % placeholder
-[s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
-
-% task = 2; Tstop = end_time_h; % placeholder
+% 
+% 
+% %% Predictions (Fig - 3, 5, 6, 7, D (53), E (54), F (55), G (56) )
+% 
+% % Fig 6
+% task = 1; Tstop = end_time_h; % placeholder
 % [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
+
+% Fig D (53) and E (53)
+task = 2; Tstop = end_time_h; % placeholder
+[s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
 % 
 % task = 3;
 % if task == 3
