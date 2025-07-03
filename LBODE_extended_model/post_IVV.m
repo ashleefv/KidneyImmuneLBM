@@ -384,10 +384,10 @@ if task == 3
     
     
     figure(Tstop); hold on; ax = gca; ax.FontSize = 8;
-    subplot(4,1,1); box; hold on; plot(tfull/(24*7), yfull(:,37), 'LineWidth', 1.2, 'color', 'k'); 
-    subplot(4,1,2); box; hold on; plot(tfull/(24*7), yfull(:,37), 'LineWidth', 1.2, 'color', 'k'); 
-    subplot(4,1,3); box; hold on; plot(tfull/(24*7), yfull(:,38), 'LineWidth', 1.2, 'color', 'k'); 
-    subplot(4,1,4); box; hold on; plot(tfull/(24*7), yfull(:,38), 'LineWidth', 1.2, 'color', 'k'); 
+    subplot(2,2,1); box; hold on; plot(tfull/(24*7), yfull(:,37), 'LineWidth', 1.2, 'color', 'k'); 
+    subplot(2,2,2); box; hold on; plot(tfull/(24*7), yfull(:,37), 'LineWidth', 1.2, 'color', 'k'); 
+    subplot(2,2,3); box; hold on; plot(tfull/(24*7), yfull(:,38), 'LineWidth', 1.2, 'color', 'k'); 
+    subplot(2,2,4); box; hold on; plot(tfull/(24*7), yfull(:,38), 'LineWidth', 1.2, 'color', 'k'); 
     
     
     inhib_knock_n = [1,2,3,5,6,7,9,11,12,18,19,25,27,32,34]; % [2,31,33,34,35,36]; %9,25 removed
@@ -404,12 +404,12 @@ if task == 3
         
         
         figure(Tstop); hold on;
-        subplot(4,1,1); hold on; plot(tn/(24*7), yn(:,37), 'LineWidth', 1.2, 'LineStyle', linest(inh)); xlabel('Time (week)'); ylabel('Fenestration Number')
+        subplot(2,2,1); hold on; plot(tn/(24*7), yn(:,37), 'LineWidth', 1.2, 'LineStyle', linest(inh)); xlabel('Time (week)'); ylabel('Fenestration Number')
         
         z_params = params;
     end
 
-    lgd = legend(['default', params{4}(inhib_knock_n)], 'Location', 'Eastoutside');
+    lgd = legend(['default', params{4}(inhib_knock_n)], 'Location', 'Eastoutside','fontsize',4);
 
     z_params = params;
     for inh = [1:length(inhib_prod_n)]
@@ -421,11 +421,11 @@ if task == 3
         
         figure(Tstop); hold on; ax = gca; ax.FontSize = 8;
         
-        subplot(4,1,2); hold on; plot(tn/(24*7), yn(:,37), 'LineWidth', 1.2, 'LineStyle', linest(inh)); xlabel('Time (week)'); ylabel('Fenestration Number')
+        subplot(2,2,2); hold on; plot(tn/(24*7), yn(:,37), 'LineWidth', 1.2, 'LineStyle', linest(inh)); xlabel('Time (week)'); ylabel('Fenestration Number')
         
         z_params = params;
     end
-    lgd = legend(['default', params{5}(inhib_prod_n)], 'Location', 'Eastoutside');
+    lgd = legend(['default', params{5}(inhib_prod_n)], 'Location', 'Eastoutside','fontsize',4);
     
     inhib_knock_d = [1,3,5,6,7,9,11,12,18,19,25,27,32,34];
     inhib_prod = [2,3,19,20,29,42,44,15,24,21];
@@ -439,11 +439,11 @@ if task == 3
     
     
     figure(Tstop); hold on;
-    subplot(4,1,4); hold on; plot(tn/(24*7), yn(:,38), 'LineWidth', 1.2, 'LineStyle', linest(inh)); xlabel('Time (week)'); ylabel('Fenestration Diameter (nm)')
+    subplot(2,2,4); hold on; plot(tn/(24*7), yn(:,38), 'LineWidth', 1.2, 'LineStyle', linest(inh)); xlabel('Time (week)'); ylabel('Fenestration Diameter (nm)')
     z_params = params;
     end
     
-    lgd = legend(['default', params{5}(inhib_prod)], 'Location', 'Eastoutside');
+    lgd = legend(['default', params{5}(inhib_prod)], 'Location', 'Eastoutside','fontsize',4);
     
     z_params = params;
     for inh = [1:length(inhib_knock_d)]
@@ -453,15 +453,15 @@ if task == 3
         
         
         figure(Tstop); hold on; ax = gca; ax.FontSize = 8;
-        subplot(4,1,3); hold on; plot(tn/(24*7), yn(:,38), 'LineWidth', 1.2, 'LineStyle', linest(inh)); xlabel('Time (week)'); ylabel('Fenestration Diameter (nm)')
+        subplot(2,2,3); hold on; plot(tn/(24*7), yn(:,38), 'LineWidth', 1.2, 'LineStyle', linest(inh)); xlabel('Time (week)'); ylabel('Fenestration Diameter (nm)')
         z_params = params;
     end
     
-    lgd = legend(['default', params{4}(inhib_knock_d)], 'Location', 'Eastoutside'); 
+    lgd = legend(['default', params{4}(inhib_knock_d)], 'Location', 'Eastoutside','fontsize',4);
 
     labelstring = {'A', 'B','C','D'};
     for v = 1:4
-        subplot(4,1,v)
+        subplot(2,2,v)
         hold on
         text(-0.1, 1.1, labelstring(v)', 'Units', 'normalized', 'FontWeight', 'bold','FontSize',8)
         set(gca,'FontName','Arial','FontSize',8)
@@ -475,9 +475,8 @@ if task == 3
         figname = 'FigG';
     end
 
-    
-    widthInches = 5.5;
-    heightInches = 10.25;
+    widthInches = 9.5;
+    heightInches = 6;
     run('ScriptForExportingImages.m')   
 
 end
