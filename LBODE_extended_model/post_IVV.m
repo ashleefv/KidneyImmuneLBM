@@ -475,8 +475,8 @@ if task == 3
         figname = 'FigG';
     end
 
-    widthInches = 9.5;
-    heightInches = 6;
+    widthInches = 9;
+    heightInches = 5.5;
     run('ScriptForExportingImages.m')   
 
 end
