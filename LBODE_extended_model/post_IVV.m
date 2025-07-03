@@ -348,7 +348,7 @@ labelstring = {'A', 'B'};
 % end
 widthInches = 5.5;
 heightInches = 4.23;
-run('ScriptForExportingImages.m') 
+run('ScriptForExportingImages.m')     
 
 figure(54)
 figname = 'FigE';
@@ -358,7 +358,7 @@ figname = 'FigE';
 % end
 widthInches = 5.5;
 heightInches = 4.23;
-run('ScriptForExportingImages.m') 
+run('ScriptForExportingImages.m')     
 
 end
 
@@ -383,11 +383,11 @@ if task == 3
     
     
     
-    figure(Tstop); hold on; ax = gca; ax.FontSize = 14;
-    subplot(2,2,1); box; hold on; plot(tfull/(24*7), yfull(:,37), 'LineWidth', 2, 'color', 'k'); 
-    subplot(2,2,2); box; hold on; plot(tfull/(24*7), yfull(:,37), 'LineWidth', 2, 'color', 'k'); 
-    subplot(2,2,3); box; hold on; plot(tfull/(24*7), yfull(:,38), 'LineWidth', 2, 'color', 'k'); 
-    subplot(2,2,4); box; hold on; plot(tfull/(24*7), yfull(:,38), 'LineWidth', 2, 'color', 'k'); 
+    figure(Tstop); hold on; ax = gca; ax.FontSize = 8;
+    subplot(4,1,1); box; hold on; plot(tfull/(24*7), yfull(:,37), 'LineWidth', 1.2, 'color', 'k'); 
+    subplot(4,1,2); box; hold on; plot(tfull/(24*7), yfull(:,37), 'LineWidth', 1.2, 'color', 'k'); 
+    subplot(4,1,3); box; hold on; plot(tfull/(24*7), yfull(:,38), 'LineWidth', 1.2, 'color', 'k'); 
+    subplot(4,1,4); box; hold on; plot(tfull/(24*7), yfull(:,38), 'LineWidth', 1.2, 'color', 'k'); 
     
     
     inhib_knock_n = [1,2,3,5,6,7,9,11,12,18,19,25,27,32,34]; % [2,31,33,34,35,36]; %9,25 removed
@@ -404,12 +404,12 @@ if task == 3
         
         
         figure(Tstop); hold on;
-        subplot(2,2,1); hold on; plot(tn/(24*7), yn(:,37), 'LineWidth', 2, 'LineStyle', linest(inh)); xlabel('Time (week)'); ylabel('Fenestration Number')
+        subplot(4,1,1); hold on; plot(tn/(24*7), yn(:,37), 'LineWidth', 1.2, 'LineStyle', linest(inh)); xlabel('Time (week)'); ylabel('Fenestration Number')
         
         z_params = params;
     end
 
-    lgd = legend(['default', params{4}(inhib_knock_n)], 'Location', 'NorthEast');
+    lgd = legend(['default', params{4}(inhib_knock_n)], 'Location', 'Eastoutside');
 
     z_params = params;
     for inh = [1:length(inhib_prod_n)]
@@ -419,13 +419,13 @@ if task == 3
         yn = abs(yn);
         
         
-        figure(Tstop); hold on; ax = gca; ax.FontSize = 14;
+        figure(Tstop); hold on; ax = gca; ax.FontSize = 8;
         
-        subplot(2,2,2); hold on; plot(tn/(24*7), yn(:,37), 'LineWidth', 2, 'LineStyle', linest(inh)); xlabel('Time (week)'); ylabel('Fenestration Number')
+        subplot(4,1,2); hold on; plot(tn/(24*7), yn(:,37), 'LineWidth', 1.2, 'LineStyle', linest(inh)); xlabel('Time (week)'); ylabel('Fenestration Number')
         
         z_params = params;
     end
-    lgd = legend(['default', params{5}(inhib_prod_n)], 'Location', 'NorthEast');
+    lgd = legend(['default', params{5}(inhib_prod_n)], 'Location', 'Eastoutside');
     
     inhib_knock_d = [1,3,5,6,7,9,11,12,18,19,25,27,32,34];
     inhib_prod = [2,3,19,20,29,42,44,15,24,21];
@@ -439,11 +439,11 @@ if task == 3
     
     
     figure(Tstop); hold on;
-    subplot(2,2,4); hold on; plot(tn/(24*7), yn(:,38), 'LineWidth', 2, 'LineStyle', linest(inh)); xlabel('Time (week)'); ylabel('Fenestration Diameter (nm)')
+    subplot(4,1,4); hold on; plot(tn/(24*7), yn(:,38), 'LineWidth', 1.2, 'LineStyle', linest(inh)); xlabel('Time (week)'); ylabel('Fenestration Diameter (nm)')
     z_params = params;
     end
     
-    lgd = legend(['default', params{5}(inhib_prod)], 'Location', 'NorthEast');
+    lgd = legend(['default', params{5}(inhib_prod)], 'Location', 'Eastoutside');
     
     z_params = params;
     for inh = [1:length(inhib_knock_d)]
@@ -452,12 +452,33 @@ if task == 3
         yn = abs(yn);
         
         
-        figure(Tstop); hold on; ax = gca; ax.FontSize = 14;
-        subplot(2,2,3); hold on; plot(tn/(24*7), yn(:,38), 'LineWidth', 2, 'LineStyle', linest(inh)); xlabel('Time (week)'); ylabel('Fenestration Diameter (nm)')
+        figure(Tstop); hold on; ax = gca; ax.FontSize = 8;
+        subplot(4,1,3); hold on; plot(tn/(24*7), yn(:,38), 'LineWidth', 1.2, 'LineStyle', linest(inh)); xlabel('Time (week)'); ylabel('Fenestration Diameter (nm)')
         z_params = params;
     end
     
-    lgd = legend(['default', params{4}(inhib_knock_d)], 'Location', 'NorthEast'); 
+    lgd = legend(['default', params{4}(inhib_knock_d)], 'Location', 'Eastoutside'); 
+
+    labelstring = {'A', 'B','C','D'};
+    for v = 1:4
+        subplot(4,1,v)
+        hold on
+        text(-0.1, 1.1, labelstring(v)', 'Units', 'normalized', 'FontWeight', 'bold','FontSize',8)
+        set(gca,'FontName','Arial','FontSize',8)
+    end
+
+    if Tstop == 8*24*7 % 8 weeks
+        figname = 'Fig7';
+    elseif Tstop == 10*24*7 % 10 weeks
+        figname = 'FigF';
+    elseif Tstop == 20*24*7 % 10 weeks
+        figname = 'FigG';
+    end
+
+    
+    widthInches = 5.5;
+    heightInches = 10.25;
+    run('ScriptForExportingImages.m')   
 
 end
 %%  4: Glucose-intervention
@@ -626,6 +647,7 @@ if task == 4
 
 %%
 figure(5);
+figname = 'Fig5';
     subplot(3,2,1);
     bar((Ymean(end,[2:29,31:36]) - Ymean(1,[2:29,31:36])), 'k'); title('No intervention'); 
     xticks([1:34]); xticklabels(params{4}([2:29,31:36])); ylabel('Change relative to baseline')
@@ -658,6 +680,18 @@ figure(5);
     subplot(3,2,6)
     bar((Ymean10(end,[37:38]) - Ymean10(1,[37:38])), 'k'); title('Glucose intervention at 10 weeks')
     xticks([1:2]); xticklabels(params{4}([37:38])); ylabel('Change relative to baseline')
+
+    labelstring = {'A', 'B','C', 'D','E', 'F'};
+    for v = 1:6
+        subplot(3,2,v)
+        hold on
+        text(-0.1, 1.1, labelstring(v)', 'Units', 'normalized', 'FontWeight', 'bold','FontSize',8)
+        set(gca,'FontName','Arial','FontSize',8)
+    end
+
+    widthInches = 5.5;
+    heightInches = 4.23;
+    run('ScriptForExportingImages.m')   
 end
 
 
