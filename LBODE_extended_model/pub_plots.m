@@ -18,23 +18,23 @@ size_W = size(W_index, 2);
 
 % %% Fitted plots
 % mode=1;
-% % Figs 2, 4, B (51)
+% % Figs 2, B (52)
 % [T, Y] = coupledODE_IVV_run(tspan, y0, params, p_params, mode, state, GC_conc');
 % 
-% 
+% % 
 % %% Regulatory plots
 % 
 % global_p_best = []; p_fitted = []; error_fitted = [];
 % mode = 3;
-% % Fig C (52)
+% % Figs 4, C (53)
 % if mode == 3
 %     [T, Y] = coupledODE_IVV_multirun(tspan, y0, params, p_params, mode, state, global_p_best, p_fitted, error_fitted);
 % end
 % 
 % 
-% %% Predictions (Fig - 3, 5, 6, 7, D (53), E (54), F, G )
+% %% Predictions (Fig - 3, 5, 6, 7, D (54), E (55), F (56), G (57))
 % 
-% % Fig 6
+% % Fig 6 and Table E
 % task = 1; Tstop = end_time_h; % placeholder
 % [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
 
@@ -42,23 +42,23 @@ size_W = size(W_index, 2);
 % task = 2; Tstop = end_time_h; % placeholder
 % [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
 % % 
-task = 3;
-if task == 3
-    Tstop = end_time_h; % Fig G = figure(3360) corresponds to 20 weeks
-    [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
-
-    Tstop = 10*7*24; % Fig F = figure(1680) corresponds to 10 weeks
-    [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
-
-    Tstop = 8*7*24; % Fig 7 = figure(1344) corresponds to 8 weeks
-    [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
-end
-
-% task = 4;
-% % Fig 3
-% if task ==4 
-%     Tstop = end_time_h; 
+% task = 3;
+% if task == 3
+%     Tstop = end_time_h; % Fig G = figure(57) corresponds to 20 weeks
+%     [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
+% 
+%     Tstop = 10*7*24; % Fig F = figure(56) corresponds to 10 weeks
+%     [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
+% 
+%     Tstop = 8*7*24; % Fig 7 corresponds to 8 weeks
 %     [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
 % end
+
+task = 4;
+% Figs 3, 5
+if task ==4 
+    Tstop = end_time_h; 
+    [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
+end
 
 end

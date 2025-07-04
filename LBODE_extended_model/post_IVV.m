@@ -7,7 +7,9 @@ global number_ctrl time_ctrl density diameter GC_conc GC_time GC_LB GC_UB time_l
     start_time_h = start_time*7*24;
     end_time = 20; %weeks
     end_time_h = end_time*7*24;
-    tspan = [start_time_h:1:end_time_h]; % hours
+    tspan = start_time_h:1:end_time_h; % hours
+indexforNumber = 36;
+indexforDiameter = 37;
 
 intv = 'none';
 glu_sampled = zeros(11,1);
@@ -54,7 +56,7 @@ if task == 1
     s_ctrl_db_d = s_ref(1:8,5); % diameter data for diabetic case
     % s_ctrl_n([1:Nn],1,1) = 5.8; % reference is set for initial data value for healthy case
     % s_ctrl_d([1:Nn],1,1) = 50;  % reference is set for initial data value for healthy case
-    test_i = [29,33,32,35,2]; % inhibitors: KN93, ML7, Y27632, CalA, CytB
+    test_i = [29,32,31,34,2]; % inhibitors: KN93, ML7, Y27632, CalA, CytB
     z_params = params;
     % we plot 3 additional columns before test_i: healthy data, diabetes
     % data, no treatment
@@ -78,17 +80,17 @@ if task == 1
 
     inh = 0; % no treatment case
         %p-values for number relative to the healty condition no treatment simulation
-        [h, p_c_n(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,37), s_ctrl_n, 'Alpha', 0.05,'Vartype','unequal');
+        [h, p_c_n(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforNumber), s_ctrl_n, 'Alpha', 0.05,'Vartype','unequal');
         %p-values for diameter relative to the healty condition no treatment
-        [h, p_c_d(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,38), s_ctrl_d, 'Alpha', 0.05,'Vartype','unequal');
+        [h, p_c_d(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforDiameter), s_ctrl_d, 'Alpha', 0.05,'Vartype','unequal');
 
          %p-values for number relative to the diseased condition no treatment DATA
-        [h, p_n_data(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,37), s_ctrl_db_n, 'Alpha', 0.05,'Vartype','unequal');
+        [h, p_n_data(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforNumber), s_ctrl_db_n, 'Alpha', 0.05,'Vartype','unequal');
         %p-values for diameter relative to the diseased condition no treatment DATA
-        [h, p_d_data(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,38), s_ctrl_db_d, 'Alpha', 0.05,'Vartype','unequal');
-        [h, p_n(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,37), s_FC(:,1,37), 'Alpha', 0.05,'Vartype','unequal');
+        [h, p_d_data(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforDiameter), s_ctrl_db_d, 'Alpha', 0.05,'Vartype','unequal');
+        [h, p_n(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforNumber), s_FC(:,1,indexforNumber), 'Alpha', 0.05,'Vartype','unequal');
         %p-values for diameter relative to the diseased condition no treatment simulation
-        [h, p_d(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,38), s_FC(:,1,38), 'Alpha', 0.05,'Vartype','unequal');
+        [h, p_d(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforDiameter), s_FC(:,1,indexforDiameter), 'Alpha', 0.05,'Vartype','unequal');
         
        
 
@@ -110,26 +112,26 @@ if task == 1
         s_FC(:,inh+1,:) = YstepP_new(:,:);
 
         %p-values for number relative to the healty condition no treatment simulation
-        [h, p_c_n(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,37), s_ctrl_n, 'Alpha', 0.05,'Vartype','unequal');
+        [h, p_c_n(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforNumber), s_ctrl_n, 'Alpha', 0.05,'Vartype','unequal');
         %p-values for diameter relative to the healty condition no treatment
-        [h, p_c_d(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,38), s_ctrl_d, 'Alpha', 0.05,'Vartype','unequal');
+        [h, p_c_d(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforDiameter), s_ctrl_d, 'Alpha', 0.05,'Vartype','unequal');
          %p-values for number relative to the diseased condition no treatment DATA
-        [h, p_n_data(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,37), s_ctrl_db_n, 'Alpha', 0.05,'Vartype','unequal');
+        [h, p_n_data(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforNumber), s_ctrl_db_n, 'Alpha', 0.05,'Vartype','unequal');
         %p-values for diameter relative to the diseased condition no treatment DATA
-        [h, p_d_data(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,38), s_ctrl_db_d, 'Alpha', 0.05,'Vartype','unequal');
-        [h, p_n(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,37), s_FC(:,1,37), 'Alpha', 0.05,'Vartype','unequal');
+        [h, p_d_data(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforDiameter), s_ctrl_db_d, 'Alpha', 0.05,'Vartype','unequal');
+        [h, p_n(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforNumber), s_FC(:,1,indexforNumber), 'Alpha', 0.05,'Vartype','unequal');
         %p-values for diameter relative to the diseased condition no treatment simulation
-        [h, p_d(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,38), s_FC(:,1,38), 'Alpha', 0.05,'Vartype','unequal');
+        [h, p_d(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforDiameter), s_FC(:,1,indexforDiameter), 'Alpha', 0.05,'Vartype','unequal');
         
 
       % %p-values for number relative to the diseased condition no treatment
-      %   [h, p_n(1,inh+1)] = ttest2(s_FC(:,inh+1,37), s_FC(:,1,37), 'Alpha', 0.05,'Vartype','unequal');
+      %   [h, p_n(1,inh+1)] = ttest2(s_FC(:,inh+1,indexforNumber), s_FC(:,1,indexforNumber), 'Alpha', 0.05,'Vartype','unequal');
       %   %p-values for diameter relative to the diseased condition no treatment
-      %   [h, p_d(1,inh+1)] = ttest2(s_FC(:,inh+1,38), s_FC(:,1,38), 'Alpha', 0.05,'Vartype','unequal');
+      %   [h, p_d(1,inh+1)] = ttest2(s_FC(:,inh+1,indexforDiameter), s_FC(:,1,indexforDiameter), 'Alpha', 0.05,'Vartype','unequal');
       %   %p-values for number relative to the healty condition no treatment
-      %   [h, p_c_n(1,inh)] = ttest2(s_FC(:,inh+1,37), s_ctrl_n, 'Alpha', 0.05,'Vartype','unequal');
+      %   [h, p_c_n(1,inh)] = ttest2(s_FC(:,inh+1,indexforNumber), s_ctrl_n, 'Alpha', 0.05,'Vartype','unequal');
       %   %p-values for diameter relative to the healty condition no treatment
-      %   [h, p_c_d(1,inh)] = ttest2(s_FC(:,inh+1,38), s_ctrl_d, 'Alpha', 0.05,'Vartype','unequal');
+      %   [h, p_c_d(1,inh)] = ttest2(s_FC(:,inh+1,indexforDiameter), s_ctrl_d, 'Alpha', 0.05,'Vartype','unequal');
 
 
 %reset the params before the next knockout
@@ -143,8 +145,8 @@ p_d_data
     p_n
 p_d
 
-    s_FC_d = squeeze(s_FC(:,:,38));
-    s_FC_n = squeeze(s_FC(:,:,37));
+    s_FC_d = squeeze(s_FC(:,:,indexforDiameter));
+    s_FC_n = squeeze(s_FC(:,:,indexforNumber));
 
     CI_diameter_ub = mean(s_FC_d,1) + std(s_FC_d,1)*1.96; % upper-bound for diameter predicted
     CI_diameter_lb = mean(s_FC_d,1) - std(s_FC_d,1)*1.96;
@@ -156,11 +158,11 @@ p_d
 %     disp(mean(s_FC_n,1)); disp(std(s_FC_n,1));
 % 
 % %%
-%      s_FC([1:Nn],:,37)
+%      s_FC([1:Nn],:,indexforNumber)
 %      size(s_FC)
      figure(6)
      figname = 'Fig6';
-     subplot(2,1,1); b = bar([mean(s_ctrl_n),mean(s_ctrl_db_n), mean(s_FC([1:Nn],:,37))], 'white'); xticks([1:length(test_i)+3]); 
+     subplot(2,1,1); b = bar([mean(s_ctrl_n),mean(s_ctrl_db_n), mean(s_FC(1:Nn,:,indexforNumber))], 'white'); xticks(1:length(test_i)+3); 
     xticklabels({'Healthy Data', 'Diabetes Data','No Treatment', 'KN93', 'ML7', 'Y27632', 'CalA', 'CytB'}); 
      ylabel('Fenestration Number');
      b.FaceColor = 'flat';
@@ -171,10 +173,10 @@ p_d
         b.CData(3+inh,:) = [1 1 1]; 
      end
    hold on;  
-   %er = errorbar([2:7], [mean(s_FC([1:Nn],:,37))], (CI_number_lb-CI_number_ub)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;  
+   %er = errorbar([2:7], [mean(s_FC([1:Nn],:,indexforNumber))], (CI_number_lb-CI_number_ub)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;  
    er = errorbar(1, mean(s_ctrl_n), std(s_ctrl_n)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2; 
    er = errorbar(2, mean(s_ctrl_db_n), std(s_ctrl_db_n)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;
-   er = errorbar([3:8], [mean(s_FC([1:Nn],:,37))], [std(s_FC([1:Nn],:,37))]); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;  
+   er = errorbar(3:8, mean(s_FC(1:Nn,:,indexforNumber)), std(s_FC(1:Nn,:,indexforNumber))); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;  
    
    
      callsigstar(2,p_n_data,'k')
@@ -182,7 +184,7 @@ p_d
 
      set(gca,'FontSize',8)
 
-     figure(6); subplot(2,1,2); B = bar([mean(s_ctrl_d), mean(s_ctrl_db_d), mean(s_FC([1:Nn],:,38))], 'white'); xticks([1:length(test_i)+3]); xticklabels({'Healthy Data', 'Diabetes Data','No Treatment', 'KN93', 'ML7', 'Y27632', 'CalA', 'CytB'});  ylabel('Fenestration Diameter (nm)')
+     figure(6); subplot(2,1,2); B = bar([mean(s_ctrl_d), mean(s_ctrl_db_d), mean(s_FC([1:Nn],:,indexforDiameter))], 'white'); xticks([1:length(test_i)+3]); xticklabels({'Healthy Data', 'Diabetes Data','No Treatment', 'KN93', 'ML7', 'Y27632', 'CalA', 'CytB'});  ylabel('Fenestration Diameter (nm)')
      B.FaceColor = 'flat';
      B.CData(1,:) = [0 0 1];
      B.CData(2,:) = [0 0 0];
@@ -190,10 +192,10 @@ p_d
      for inh = 1:length(test_i)
         B.CData(3+inh,:) = [1 1 1]; 
      end
-     hold on;  %er = errorbar([2:7], [mean(s_FC([1:Nn],:,38))], (CI_diameter_lb - CI_diameter_ub)); er.Color = 'r';  er.LineStyle = 'none'; er.LineWidth=2; 
+     hold on;  %er = errorbar([2:7], [mean(s_FC([1:Nn],:,indexforDiameter))], (CI_diameter_lb - CI_diameter_ub)); er.Color = 'r';  er.LineStyle = 'none'; er.LineWidth=2; 
      er = errorbar(1, mean(s_ctrl_d), std(s_ctrl_d)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;  
      er = errorbar(2, mean(s_ctrl_db_d), std(s_ctrl_db_d)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;
-     er = errorbar([3:8], [mean(s_FC([1:Nn],:,38))],[std(s_FC([1:Nn],:,38))]); er.Color = 'r';  er.LineStyle = 'none'; er.LineWidth=2; %standard deviation instead of CI as the error
+     er = errorbar(3:8, mean(s_FC(1:Nn,:,indexforDiameter)),std(s_FC(1:Nn,:,indexforDiameter))); er.Color = 'r';  er.LineStyle = 'none'; er.LineWidth=2; %standard deviation instead of CI as the error
      callsigstar(2,p_d_data,'k')
      callsigstar(1,p_c_d,'b')
 
@@ -210,8 +212,8 @@ p_d
     heightInches = 4.23;
     run('ScriptForExportingImages.m')   
 
-    % [std(s_FC([1:Nn],:,37))]
-    % [std(s_FC([1:Nn],:,38))]
+    % [std(s_FC([1:Nn],:,indexforNumber))]
+    % [std(s_FC([1:Nn],:,indexforDiameter))]
    
     %% Generate Table E
     % Define chemical agent names
@@ -226,10 +228,10 @@ latex_table = [latex_table, "Chemical agent & Mean (SD) & Mean (SD) \\\\\n\\midr
 
 % Loop through each chemical agent
 for i = 1:length(chemical_agents)
-    mean_diam = mean(s_FC(:, i, 38), 'all');
-    std_diam = std(s_FC(:, i, 38), 0, 'all');
-    mean_num = mean(s_FC(:, i, 37), 'all');
-    std_num = std(s_FC(:, i, 37), 0, 'all');
+    mean_diam = mean(s_FC(:, i, indexforDiameter), 'all');
+    std_diam = std(s_FC(:, i, indexforDiameter), 0, 'all');
+    mean_num = mean(s_FC(:, i, indexforNumber), 'all');
+    std_num = std(s_FC(:, i, indexforNumber), 0, 'all');
 
     % Format values in scientific notation
     diam_str = sprintf('%.2f ($%.1e$)', mean_diam, std_diam);
@@ -251,7 +253,7 @@ fclose(fid);
 
 
      %%
-     % figure(6); subplot(2,1,1); b = bar([mean(s_FC([1:Nn],:,37))], 'white'); xticks([1:length(test_i)+2]); xticklabels({'healthy', 'KN93', 'ML7', 'Y27632', 'CalA', 'CytB'}); ylabel('Fenestration Number');
+     % figure(6); subplot(2,1,1); b = bar([mean(s_FC([1:Nn],:,indexforNumber))], 'white'); xticks([1:length(test_i)+2]); xticklabels({'healthy', 'KN93', 'ML7', 'Y27632', 'CalA', 'CytB'}); ylabel('Fenestration Number');
      % b.FaceColor = 'flat';
      % b.CData(1,:) = [0 0 1];
      % b.CData(2,:) = [1 1 1];
@@ -259,7 +261,7 @@ fclose(fid);
      % 
      % set(gca,'FontSize',8)
      % 
-     % figure(6); subplot(2,1,2); B = bar([mean(s_FC([1:Nn],:,38))], 'white'); xticks([1:length(test_i)+2]); xticklabels({'healthy',  'KN93', 'ML7', 'Y27632', 'CalA', 'CytB'}); ylabel('Fenestration Diameter (nm)')
+     % figure(6); subplot(2,1,2); B = bar([mean(s_FC([1:Nn],:,indexforDiameter))], 'white'); xticks([1:length(test_i)+2]); xticklabels({'healthy',  'KN93', 'ML7', 'Y27632', 'CalA', 'CytB'}); ylabel('Fenestration Diameter (nm)')
      % B.FaceColor = 'flat';
      % B.CData(1,:) = [0 0 1];
      % B.CData(2,:) = [1 1 1];
@@ -279,7 +281,7 @@ s_FD_W = zeros(SP, RP, 1);
 
 linest = ["--", "-.", ":", "--", "-.", ":",  "--", "-.", ":", "--", "-.", ":", "--", "-.", ":"];
 
-tspan = [start_time_h:end_time_h];
+tspan = start_time_h:end_time_h;
 percent = 50; opts=[];
 
 
@@ -306,12 +308,11 @@ for m = 1:SP
     end
 %     figure(2);
 %     subplot(5,7,m);
-%     plot(time/(24*7), dy_modelR(:,37)); hold on; legend(params{4}(m))
+%     plot(time/(24*7), dy_modelR(:,indexforNumber)); hold on; legend(params{4}(m))
 end
-% gap width removed from plotting (node 30 in legacy model)
-figure(53); subplot(2,1,1); h1=heatmap(real(s_FD_Ym([37],[1:29,31:36],1)), 'Colormap', jet); ax = gca; ax.XData = params{4}([1:29,31:36]); ax.YData = params{4}([37])  ; set(gca,'FontName','Arial','FontSize',8)
+figure(54); subplot(2,1,1); h1=heatmap(real(s_FD_Ym(indexforNumber,2:35,1)), 'Colormap', jet); ax = gca; ax.XData = params{4}(2:35); ax.YData = params{4}(indexforNumber)  ; set(gca,'FontName','Arial','FontSize',8)
 h1.Title = 'A';
-figure(54); subplot(2,1,1); h1=heatmap(real(s_FD_Ym([38],[1:29,31:36],1)), 'Colormap', jet); ax = gca; ax.XData = params{4}([1:29,31:36]); ax.YData = params{4}([38])  ; set(gca,'FontName','Arial','FontSize',8)
+figure(55); subplot(2,1,1); h1=heatmap(real(s_FD_Ym(indexforDiameter,2:35,1)), 'Colormap', jet); ax = gca; ax.XData = params{4}(2:35); ax.YData = params{4}(indexforDiameter)  ; set(gca,'FontName','Arial','FontSize',8)
 h1.Title = 'A';
 
 
@@ -333,12 +334,12 @@ for m = 1:RP
     end
 end
 
-figure(53); subplot(2,1,2); h2=heatmap(real(s_FD_W([37],[2:29,31:36],1)), 'Colormap', jet); ax = gca; ax.XData = params{5}([2:29,31:36]);  ax.YData = params{4}([37]);  set(gca,'FontName','Arial','FontSize',8)
+figure(54); subplot(2,1,2); h2=heatmap(real(s_FD_W(indexforNumber,2:47,1)), 'Colormap', jet); ax = gca; ax.XData = params{5}(2:47);  ax.YData = params{4}(indexforNumber);  set(gca,'FontName','Arial','FontSize',8)
 h2.Title = 'B';
-figure(54); subplot(2,1,2); h2=heatmap(real(s_FD_W([38],[2:29,31:36],1)), 'Colormap', jet); ax = gca; ax.XData = params{5}([2:29,31:36]);  ax.YData = params{4}([38]); set(gca,'FontName','Arial','FontSize',8)
+figure(55); subplot(2,1,2); h2=heatmap(real(s_FD_W(indexforDiameter,2:47,1)), 'Colormap', jet); ax = gca; ax.XData = params{5}(2:47);  ax.YData = params{4}(indexforDiameter); set(gca,'FontName','Arial','FontSize',8)
 h2.Title = 'B';
 
-figure(53)
+figure(54)
 figname = 'FigD';
 labelstring = {'A', 'B'};
 % for v = 1:2
@@ -350,7 +351,7 @@ widthInches = 5.5;
 heightInches = 4.23;
 run('ScriptForExportingImages.m')     
 
-figure(54)
+figure(55)
 figname = 'FigE';
 % verticalposition = [0.2 0.8];
 % for v = 1:2
@@ -372,7 +373,7 @@ if task == 3
     
     linest = ["--", "-.", ":", "--", "-.", ":",  "--", "-.", ":", "--", "-.", ":", "--", "-.", ":"];
     
-    tspan = [start_time_h:1:Tstop];
+    tspan = start_time_h:1:Tstop;
     percent = 50; opts=[];
     
     [t, y] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,params,p_params, state, GC_conc', intv); 
@@ -381,83 +382,106 @@ if task == 3
     [tfull, yfull] = ode15s(@coupledODE_IVV_step,[start_time_h:5000],y0,opts,params,p_params, state, GC_conc', intv); 
     yfull = abs(yfull);
     
+    if Tstop/24/7 == 8
+        NUM = 7; % FIG 7 publication
+        figname = 'Fig7';
+    elseif Tstop/24/7 == 10
+        NUM = 56; % FIG F publication
+        figname = 'FigF';
+    elseif Tstop/24/7 == 20
+        NUM = 57; % FIG G publication
+        figname = 'FigG';
+    end
+
+    figure(NUM); hold on; ax = gca; ax.FontSize = 8;
+    subplot(2,2,1); box; hold on; h=plot(tfull/(24*7), yfull(:,indexforNumber), 'LineWidth', 1.2, 'color', 'k','DisplayName','Baseline'); 
+    legendHandles = h;
+    legendNames = {'Baseline'};
     
-    
-    figure(Tstop); hold on; ax = gca; ax.FontSize = 8;
-    subplot(2,2,1); box; hold on; plot(tfull/(24*7), yfull(:,37), 'LineWidth', 1.2, 'color', 'k'); 
-    subplot(2,2,2); box; hold on; plot(tfull/(24*7), yfull(:,37), 'LineWidth', 1.2, 'color', 'k'); 
-    subplot(2,2,3); box; hold on; plot(tfull/(24*7), yfull(:,38), 'LineWidth', 1.2, 'color', 'k'); 
-    subplot(2,2,4); box; hold on; plot(tfull/(24*7), yfull(:,38), 'LineWidth', 1.2, 'color', 'k'); 
-    
-    
-    inhib_knock_n = [1,2,3,5,6,7,9,11,12,18,19,25,27,32,34]; % [2,31,33,34,35,36]; %9,25 removed
-    inhib_prod_n = [47,21,24,16,17,2,3,18,20,29,42,44];
+    inhib_knock_n = [1,2,3,5,7,9,11,12,18,19,25,27,31,33]; % 6 ignored
+    inhib_prod_n = [46,21,24,16,2,3,18,20,29,41,43];  % 17 ignored
     % % inhib_knock_n2 = [35,36,31]; %promotes fenestrations
     
-    tnew = [Tstop:1:5000];
+    tnew = Tstop:1:5000;
     y0(:) = y(end,:);
     z_params = params;
-    for inh = [1:length(inhib_knock_n)]
+    for inh = 1:length(inhib_knock_n)
         z_params{3}(inhib_knock_n(inh)) = 0.5;
         [tn, yn] = ode15s(@coupledODE_IVV_step,tnew,y0,opts,z_params,p_params, state, GC_conc', intv); 
         yn = abs(yn);
         
-        
-        figure(Tstop); hold on;
-        subplot(2,2,1); hold on; plot(tn/(24*7), yn(:,37), 'LineWidth', 1.2, 'LineStyle', linest(inh)); xlabel('Time (week)'); ylabel('Fenestration Number')
-        
+       
+        name = params{4}(inhib_knock_n(inh));
+        h=plot(tn/(24*7), yn(:,indexforNumber), 'LineWidth', 1.2, 'LineStyle', linest(inh),'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Number');
+        legendHandles(end+1) = h;
+        legendNames{end+1} = name{1};
+
         z_params = params;
     end
 
-    lgd = legend(['default', params{4}(inhib_knock_n)], 'Location', 'Eastoutside','fontsize',4);
+    legend(legendHandles, legendNames, 'Location', 'Eastoutside','fontsize',4)
 
+    subplot(2,2,2); box; hold on; h=plot(tfull/(24*7), yfull(:,indexforNumber), 'LineWidth', 1.2, 'color', 'k','DisplayName','Baseline'); 
+    legendHandles = h;
+    legendNames = {'Baseline'};
     z_params = params;
-    for inh = [1:length(inhib_prod_n)]
+    for inh = 1:length(inhib_prod_n)
         %z_params{3}(inhib_knock_n2(inh)) = 2;
         z_params{1}(1,inhib_prod_n(inh)) = 0.5;
         [tn, yn] = ode15s(@coupledODE_IVV_step,tnew,y0,opts,z_params,p_params, state, GC_conc', intv); 
         yn = abs(yn);
         
         
-        figure(Tstop); hold on; ax = gca; ax.FontSize = 8;
-        
-        subplot(2,2,2); hold on; plot(tn/(24*7), yn(:,37), 'LineWidth', 1.2, 'LineStyle', linest(inh)); xlabel('Time (week)'); ylabel('Fenestration Number')
-        
+        name = params{5}(inhib_prod_n(inh));
+        h=plot(tn/(24*7), yn(:,indexforNumber), 'LineWidth', 1.2, 'LineStyle', linest(inh),'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Number');
+        legendHandles(end+1) = h;
+        legendNames{end+1} = name{1};        
         z_params = params;
     end
-    lgd = legend(['default', params{5}(inhib_prod_n)], 'Location', 'Eastoutside','fontsize',4);
+    legend(legendHandles, legendNames, 'Location', 'Eastoutside','fontsize',4)
+
     
-    inhib_knock_d = [1,3,5,6,7,9,11,12,18,19,25,27,32,34];
-    inhib_prod = [2,3,19,20,29,42,44,15,24,21];
+    inhib_knock_d = [1,3,5,6,7,9,11,12,18,19,25,27,31,33]; 
+    inhib_prod = [2,3,19,20,29,41,43,15,24,21];
    
     
+    subplot(2,2,3); box; hold on; h=plot(tfull/(24*7), yfull(:,indexforDiameter), 'LineWidth', 1.2, 'color', 'k','DisplayName','Baseline'); 
+    legendHandles = h;
+    legendNames = {'Baseline'};
     z_params = params;
-    for inh = [1:length(inhib_prod)]
+    for inh = 1:length(inhib_knock_d)
+        z_params{3}(inhib_knock_d(inh)) = 0.5;
+        [tn, yn] = ode15s(@coupledODE_IVV_step,tnew,y0,opts,z_params,p_params, state, GC_conc', intv); 
+        yn = abs(yn);
+              
+        name = params{4}(inhib_knock_d(inh));
+        h=plot(tn/(24*7), yn(:,indexforDiameter), 'LineWidth', 1.2, 'LineStyle', linest(inh),'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Diameter (nm)');
+        legendHandles(end+1) = h;
+        legendNames{end+1} = name{1};
+        z_params = params;
+    end
+    
+    legend(legendHandles, legendNames, 'Location', 'Eastoutside','fontsize',4)
+
+    subplot(2,2,4); box; hold on; h=plot(tfull/(24*7), yfull(:,indexforDiameter), 'LineWidth', 1.2, 'color', 'k','DisplayName','Baseline');  
+    legendHandles = h;
+    legendNames = {'Baseline'};
+    z_params = params;
+    for inh = 1:length(inhib_prod)
     z_params{1}(1,inhib_prod(inh)) = 0.5;
     [tn, yn] = ode15s(@coupledODE_IVV_step,tnew,y0,opts,z_params,p_params, state, GC_conc', intv); 
     yn = abs(yn);
     
     
-    figure(Tstop); hold on;
-    subplot(2,2,4); hold on; plot(tn/(24*7), yn(:,38), 'LineWidth', 1.2, 'LineStyle', linest(inh)); xlabel('Time (week)'); ylabel('Fenestration Diameter (nm)')
+    name = params{5}(inhib_prod(inh));
+    h=plot(tn/(24*7), yn(:,indexforDiameter), 'LineWidth', 1.2, 'LineStyle', linest(inh),'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Diameter (nm)');
+    legendHandles(end+1) = h;
+    legendNames{end+1} = name{1};
     z_params = params;
     end
-    
-    lgd = legend(['default', params{5}(inhib_prod)], 'Location', 'Eastoutside','fontsize',4);
-    
-    z_params = params;
-    for inh = [1:length(inhib_knock_d)]
-        z_params{3}(inhib_knock_d(inh)) = 0.5;
-        [tn, yn] = ode15s(@coupledODE_IVV_step,tnew,y0,opts,z_params,p_params, state, GC_conc', intv); 
-        yn = abs(yn);
-        
-        
-        figure(Tstop); hold on; ax = gca; ax.FontSize = 8;
-        subplot(2,2,3); hold on; plot(tn/(24*7), yn(:,38), 'LineWidth', 1.2, 'LineStyle', linest(inh)); xlabel('Time (week)'); ylabel('Fenestration Diameter (nm)')
-        z_params = params;
-    end
-    
-    lgd = legend(['default', params{4}(inhib_knock_d)], 'Location', 'Eastoutside','fontsize',4);
+
+    legend(legendHandles, legendNames, 'Location', 'Eastoutside','fontsize',4)
+
 
     labelstring = {'A', 'B','C','D'};
     for v = 1:4
@@ -465,14 +489,6 @@ if task == 3
         hold on
         text(-0.1, 1.1, labelstring(v)', 'Units', 'normalized', 'FontWeight', 'bold','FontSize',8)
         set(gca,'FontName','Arial','FontSize',8)
-    end
-
-    if Tstop == 8*24*7 % 8 weeks
-        figname = 'Fig7';
-    elseif Tstop == 10*24*7 % 10 weeks
-        figname = 'FigF';
-    elseif Tstop == 20*24*7 % 10 weeks
-        figname = 'FigG';
     end
 
     widthInches = 9;
@@ -485,7 +501,7 @@ if task == 4
     opts=[];
     % no intervention step
     intv = 'none';
-    t1 = [start_time_h:end_time_h];
+    t1 = start_time_h:end_time_h;
     %[T, Y] = ode15s(@coupledODE_IVV_step,t1,y0,opts,params,p_params, state, GC_conc', intv);
     %Y = real(Y);
 
@@ -507,13 +523,13 @@ if task == 4
 
     end
 
-    Ymean(1,:,:) = mean(YstepP([1:Nn],:,:));
+    Ymean(1,:,:) = mean(YstepP(1:Nn,:,:));
     Ymean = squeeze(Ymean(1,:,:));   
        
 
     for Nstep=1:Nn
         %Gp = step_function(glu_sampled(:,Nstep));
-        for Tt = [start_time_h:1:tspan(end)]
+        for Tt = start_time_h:1:tspan(end)
             if (Tt >= time_lee(1) && Tt <= time_lee(5))
                 GLU_p(Tt,Nstep) =  0.051*(Tt)  - 9.38;
             else
@@ -534,7 +550,7 @@ if task == 4
 
     
        % Gp = step_function(glu_sampled);
-        for Tt = [start_time_h:1:tspan(end)]
+        for Tt = start_time_h:1:tspan(end)
             if (Tt >= time_lee(1) && Tt <= time_lee(3))
                 GLU_p4(Tt,1) = 0.051*(Tt)  - 9.38;
             else
@@ -568,12 +584,12 @@ if task == 4
 
     end
 
-    Ymean10(1,:,:) = mean(YstepP10([1:Nn],:,:));
+    Ymean10(1,:,:) = mean(YstepP10(1:Nn,:,:));
     Ymean10 = squeeze(Ymean10(1,:,:));   
     
     for Nstep=1:Nn
         %Gp = step_function(glu_sampled(:,Nstep));
-        for Tt = [start_time_h:1:tspan(end)]
+        for Tt = start_time_h:1:tspan(end)
             if (Tt >= time_lee(1) && Tt <= time_lee(5))
                 GLU_p10(Tt,Nstep) =  0.051*(Tt)  - 9.38;
             elseif (Tt>time_lee(5) && Tt<=time_lee(9))
@@ -590,7 +606,7 @@ if task == 4
 
     figure(3); box;  
     subplot(1,2,1)
-    plot(T/(24*7), GLU_p([start_time_h:end_time_h],:), 'LineWidth', 1.5); hold on;
+    plot(T/(24*7), GLU_p(start_time_h:end_time_h,:), 'LineWidth', 1.5); hold on;
     hold on;
     
     xlabel('Time (weeks)'); xlim([0,21]);
@@ -598,7 +614,7 @@ if task == 4
     ax = gca; ax.FontSize = 20;
 
     subplot(1,2,2)
-    plot(T/(24*7), mean(GLU_p([start_time_h:end_time_h],:)'), 'LineWidth', 3, 'Color', 'k'); 
+    plot(T/(24*7), mean(GLU_p(start_time_h:end_time_h,:)'), 'LineWidth', 3, 'Color', 'k'); 
     hold on; scatter(time_finch/(7*24), glu_finch, 'MarkerFaceColor',[1 0 0],'Marker','^','Color',[1 0 0])
     hold on; errorbar(time_finch/(7*24), glu_finch, abs(glu_finch - glu_LB), abs(glu_finch - glu_UB), '^', 'Color',[1  0  0]);
     hold on; scatter(time_lee/(7*24), glucose_lee, 'MarkerFaceColor',[0  0  1],'Marker','o','Color',[0  0  1])
@@ -607,9 +623,9 @@ if task == 4
 %     hold on
 %     jbfill([start_time_h:end_time_h]/24/7, min(GLU_p([start_time_h:end_time_h],:)'), max(GLU_p([start_time_h:end_time_h],:)'), [.7 .7 .7], [.7 .7 .7], 1, 0.2);
     hold on
-    plot(T4/(24*7), GLU_p4([start_time_h:end_time_h],1), 'LineWidth', 3, 'Color', 'k', 'LineStyle', ':'); 
+    plot(T4/(24*7), GLU_p4(start_time_h:end_time_h,1), 'LineWidth', 3, 'Color', 'k', 'LineStyle', ':'); 
     hold on;
-    plot(T10/(24*7), mean(GLU_p10([start_time_h:end_time_h],:)'), 'LineWidth', 3, 'Color', [0.7 0.7 0.7], 'LineStyle', '--'); 
+    plot(T10/(24*7), mean(GLU_p10(start_time_h:end_time_h,:)'), 'LineWidth', 3, 'Color', [0.7 0.7 0.7], 'LineStyle', '--'); 
 
     hold on;
     xlabel('Time (weeks)'); xlim([0,21]);
@@ -648,37 +664,28 @@ if task == 4
 figure(5);
 figname = 'Fig5';
     subplot(3,2,1);
-    bar((Ymean(end,[2:29,31:36]) - Ymean(1,[2:29,31:36])), 'k'); title('No intervention'); 
-    xticks([1:34]); xticklabels(params{4}([2:29,31:36])); ylabel('Change relative to baseline')
+    bar((Ymean(end,2:35) - Ymean(1,2:35)), 'k'); title('No intervention'); 
+    xticks(1:34); xticklabels(params{4}(2:35)); ylabel('Change relative to baseline')
     
-    figure(5)
     subplot(3,2,2)
-    bar((Ymean(end,[37:38]) - Ymean(1,[37:38])), 'k'); title('No intervention')
-    xticks([1:2]); xticklabels(params{4}([37:38])); ylabel('Change relative to baseline')
-
-       hold on
-    
-    figure(5);
+    bar((Ymean(end,indexforNumber:indexforDiameter) - Ymean(1,indexforNumber:indexforDiameter)), 'k'); title('No intervention')
+    xticks(1:2); xticklabels(params{4}(indexforNumber:indexforDiameter)); ylabel('Change relative to baseline')
+ 
     subplot(3,2,3);
-    bar((Y4(end,[2:29,31:36]) - Y4(1,[2:29,31:36])), 'k'); title('Glucose intervention at 4 weeks'); 
-    xticks([1:34]); xticklabels(params{4}([2:29,31:36])); ylabel('Change relative to baseline')
+    bar((Y4(end,2:35) - Y4(1,2:35)), 'k'); title('Glucose intervention at 4 weeks'); 
+    xticks(1:34); xticklabels(params{4}(2:35)); ylabel('Change relative to baseline')
     
-    figure(5)
     subplot(3,2,4)
-    bar((Y4(end,[37:38]) - Y4(1,[37:38])), 'k'); title('Glucose intervention at 4 weeks')
-    xticks([1:2]); xticklabels(params{4}([37:38])); ylabel('Change relative to baseline')
-
-       hold on
+    bar((Y4(end,indexforNumber:indexforDiameter) - Y4(1,indexforNumber:indexforDiameter)), 'k'); title('Glucose intervention at 4 weeks')
+    xticks(1:2); xticklabels(params{4}(indexforNumber:indexforDiameter)); ylabel('Change relative to baseline')
     
-    figure(5);
     subplot(3,2,5);
-    bar((Ymean10(end,[2:29,31:36]) - Ymean10(1,[2:29,31:36])), 'k'); title('Glucose intervention at 10 weeks'); 
-    xticks([1:34]); xticklabels(params{4}([2:29,31:36])); ylabel('Change relative to baseline')
+    bar((Ymean10(end,2:35) - Ymean10(1,2:35)), 'k'); title('Glucose intervention at 10 weeks'); 
+    xticks(1:34); xticklabels(params{4}(2:35)); ylabel('Change relative to baseline')
     
-    figure(5)
     subplot(3,2,6)
-    bar((Ymean10(end,[37:38]) - Ymean10(1,[37:38])), 'k'); title('Glucose intervention at 10 weeks')
-    xticks([1:2]); xticklabels(params{4}([37:38])); ylabel('Change relative to baseline')
+    bar((Ymean10(end,indexforNumber:indexforDiameter) - Ymean10(1,indexforNumber:indexforDiameter)), 'k'); title('Glucose intervention at 10 weeks')
+    xticks(1:2); xticklabels(params{4}(indexforNumber:indexforDiameter)); ylabel('Change relative to baseline')
 
     labelstring = {'A', 'B','C', 'D','E', 'F'};
     for v = 1:6

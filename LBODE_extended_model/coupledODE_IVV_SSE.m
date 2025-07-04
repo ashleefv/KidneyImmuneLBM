@@ -26,11 +26,12 @@ global number_ctrl time_ctrl density diameter GC_conc GC_time GC_LB GC_UB time_l
 %          params{1}(3,k_index(k_iter)) = p(k_iter + size_W + size_n + size_tau);
 %  end
 
-
+indexforNumber = 36;
+indexforDiameter = 37;
 
 p_params(4) = p(1);
 p_params(5) = p(2);
-params{2}(34) = p(3);
+params{2}(33) = p(3);
 p_params(6) = p(4);
 p_params(7) = p(5);
 
@@ -45,11 +46,11 @@ Tout = t;
 
 % control data for fenestration density
 
-% pred_in = interp1(Tout, Yout(:,37), time_ctrl(:,1)*24*7); error(1,1) = sum((pred_in - number_ctrl(:,1)).^2); pred_in = []; % ctrl data
+% pred_in = interp1(Tout, Yout(:,indexforNumber), time_ctrl(:,1)*24*7); error(1,1) = sum((pred_in - number_ctrl(:,1)).^2); pred_in = []; % ctrl data
 
 % diseased data for width and density
-pred_in = interp1(Tout, Yout(:,37), time_ctrl(:,1)*24*7); error(1,1) = sum((pred_in - density).^2); pred_in = [];
-pred_in = interp1(Tout, Yout(:,38), time_ctrl(:,1)*24*7); error(1,2) = sum((pred_in - diameter).^2); pred_in = [];
+pred_in = interp1(Tout, Yout(:,indexforNumber), time_ctrl(:,1)*24*7); error(1,1) = sum((pred_in - density).^2); pred_in = [];
+pred_in = interp1(Tout, Yout(:,indexforDiameter), time_ctrl(:,1)*24*7); error(1,2) = sum((pred_in - diameter).^2); pred_in = [];
   
  
  err_db = sum(error);

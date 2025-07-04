@@ -57,7 +57,7 @@ load data/GLU_data.mat
     start_time_h = start_time*7*24;
     end_time = 20; %weeks
     end_time_h = end_time*7*24;
-    tspan = [start_time_h:1:end_time_h]; % hours
+    tspan = start_time_h:1:end_time_h; % hours
 % 8000 hours ~ 12 month ~ 48 weeks 
 
 % params: dictionary of parameters
@@ -123,8 +123,7 @@ elseif strcmp(step,"Publication_plots")
         glu_sampled(i) = unifrnd(GC_LB(:,i), GC_UB(:,i)); % 
     end
     pub_plots(tspan, y0, params, p_params, mode, state, glu_sampled, tau_index, k_index, n_index, W_index);
-    disp('Main-text figures: {2,3,4,5,6}. 5upplementary figures start with {51, 52, 53,54} for B, C, D, E, F, G, H, respectively.');
-    disp('Fig 1344, 1680, 3360 correspond to in silico test at 8, 10, 20 weeks');
+    disp('Main-text figures: {2, 3, 4, 5, 6, 7}. 5upplementary figures start with 5 and are {52, 53, 54, 55, 56, 57} for B, C, D, E, F, G, respectively.');
 
 elseif strcmp(step, "Predictions")
     disp('1: test_knockout, 2: LSA-based perturbation, 3: time-dependent intervention, 4: Glucose-intervention')
@@ -149,7 +148,7 @@ elseif strcmp(step, "Variability")
             
             global_p_best = csvread("recal-param\fen_combined_25.csv");
             fitted_p = csvread("recal-param\fen_combined_fitted_25.csv");
-            p_fitted = fitted_p(:,[1:end-1]);
+            p_fitted = fitted_p(:,1:end-1);
             error_fitted = fitted_p(:,end);
             [Time, Ymean] = coupledODE_IVV_multirun(tspan, y0, params, p_params, mode, state, global_p_best, p_fitted, error_fitted);
         else
@@ -171,12 +170,12 @@ elseif strcmp(step,"Multistart_NLS")
     repeats = 25;               % integer, number of optimization runs, must be greater than 0
     mode = 0;
     tau_index = []; W_index = []; n_index = []; k_index = [];
-    rng("twister") % Default random number generator algorithm with seed = 0 to ensure that we generate the same sequence of draws
+    glu_sampled = GC_conc;
+    % rng("twister") % Default random number generator algorithm with seed = 0 to ensure that we generate the same sequence of draws
     % glu_sampled = zeros(11,1);
-    for i = 1:length(GC_time)
-            glu_sampled(i) = GC_conc(i); %unifrnd(glu_LB(:,i), glu_UB(:,i)); % 
-            % glu_sampled(i) = normrnd(glu_finch(:,i), abs(glu_finch(:,i)-glu_LB(:,i))); % not sure about skewed SD
-    end
+    % for i = 1:length(GC_time)
+    %         glu_sampled(i) = unifrnd(glu_LB(:,i), glu_UB(:,i)); % 
+    % end
     [global_p_best, p_fitted, error_fitted] = multistart_param_opt(params, y0, tspan, p_params, tau_index, n_index, k_index, W_index, repeats, state, glu_sampled);    
     disp(global_p_best);
 

@@ -68,7 +68,7 @@ size_W = size(W_index, 2);
 
 % p_init: parameter guess list
 
-p_init = horzcat(p_params(4), p_params(5), params{2}(34), p_params(6), p_params(7));                  % order tau, W, k, n, ... 
+p_init = horzcat(p_params(4), p_params(5), params{2}(33), p_params(6), p_params(7));                  % order tau, W, k, n, ... 
                                                     % only valid when atleast 1 sensitive parameter from each category exists
 
 disp(p_init);

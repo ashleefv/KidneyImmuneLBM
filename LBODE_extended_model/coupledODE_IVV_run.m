@@ -11,6 +11,9 @@ function [Tout, Yout] = coupledODE_IVV_run(tspan, y0, params, p_params, mode, st
     end_time = 20; %weeks
     end_time_h = end_time*7*24;
 
+indexforNumber = 36;
+indexforDiameter = 37;
+
   opts=[];
   %opts = odeset('RelTol',1e-20, 'MaxStep',1e-16);
   intv = "none";
@@ -26,7 +29,7 @@ function [Tout, Yout] = coupledODE_IVV_run(tspan, y0, params, p_params, mode, st
 
     if state == 'diab_mice'
        % Gp = step_function(glu_sampled);
-        for Tt = [start_time_h:1:tspan(end)]
+        for Tt = start_time_h:1:tspan(end)
             if (Tt >= time_lee(1) && Tt <= time_lee(5))
                 GLU_p(Tt,1) = 0.051*(Tt)  - 9.38;
                 %%GLU_p(Tt,1) = -2.994e-05*Tt^2 + 0.08638*Tt - 18.4;
@@ -44,13 +47,11 @@ function [Tout, Yout] = coupledODE_IVV_run(tspan, y0, params, p_params, mode, st
 
 
 if mode == 1
-  
-    purple = [    0.4940    0.1840    0.5560];
 
     %FINCH figure 2 data for time series
     pop_diameter = load("data\dbmice_diameter_population.csv");
     pop_density = load("data\dbmice_density_population.csv");
-    time_g = [start_time_h:1:end_time_h];
+    time_g = start_time_h:1:end_time_h;
 
     % use the FINCH data to determine the standard deviations rather than
     % digitizing the error bars
@@ -70,31 +71,8 @@ if mode == 1
         pop_density_mean(i) = mean(density_at_time);
         pop_density_sd(i) = std(density_at_time);
     end
-    figure(4) 
-    figname = 'Fig4';
-    subplot(2,2,2); box;
-    hold on
-    
-    scatter(pop_time_vector(1), [47.91], 100, 's', 'filled', 'r');
-    hold on 
-    % scatter([6,10,15,20], [50.74, 60.19, 73.65, 74.63], 50, 'filled', 'k')
-    % hold on
-    %errorbar(pop_time_vector, diameter', abs([50.74, 60.19, 73.65, 74.63] - [55.12,63.9,80.48,80]), 'ko', 'MarkerFaceColor', 'k', 'LineWidth', 0.75);
-    errorbar(pop_time_vector, diameter', pop_diameter_sd, 'ko', 'MarkerFaceColor', 'k', 'LineWidth', 0.75);
-
-    hold on
-    scatter(pop_diameter(:,1), pop_diameter(:,2), 'o',  'k')
-    hold on
-    plot(Tout/(24*7), Yout(:,[38]), 'LineWidth', 1.2, 'Color', 'k'); 
-    hold on
-    [ph,msg] = jbfill(time_g/(24*7), credible(:,1,38)', credible(:,2,38)', blue, blue, 1, 0.2);
-    ylabel('Fenestration Diameter (nm)'); xlabel('Time (weeks)')
-%    legend('Model', '95% credible interval', 'Control data', 'Diabetes data', 'Diabetes population')
-    ax = gca;  ax.FontSize = 8;    
-    xlim([0 21])
-    ylim([40 100])
-%     t = title(['Finch et al., JASN (2022)']); t.FontSize = 8;
-
+    figure(40) % single run, not for publication
+    % this figure runs at the output where glu_sampled = GC_conc;
     subplot(2,2,1); box;
     
     hold on 
@@ -109,9 +87,9 @@ if mode == 1
     hold on
     scatter(pop_density(:,1), pop_density(:,2), 'o', 'k')
     hold on
-    plot(Tout/(24*7), Yout(:,37), 'LineWidth', 1.2, 'Color', 'k'); 
+    plot(Tout/(24*7), Yout(:,indexforNumber), 'LineWidth', 1.2, 'Color', 'k'); 
     hold on
-    [ph,msg] = jbfill(time_g/(24*7), credible(:,1,37)', credible(:,2,37)', blue, blue, 1, 0.2);
+    [ph,msg] = jbfill(time_g/(24*7), credible(:,1,indexforNumber+1)', credible(:,2,indexforNumber+1)', blue, blue, 1, 0.2);
     xlabel('Time (weeks)');
     ylabel('Fenestration Number');
     xlim([0 21])
@@ -119,6 +97,28 @@ if mode == 1
     ax = gca;  ax.FontSize = 8;    
 %     t = title(['Finch et al., JASN (2022)']); t.FontSize = 8;
 
+    subplot(2,2,2); box;
+    hold on
+    
+    scatter(pop_time_vector(1), 47.91, 100, 's', 'filled', 'r');
+    hold on 
+    % scatter([6,10,15,20], [50.74, 60.19, 73.65, 74.63], 50, 'filled', 'k')
+    % hold on
+    %errorbar(pop_time_vector, diameter', abs([50.74, 60.19, 73.65, 74.63] - [55.12,63.9,80.48,80]), 'ko', 'MarkerFaceColor', 'k', 'LineWidth', 0.75);
+    errorbar(pop_time_vector, diameter', pop_diameter_sd, 'ko', 'MarkerFaceColor', 'k', 'LineWidth', 0.75);
+
+    hold on
+    scatter(pop_diameter(:,1), pop_diameter(:,2), 'o',  'k')
+    hold on
+    plot(Tout/(24*7), Yout(:,indexforDiameter), 'LineWidth', 1.2, 'Color', 'k'); 
+    hold on
+    [ph,msg] = jbfill(time_g/(24*7), credible(:,1,indexforDiameter+1)', credible(:,2,indexforDiameter+1)', blue, blue, 1, 0.2);
+    ylabel('Fenestration Diameter (nm)'); xlabel('Time (weeks)')
+%    legend('Model', '95% credible interval', 'Control data', 'Diabetes data', 'Diabetes population')
+    ax = gca;  ax.FontSize = 8;    
+    xlim([0 21])
+    ylim([40 100])
+%     t = title(['Finch et al., JASN (2022)']); t.FontSize = 8;
 
     labelstring = {'A', 'B'};
     for v = 1:2
@@ -135,9 +135,7 @@ if mode == 1
     p = [0.5 0.45 0.03 0.03];
     set(h,'Position', p,'Units', 'normalized');
 
-widthInches = 6;
-heightInches = 4.6;
-run('ScriptForExportingImages.m')         
+         
 
 if state == 'diab_mice'
     Gp0 = GLU_p(start_time_h,1);
@@ -147,7 +145,7 @@ if state == 'diab_mice'
     yyaxis left
     co = orderedcolors("gem");
     color5 = co(5, :);
-    plot([start_time_h:length(GLU_p(:,1))]/(24*7), GLU_p(start_time_h:end_time_h,1), 'LineWidth', 1.2, 'Color','k', 'LineStyle','--'); 
+    plot((start_time_h:length(GLU_p(:,1)))/(24*7), GLU_p(start_time_h:end_time_h,1), 'LineWidth', 1.2, 'Color','k', 'LineStyle','--'); 
     %hold on; scatter(time_lee/(7*24), glucose_lee, 'MarkerFaceColor',[0  0  1],'Marker','o','MarkerEdgeColor',[0  0  1])
     glucose_data_Lee_sd = abs(glucose_lee - LB_lee);
     glucose_data_Finch_sd = abs(glu_finch - glu_UB); 
@@ -170,11 +168,7 @@ if state == 'diab_mice'
     % perfect
     rightymin = (leftymin - Gp0) / (max(glu_UB) - Gp0);
     rightymax = (leftymax - Gp0) / (max(glu_UB) - Gp0);
-    % x0=10;
-    % y0=10;
-    % width=800;
-    % height=800;
-    % set(gcf,'position',[x0,y0,width,height])
+
     ax = gca; ax.FontSize = 8;
 
     % abs(glucose_lee - LB_lee), abs(glucose_lee - UB_lee)
@@ -184,7 +178,7 @@ if state == 'diab_mice'
     yyaxis right
     %plot(Tout/(24*7), Yout(:,1), 'k-','LineWidth', 1.2);
     hold on
-    plot([start_time_h:length(GLU_p(:,1))]/(24*7), W_GLU(start_time_h:end_time_h,1), 'LineWidth', 1.2, 'Color','k', 'LineStyle',':')
+    plot((start_time_h:length(GLU_p(:,1)))/(24*7), W_GLU(start_time_h:end_time_h,1), 'LineWidth', 1.2, 'Color','k', 'LineStyle',':')
     ax = gca; ax.FontSize = 8;
     ax.YAxis(2).Color = 'k'; 
     ylabel('Normalized Glucose Units');% xlim([0,22]);
@@ -221,22 +215,15 @@ else
 end
 
 
-var = [1:29, 31:36]; % gap width node not plotted
-fig = figure(51);
+var = 1:37;
+fig = figure(52);
 figname = 'FigB';
 for i=var
-    if i<=29
-     subplot(4,9,i)
+
+     subplot(5,8,i)
      plot(Tout/(24*7), Yout(:,i),'LineWidth', 1.2, 'Color', 'k');
 
      hold on
-    end
-    if i>=31
-     subplot(4,9,i-1)
-     plot(Tout/(24*7), Yout(:,i),'LineWidth', 1.2, 'Color', 'k');
-
-     hold on
-    end
 
      ylabel(params{4}(i))
      %xlabel('Time (weeks)')
@@ -248,7 +235,7 @@ han = axes(fig, 'visible', 'off');
 han.XLabel.Visible = 'on';
 xlabel(han, 'Time (weeks)','FontName','Arial','FontSize',8);
 
-widthInches = 9.5;
+widthInches = 9;
 heightInches = 5;
 run('ScriptForExportingImages.m')    
 

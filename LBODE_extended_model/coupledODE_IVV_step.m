@@ -33,17 +33,17 @@ PLC = 26;
 VEGFa = 27; 
 pJunc = 28; 
 Calcium = 29; 
-GapWidth = 30; 
-ActinR = 31;
-RhoRock = 32;
-MLCK = 33;
-pMLC = 34;
-MLCP = 35;
-MLC = 36;
-FenCount = 37;
-FenDiameter = 38; 
+%GapWidth = 30; 
+ActinR = 30;
+RhoRock = 31;
+MLCK = 32;
+pMLC = 33;
+MLCP = 34;
+MLC = 35;
+FenCount = 36;
+FenDiameter = 37; 
 
-dydt = zeros(38,1); 
+dydt = zeros(37,1); 
 
 rpar = params{1};
 tau = params{2};
@@ -130,7 +130,7 @@ dydt(NFKB) = (OR(AND(rpar(:,6),act(y(IL1R),rpar(:,6)),act(y(ROS),rpar(:,6))),act
 %dydt(NFKB) = (OR(act(y(ROS),rpar(:,7)),act(y(AKT),rpar(:,13)))*ymax(NFKB) - y(NFKB))/tau(NFKB); 
 
 
-dydt(NO) = (OR(act(y(eNOS),rpar(:,31)),act(y(Calcium),rpar(:,39)))*ymax(NO) - y(NO))/tau(NO); %%%(AND(rpar(:,33),act(y(eNOS),rpar(:,33)),act(y(Calcium),rpar(:,33)))*ymax(NO) - y(NO))/tau(NO); % 
+dydt(NO) = (OR(act(y(eNOS),rpar(:,31)),act(y(Calcium),rpar(:,38)))*ymax(NO) - y(NO))/tau(NO); %%%(AND(rpar(:,33),act(y(eNOS),rpar(:,33)),act(y(Calcium),rpar(:,33)))*ymax(NO) - y(NO))/tau(NO); % 
 dydt(ONOO) = (AND(rpar(:,34),act(y(ROSec),rpar(:,34)),act(y(NO),rpar(:,34)))*ymax(ONOO) - y(ONOO))/tau(ONOO); 
 % dydt(NOu) = (y(NO) - AND(rpar(:,35),act(y(ROSec),rpar(:,35)),act(y(NO),rpar(:,35)))*ymax(NOu))/(taus(NOu)) - (y(NOu))/tau(NOu) - (y(NO)*y(ROSec))/tau(NOu) ; 
 
@@ -145,35 +145,24 @@ dydt(VEGFa) = (act(y(VEGFamRNA),rpar(:,16))*ymax(VEGFa) - y(VEGFa))/tau(VEGFa);
 dydt(Calcium) = (OR(inhib(y(NO),rpar(:,35)),act(y(PLC),rpar(:,36)))*ymax(Calcium) - y(Calcium))/tau(Calcium); % calcium oscillations follow glucose oscillations
   
 
-%if W_GLU <= 0.25 
-%    rpar(1,[38,39]) = 0;
-%end
-%elseif W_GLU <= 0.5 && W_GLU > 0
-%    tau_e = 60; %needs to be optimized
-%    dydt(pJunc) = (act(y(Calcium),rpar(:,38))*ymax(pJunc)/(t - tau(pJunc))) - (y(pJunc)/tau_e);
-%    %dydt(GapWidth) = 0; % Change in gap width is not monitored when none of the inputs are above threshold (=0)
 
 dydt(pJunc) = (act(y(Calcium),rpar(:,37))*ymax(pJunc) - y(pJunc))/tau(pJunc);
-dydt(MLCK) = (OR(AND(rpar(:,40),act(y(ROS),rpar(:,40)),inhib(y(NO),rpar(:,40))), act(y(Calcium),rpar(:,41)))*ymax(MLCK) - y(MLCK))/tau(MLCK); 
-dydt(pMLC) = (OR(act(y(RhoRock),rpar(:,42)),AND(rpar(:,46),act(y(MLCK),rpar(:,46)),act(y(MLC),rpar(:,46))))*ymax(pMLC) - y(pMLC))/tau(pMLC); 
+dydt(MLCK) = (OR(AND(rpar(:,39),act(y(ROS),rpar(:,39)),inhib(y(NO),rpar(:,39))), act(y(Calcium),rpar(:,40)))*ymax(MLCK) - y(MLCK))/tau(MLCK); 
+dydt(pMLC) = (OR(act(y(RhoRock),rpar(:,41)),AND(rpar(:,45),act(y(MLCK),rpar(:,45)),act(y(MLC),rpar(:,45))))*ymax(pMLC) - y(pMLC))/tau(pMLC); 
 
-dydt(MLCP) = (inhib(y(RhoRock),rpar(:,45))*ymax(MLCP) - y(MLCP))/tau(MLCP); 
-%dydt(MLCP) = (act(y(RhoRock),rpar(:,46))*ymax(MLCP) - y(MLCP))/tau(MLCP); % healthy state simulation for Fenestration Formation
+dydt(MLCP) = (inhib(y(RhoRock),rpar(:,44))*ymax(MLCP) - y(MLCP))/tau(MLCP); 
+%dydt(MLCP) = (act(y(RhoRock),rpar(:,45))*ymax(MLCP) - y(MLCP))/tau(MLCP); % healthy state simulation for Fenestration Formation
 
-dydt(MLC) = (AND(rpar(:,43),act(y(pMLC),rpar(:,43)),act(y(MLCP),rpar(:,43)))*ymax(MLC) - y(MLC))/tau(MLC); 
-dydt(RhoRock) = (act(y(VEGFR2),rpar(:,44))*ymax(RhoRock) - y(RhoRock))/tau(RhoRock); 
+dydt(MLC) = (AND(rpar(:,42),act(y(pMLC),rpar(:,42)),act(y(MLCP),rpar(:,42)))*ymax(MLC) - y(MLC))/tau(MLC); 
+dydt(RhoRock) = (act(y(VEGFR2),rpar(:,43))*ymax(RhoRock) - y(RhoRock))/tau(RhoRock); 
 
-% Cell Morphological Changes
-dydt(GapWidth) = (act(y(pJunc),rpar(:,38))*ymax(GapWidth) - y(GapWidth))/tau(GapWidth); 
 
-dydt(ActinS) = (act(y(pMLC),rpar(:,47))*ymax(ActinS) - y(ActinS))/tau(ActinS); 
-dydt(ActinR) = (act(y(MLC),rpar(:,48))*ymax(ActinR) - y(ActinR))/tau(ActinR); 
 
-% dydt(FenCount) = 0; %(OR(inhib(y(ActinF),rpar(:,50)),act(y(ActinM),rpar(:,50)))*ymax(FenCount) - y(FenCount))/tau(FenCount); 
-% dydt(FenDiameter) = (act(y(pMLC),rpar(:,2))*ymax(FenDiameter) - y(FenDiameter))/tau(FenDiameter); 
-%yss = 4; kloss = 0.056; kform = 1;
+dydt(ActinS) = (act(y(pMLC),rpar(:,46))*ymax(ActinS) - y(ActinS))/tau(ActinS); 
+dydt(ActinR) = (act(y(MLC),rpar(:,47))*ymax(ActinR) - y(ActinR))/tau(ActinR); 
+
+
 dydt(FenCount) = p_params(3)*y(ActinR)*(abs(p_params(1) - y(FenCount)))^p_params(2) - p_params(6)*(y(ActinS))*(abs(p_params(7) - y(FenCount)))^p_params(2);
-% dydt(FenDiameter) = (1 + y(pMLC)/1.8)*47 - y(FenDiameter); 
 
 y0 = 47.91;
 dydt(FenDiameter) = p_params(4)*(y(pMLC) - 0)^p_params(2) - p_params(5)*(y(FenDiameter) - y0);
@@ -191,7 +180,7 @@ function fact = act(x,rpar)
     beta = (EC50.^n - 1)./(2*EC50.^n - 1); 
     K = (beta - 1).^(1./n); 
     fact = w.*(beta.*x.^n)./(K.^n + x.^n); 
-    if fact> w,                 % cap fact(x)<= 1 
+    if fact> w                 % cap fact(x)<= 1 
         fact = w; 
     end
     
@@ -210,7 +199,7 @@ end
 function z = AND(rpar,varargin) 
 % AND logic gate, multiplying all of the reactants together 
     w = rpar(1); 
-    if w == 0, 
+    if w == 0 
         z = 0; 
     else 
         v = cell2mat(varargin); 
