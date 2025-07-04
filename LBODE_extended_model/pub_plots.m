@@ -41,7 +41,7 @@ size_W = size(W_index, 2);
 % % Fig D (53) and E (53)
 % task = 2; Tstop = end_time_h; % placeholder
 % [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
-% % 
+% 
 % task = 3;
 % if task == 3
 %     Tstop = end_time_h; % Fig G = figure(57) corresponds to 20 weeks
@@ -54,11 +54,11 @@ size_W = size(W_index, 2);
 %     [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
 % end
 
-task = 4;
-% Figs 3, 5
-if task ==4 
-    Tstop = end_time_h; 
-    [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
-end
+% task = 4;
+% % Figs 3, 5
+% if task ==4 
+%     Tstop = end_time_h; 
+%     [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
+% end
 
 end

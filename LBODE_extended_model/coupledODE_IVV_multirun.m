@@ -88,7 +88,7 @@ for i=var
      hold on
      ylabel(params{4}(i))
      %xlabel('Time (week)')
-     ax = gca; ax.FontSize = 8;
+    set(gca,'FontName','Arial','FontSize',8)
 end
 
 % Common x-axis label

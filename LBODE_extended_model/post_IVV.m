@@ -177,7 +177,7 @@ p_d
    er = errorbar(1, mean(s_ctrl_n), std(s_ctrl_n)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2; 
    er = errorbar(2, mean(s_ctrl_db_n), std(s_ctrl_db_n)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;
    er = errorbar(3:8, mean(s_FC(1:Nn,:,indexforNumber)), std(s_FC(1:Nn,:,indexforNumber))); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;  
-   
+   ylim([0 10.5])
    
      callsigstar(2,p_n_data,'k')
      callsigstar(1,p_c_n,'b')
@@ -198,6 +198,7 @@ p_d
      er = errorbar(3:8, mean(s_FC(1:Nn,:,indexforDiameter)),std(s_FC(1:Nn,:,indexforDiameter))); er.Color = 'r';  er.LineStyle = 'none'; er.LineWidth=2; %standard deviation instead of CI as the error
      callsigstar(2,p_d_data,'k')
      callsigstar(1,p_c_d,'b')
+     ylim([0 120])
 
      set(gca,'FontSize',8)
     labelstring = {'A', 'B'};
@@ -394,9 +395,9 @@ if task == 3
     end
 
     figure(NUM); hold on; ax = gca; ax.FontSize = 8;
-    subplot(2,2,1); box; hold on; h=plot(tfull/(24*7), yfull(:,indexforNumber), 'LineWidth', 1.2, 'color', 'k','DisplayName','Baseline'); 
+    subplot(2,2,1); box; hold on; h=plot(tfull/(24*7), yfull(:,indexforNumber), 'LineWidth', 1.2, 'color', 'k','DisplayName','No inhibition'); 
     legendHandles = h;
-    legendNames = {'Baseline'};
+    legendNames = {'No inhibition'};
     
     inhib_knock_n = [1,2,3,5,7,9,11,12,18,19,25,27,31,33]; % 6 ignored
     inhib_prod_n = [46,21,24,16,2,3,18,20,29,41,43];  % 17 ignored
@@ -421,9 +422,9 @@ if task == 3
 
     legend(legendHandles, legendNames, 'Location', 'Eastoutside','fontsize',4)
 
-    subplot(2,2,2); box; hold on; h=plot(tfull/(24*7), yfull(:,indexforNumber), 'LineWidth', 1.2, 'color', 'k','DisplayName','Baseline'); 
+    subplot(2,2,2); box; hold on; h=plot(tfull/(24*7), yfull(:,indexforNumber), 'LineWidth', 1.2, 'color', 'k','DisplayName','No inhibition'); 
     legendHandles = h;
-    legendNames = {'Baseline'};
+    legendNames = {'No inhibition'};
     z_params = params;
     for inh = 1:length(inhib_prod_n)
         %z_params{3}(inhib_knock_n2(inh)) = 2;
@@ -445,9 +446,9 @@ if task == 3
     inhib_prod = [2,3,19,20,29,41,43,15,24,21];
    
     
-    subplot(2,2,3); box; hold on; h=plot(tfull/(24*7), yfull(:,indexforDiameter), 'LineWidth', 1.2, 'color', 'k','DisplayName','Baseline'); 
+    subplot(2,2,3); box; hold on; h=plot(tfull/(24*7), yfull(:,indexforDiameter), 'LineWidth', 1.2, 'color', 'k','DisplayName','No inhibition'); 
     legendHandles = h;
-    legendNames = {'Baseline'};
+    legendNames = {'No inhibition'};
     z_params = params;
     for inh = 1:length(inhib_knock_d)
         z_params{3}(inhib_knock_d(inh)) = 0.5;
@@ -463,9 +464,9 @@ if task == 3
     
     legend(legendHandles, legendNames, 'Location', 'Eastoutside','fontsize',4)
 
-    subplot(2,2,4); box; hold on; h=plot(tfull/(24*7), yfull(:,indexforDiameter), 'LineWidth', 1.2, 'color', 'k','DisplayName','Baseline');  
+    subplot(2,2,4); box; hold on; h=plot(tfull/(24*7), yfull(:,indexforDiameter), 'LineWidth', 1.2, 'color', 'k','DisplayName','No inhibition');  
     legendHandles = h;
-    legendNames = {'Baseline'};
+    legendNames = {'No inhibition'};
     z_params = params;
     for inh = 1:length(inhib_prod)
     z_params{1}(1,inhib_prod(inh)) = 0.5;
@@ -611,7 +612,7 @@ if task == 4
     
     xlabel('Time (weeks)'); xlim([0,21]);
     ylabel('Glucose (mmol/l)'); ylim([0,55]);
-    ax = gca; ax.FontSize = 20;
+    set(gca,'FontName','Arial','FontSize',8)
 
     subplot(1,2,2)
     plot(T/(24*7), mean(GLU_p(start_time_h:end_time_h,:)'), 'LineWidth', 3, 'Color', 'k'); 
@@ -639,7 +640,7 @@ if task == 4
     width=800;
     height=800;
     set(gcf,'position',[x0,y0,width,height])
-    ax = gca; ax.FontSize = 20;
+    set(gca,'FontName','Arial','FontSize',8)
 
 %     subplot(1,2,2); 
 %     plot(T/(24*7), Y(:,1), 'LineWidth', 3, 'Color', 'k');
