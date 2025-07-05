@@ -19,7 +19,7 @@ SP = length(params{3}(:));
 s_FD_Ym = []; s_FD_W = [];
 %% 1: test_knockout
 if task == 1
-    opts=[];
+    opts = odeset(AbsTol=1e-8);
     Nn = 100;
     state = 'diab_mice';
     
@@ -40,7 +40,7 @@ if task == 1
         glu_sampled(i,:) = normrnd(GC_conc(i), sigma_data(i),[1,Nn]); %
     end
     for Nstep = 1:Nn
-        [t, y] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,params,p_params, state, glu_sampled(:,Nstep), intv);
+        [t, y] = ode23s(@coupledODE_IVV_step,tspan,y0,opts,params,p_params, state, glu_sampled(:,Nstep), intv);
         YstepP(Nstep,:) = real(y(end,:));
         %disp(size(YstepP))
     end
@@ -112,7 +112,7 @@ refForModeld =  s_FC(:,1,indexforDiameter);
 
         for Nstep = 1:Nn
             
-            [tn, yn] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,z_params,p_params, state, glu_sampled(:,Nstep), intv);
+            [tn, yn] = ode23s(@coupledODE_IVV_step,tspan,y0,opts,z_params,p_params, state, glu_sampled(:,Nstep), intv);
             YstepP_new(Nstep,:) = real(yn(end,:));
             %fprintf('run %i finished\n', Nstep)
 
@@ -296,10 +296,10 @@ s_FD_W = zeros(SP, RP, 1);
 linest = ["--", "-.", ":", "--", "-.", ":",  "--", "-.", ":", "--", "-.", ":", "--", "-.", ":"];
 
 tspan = start_time_h:end_time_h;
-percent = 50; opts=[];
+percent = 50; opts = odeset(AbsTol=1e-8);
 
 
-[t, y] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,params,p_params, state, GC_conc', intv); 
+[t, y] = ode23s(@coupledODE_IVV_step,tspan,y0,opts,params,p_params, state, GC_conc', intv); 
 y = abs(y);
 
 % Parameter: Ymax
@@ -308,8 +308,8 @@ y = abs(y);
 for m = 1:SP
     params_new = params;
     params_new{3}(m) = 0; %params{3}(m)*(1 + deltaP); % perturb each "Ymax" parameter by a small amount
-    opts = [];
-    [time,dy_model] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,params_new,p_params, state, GC_conc', intv);
+    opts = odeset(AbsTol=1e-8);
+    [time,dy_model] = ode23s(@coupledODE_IVV_step,tspan,y0,opts,params_new,p_params, state, GC_conc', intv);
     
 
     dy_model = real(dy_model);
@@ -332,7 +332,7 @@ for m = 1:RP
     params_new = params;
     params_new{1}(1,m) = 0; %params{1}(1,m)*(1 + deltaP); % perturb each "W" parameter by a small amount
         
-    [time,dy_model] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,params_new,p_params, state, GC_conc', intv);
+    [time,dy_model] = ode23s(@coupledODE_IVV_step,tspan,y0,opts,params_new,p_params, state, GC_conc', intv);
      
     dy_model = real(dy_model);
     
@@ -358,7 +358,9 @@ ax.YDisplayLabels = 'y_{max_i}'; ax.YLabel = {'Normalized % change'; 'in Number'
 set(gca,'FontName','Arial','FontSize',6)
 h1.ColorLimits = [-round(max(abs(x_sorted)),-1), round(max(abs(x_sorted)),-1)];
 h1.Title = 'A';
-
+filtered_sorted_indices = find(abs(x_sorted) > 5);
+original_indices = sortIdx(filtered_sorted_indices);
+numSpeciesSortIdx = original_indices+1;
 
 hcolormap = colMapGen([1 0 0],[0 0 1],50,1);
 % do not consider the GLU input rxn j = 1 because the reaction parameters are undefined
@@ -373,7 +375,9 @@ ax.YDisplayLabels = 'W_j'; ax.YLabel = {'Normalized % change'; 'in Number'; 'rel
 set(gca,'FontName','Arial','FontSize',6)
 h2.Title = 'B';
 h2.ColorLimits = [-round(max(abs(x_sorted)),-1), round(max(abs(x_sorted)),-1)];
-
+filtered_sorted_indices = find(abs(x_sorted) > 5);
+original_indices = sortIdx(filtered_sorted_indices);
+numRxnSortIdx = original_indices+1;
 
 hcolormap = colMapGen([1 0 0],[0 0 1],80,0.5);
 % do not consider the GLU input i = 1 or the responses Number and Diameter i = 36 and 37 because species parameters are undefined
@@ -388,7 +392,9 @@ ax.YDisplayLabels = 'y_{max_i}'; ax.YLabel = {'Normalized % change'; 'in Diamete
 set(gca,'FontName','Arial','FontSize',6)
 h1.Title = 'A';
 h1.ColorLimits = [0, round(max(abs(x_sorted)),-1)];
-
+filtered_sorted_indices = find(abs(x_sorted) > 5);
+original_indices = sortIdx(filtered_sorted_indices);
+diamSpeciesSortIdx = original_indices+1;
 
 hcolormap = colMapGen([1 0 0],[0 0 1],80,0.5);
 % do not consider the GLU input rxn j = 1 because the reaction parameters are undefined
@@ -403,6 +409,9 @@ ax.YDisplayLabels = 'W_j'; ax.YLabel = {'Normalized % change'; 'in Diameter'; 'r
 set(gca,'FontName','Arial','FontSize',6)
 h2.Title = 'B';
 h2.ColorLimits = [0, round(max(abs(x_sorted)),-1)];
+filtered_sorted_indices = find(abs(x_sorted) > 5);
+original_indices = sortIdx(filtered_sorted_indices);
+diamRxnSortIdx = original_indices+1;
 
 figure(55)
 figname = 'FigE';
@@ -414,7 +423,10 @@ figure(56)
 figname = 'FigF';
 widthInches = 5.5;
 heightInches = 4.23;
-run('ScriptForExportingImages.m')     
+run('ScriptForExportingImages.m')
+
+listOfSensSortIdx = {numSpeciesSortIdx,numRxnSortIdx,diamSpeciesSortIdx,diamRxnSortIdx};
+save('data/listOfSensSortIdx.mat','listOfSensSortIdx')
 
 end
 
@@ -426,15 +438,16 @@ if task == 3
     s_FD_Ym = zeros(SP, SP, 1); 
     s_FD_W = zeros(SP, RP, 1);
     
-    linest = ["--", "-.", ":", "--", "-.", ":",  "--", "-.", ":", "--", "-.", ":", "--", "-.", ":"];
+    linest = ["--", "-.", ":", "--", "-.", ":",  "--", "-.", ":", "--", "-.", ":", "--", "-.", ":","--", "-.", ":"];
     
     tspan = start_time_h:1:Tstop;
-    percent = 50; opts=[];
-    
-    [t, y] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,params,p_params, state, GC_conc', intv); 
+    percent = 50; opts = odeset(AbsTol=1e-8);
+    longTfinal = 30; %weeks
+    longTfinal_h = longTfinal*24*7;
+    [t, y] = ode23s(@coupledODE_IVV_step,tspan,y0,opts,params,p_params, state, GC_conc', intv); 
     y = abs(y);
 
-    [tfull, yfull] = ode15s(@coupledODE_IVV_step,[start_time_h:5000],y0,opts,params,p_params, state, GC_conc', intv); 
+    [tfull, yfull] = ode23s(@coupledODE_IVV_step,[start_time_h:longTfinal_h],y0,opts,params,p_params, state, GC_conc', intv); 
     yfull = abs(yfull);
     
     if Tstop/24/7 == 8
@@ -447,27 +460,28 @@ if task == 3
         NUM = 58; % FIG H publication
         figname = 'FigH';
     end
-
+load('data/listOfSensSortIdx.mat','listOfSensSortIdx');
+% {numSpeciesSortIdx,numRxnSortIdx,diamSpeciesSortIdx,diamRxnSortIdx};
     figure(NUM); hold on; ax = gca; ax.FontSize = 8;
     subplot(2,2,1); box; hold on; h=plot(tfull/(24*7), yfull(:,indexforNumber), 'LineWidth', 1.2, 'color', 'k','DisplayName','No inhibition'); 
     legendHandles = h;
     legendNames = {'No inhibition'};
-    
-    inhib_knock_n = [1,2,3,5,7,9,11,12,18,19,25,27,31,33]; % 6 ignored
-    inhib_prod_n = [46,21,24,16,2,3,18,20,29,41,43];  % 17 ignored
+   
+    inhib_knock_n = listOfSensSortIdx{1}; %all: 2:35; %KP list: [1,2,3,5,7,9,11,12,18,19,25,27,31,33]; % 6 ignored
+    inhib_prod_n = listOfSensSortIdx{2}; %all: 2:47; %KP list: [46,21,24,16,2,3,18,20,29,41,43];  % 17 ignored
     % % inhib_knock_n2 = [35,36,31]; %promotes fenestrations
     
-    tnew = Tstop:1:5000;
+    tnew = Tstop:1:longTfinal_h;
     y0(:) = y(end,:);
     z_params = params;
     for inh = 1:length(inhib_knock_n)
         z_params{3}(inhib_knock_n(inh)) = 0.5;
-        [tn, yn] = ode15s(@coupledODE_IVV_step,tnew,y0,opts,z_params,p_params, state, GC_conc', intv); 
+        [tn, yn] = ode23s(@coupledODE_IVV_step,tnew,y0,opts,z_params,p_params, state, GC_conc', intv); 
         yn = abs(yn);
         
        
         name = params{4}(inhib_knock_n(inh));
-        h=plot(tn/(24*7), yn(:,indexforNumber), 'LineWidth', 1.2, 'LineStyle', linest(inh),'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Number');
+        h=plot(tn/(24*7), yn(:,indexforNumber), 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Number');
         legendHandles(end+1) = h;
         legendNames{end+1} = name{1};
 
@@ -482,13 +496,13 @@ if task == 3
     z_params = params;
     for inh = 1:length(inhib_prod_n)
         %z_params{3}(inhib_knock_n2(inh)) = 2;
-        z_params{1}(1,inhib_prod_n(inh)) = 0.5;
-        [tn, yn] = ode15s(@coupledODE_IVV_step,tnew,y0,opts,z_params,p_params, state, GC_conc', intv); 
+        z_params{1}(1,inhib_prod_n(inh)) = 0.5*z_params{1}(1,inhib_prod_n(inh));
+        [tn, yn] = ode23s(@coupledODE_IVV_step,tnew,y0,opts,z_params,p_params, state, GC_conc', intv); 
         yn = abs(yn);
         
         
         name = params{5}(inhib_prod_n(inh));
-        h=plot(tn/(24*7), yn(:,indexforNumber), 'LineWidth', 1.2, 'LineStyle', linest(inh),'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Number');
+        h=plot(tn/(24*7), yn(:,indexforNumber), 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Number');
         legendHandles(end+1) = h;
         legendNames{end+1} = name{1};        
         z_params = params;
@@ -496,8 +510,8 @@ if task == 3
     legend(legendHandles, legendNames, 'Location', 'Eastoutside','fontsize',4)
 
     
-    inhib_knock_d = [1,3,5,6,7,9,11,12,18,19,25,27,31,33]; 
-    inhib_prod = [2,3,19,20,29,41,43,15,24,21];
+    inhib_knock_d = listOfSensSortIdx{3}; % all: 2:35;%KP list: [1,3,5,6,7,9,11,12,18,19,25,27,31,33]; 
+    inhib_prod = listOfSensSortIdx{4}; % all: 2:47;%KP list: [2,3,19,20,29,41,43,15,24,21];
    
     
     subplot(2,2,3); box; hold on; h=plot(tfull/(24*7), yfull(:,indexforDiameter), 'LineWidth', 1.2, 'color', 'k','DisplayName','No inhibition'); 
@@ -506,11 +520,11 @@ if task == 3
     z_params = params;
     for inh = 1:length(inhib_knock_d)
         z_params{3}(inhib_knock_d(inh)) = 0.5;
-        [tn, yn] = ode15s(@coupledODE_IVV_step,tnew,y0,opts,z_params,p_params, state, GC_conc', intv); 
+        [tn, yn] = ode23s(@coupledODE_IVV_step,tnew,y0,opts,z_params,p_params, state, GC_conc', intv); 
         yn = abs(yn);
               
         name = params{4}(inhib_knock_d(inh));
-        h=plot(tn/(24*7), yn(:,indexforDiameter), 'LineWidth', 1.2, 'LineStyle', linest(inh),'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Diameter (nm)');
+        h=plot(tn/(24*7), yn(:,indexforDiameter), 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Diameter (nm)');
         legendHandles(end+1) = h;
         legendNames{end+1} = name{1};
         z_params = params;
@@ -521,18 +535,20 @@ if task == 3
     subplot(2,2,4); box; hold on; h=plot(tfull/(24*7), yfull(:,indexforDiameter), 'LineWidth', 1.2, 'color', 'k','DisplayName','No inhibition');  
     legendHandles = h;
     legendNames = {'No inhibition'};
+
+
     z_params = params;
     for inh = 1:length(inhib_prod)
-    z_params{1}(1,inhib_prod(inh)) = 0.5;
-    [tn, yn] = ode15s(@coupledODE_IVV_step,tnew,y0,opts,z_params,p_params, state, GC_conc', intv); 
-    yn = abs(yn);
-    
-    
-    name = params{5}(inhib_prod(inh));
-    h=plot(tn/(24*7), yn(:,indexforDiameter), 'LineWidth', 1.2, 'LineStyle', linest(inh),'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Diameter (nm)');
-    legendHandles(end+1) = h;
-    legendNames{end+1} = name{1};
-    z_params = params;
+        z_params{1}(1,inhib_prod(inh)) = 0.5*z_params{1}(1,inhib_prod(inh));
+        [tn, yn] = ode23s(@coupledODE_IVV_step,tnew,y0,opts,z_params,p_params, state, GC_conc', intv); 
+        yn = abs(yn);
+        
+        
+        name = params{5}(inhib_prod(inh));
+        h=plot(tn/(24*7), yn(:,indexforDiameter), 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Diameter (nm)');
+        legendHandles(end+1) = h;
+        legendNames{end+1} = name{1};
+        z_params = params;
     end
 
     legend(legendHandles, legendNames, 'Location', 'Eastoutside','fontsize',4)
@@ -553,14 +569,13 @@ if task == 3
 end
 %%  4: Glucose-intervention
 if task == 4
-    opts=[];
+    opts = odeset(AbsTol=1e-8);
     % no intervention step
     intv = 'none';
     t1 = start_time_h:end_time_h;
-    %[T, Y] = ode15s(@coupledODE_IVV_step,t1,y0,opts,params,p_params, state, GC_conc', intv);
+    %[T, Y] = ode23s(@coupledODE_IVV_step,t1,y0,opts,params,p_params, state, GC_conc', intv);
     %Y = real(Y);
 
-    opts=[];
     Nn = 100;
     glu_sampled = zeros(11,Nn);
     rng("twister") % Default random number generator algorithm with seed = 0 to ensure that we generate the same sequence of draws
@@ -580,7 +595,7 @@ if task == 4
     end
     for Nstep = 1:Nn
 
-        [T, Y] = ode15s(@coupledODE_IVV_step,t1,y0,opts,params,p_params, state, glu_sampled(:,Nstep), intv);
+        [T, Y] = ode23s(@coupledODE_IVV_step,t1,y0,opts,params,p_params, state, glu_sampled(:,Nstep), intv);
         YstepP(Nstep,:,:) = real(Y);
         %fprintf('run %i finished\n', Nstep)
 
@@ -603,7 +618,7 @@ if task == 4
 
     % intervention at 4 hours 
     intv = '4h';
-    [T4, Y4] = ode15s(@coupledODE_IVV_step,t1,y0,opts,params,p_params, state, GC_conc', intv);
+    [T4, Y4] = ode23s(@coupledODE_IVV_step,t1,y0,opts,params,p_params, state, GC_conc', intv);
     Y4 = real(Y4);
 
     
@@ -619,10 +634,10 @@ if task == 4
     y0 = Y4(end,:);
     intv = '10h';
     % intervention at 10 hours 
-    [T10, Y10] = ode15s(@coupledODE_IVV_step,t1,y0,opts,params,p_params, state, GC_conc', intv);
+    [T10, Y10] = ode23s(@coupledODE_IVV_step,t1,y0,opts,params,p_params, state, GC_conc', intv);
     Y10 = real(Y10);
 
-    opts=[];
+    opts = odeset(AbsTol=1e-8);
     Nn ;
     glu_sampled = zeros(11,Nn);
     rng("twister") % Default random number generator algorithm with seed = 0 to ensure that we generate the same sequence of draws
@@ -642,7 +657,7 @@ if task == 4
     end
     for Nstep = 1:Nn
 
-        [T10, Y10] = ode15s(@coupledODE_IVV_step,t1,y0,opts,params,p_params, state, glu_sampled(:,Nstep), intv);
+        [T10, Y10] = ode23s(@coupledODE_IVV_step,t1,y0,opts,params,p_params, state, glu_sampled(:,Nstep), intv);
         YstepP10(Nstep,:,:) = real(Y10);
         %fprintf('run %i finished\n', Nstep)
 
