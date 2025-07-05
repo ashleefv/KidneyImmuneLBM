@@ -21,16 +21,24 @@ if mode == 3
     MC = load('data/MC_25_fen_multirun.mat');
     credible = MC.credible;
     opts=[];
-    Nn = 25;
+    Nn = 100;
     if state == 'diab_mice'
-        rng("twister") % Default random number generator algorithm with seed = 0 to ensure that we generate the same sequence of draws
         glu_sampled = zeros(11,Nn);
-
+        rng("twister") % Default random number generator algorithm with seed = 0 to ensure that we generate the same sequence of draws
+        glucose_data_Lee_sd = abs(glucose_lee - LB_lee);
+        glucose_data_Finch_sd = abs(glu_finch - glu_UB); 
+        subsetIdx = find(time_lee>=6*24*7);
+        sigma_data = [glucose_data_Lee_sd(subsetIdx)'  glucose_data_Finch_sd];
+%         for Nstep = 1:Nn
+%             for i = 1:length(GC_time)
+% %                glu_sampled(i,Nstep) = unifrnd(GC_LB(:,i), GC_UB(:,i)); %
+%                 glu_sampled(i,Nstep) = normrnd(GC_conc(:,i), sigma_data(i)); %
+%             end
+        for i = 1:length(GC_time)
+%                glu_sampled(i,Nstep) = unifrnd(GC_LB(:,i), GC_UB(:,i)); %
+            glu_sampled(i,:) = normrnd(GC_conc(i), sigma_data(i),[1,Nn]); %
+        end
         for Nstep = 1:Nn
-            for i = 1:length(GC_time)
-                glu_sampled(i,Nstep) = unifrnd(GC_LB(:,i), GC_UB(:,i)); %
-
-            end
 
             [t, y] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,params,p_params, state, glu_sampled(:,Nstep), intv);
             YstepP(Nstep,:,:) = real(y);
@@ -72,7 +80,6 @@ if mode == 3
     end
 
 time_g = start_time_h:length(GLU_p(:,1));
-
    
 var = 1:37;
 
@@ -83,9 +90,12 @@ figname = 'FigC';
 
 for i=var
      subplot(5,8,i)
-     plot(time_g/(24*7), YstepP(:,:,i),'LineWidth', 1.2);
+     plot(time_g./(24*7), YstepP(1:Nn,:,i),'LineWidth', 1.2);
     
      hold on
+     % for aesthetics make the mean of samples black
+     MEANYstepP(:,i)=mean(YstepP(1:Nn,:,i),1);
+     plot(time_g./(24*7), MEANYstepP(:,i),'LineWidth', 1.2,'Color','k');
      ylabel(params{4}(i))
      %xlabel('Time (week)')
     set(gca,'FontName','Arial','FontSize',8)
@@ -100,6 +110,45 @@ widthInches = 9;
 heightInches = 5;
 run('ScriptForExportingImages.m')   
 
+% reduce YstepP to only the times that correspond to GC_time
+[~, idx] = ismember(GC_time, time_g);
+valid_idx = idx(idx > 0);
+YstepP_GC = YstepP(:, valid_idx, :);
+varsofinterest = [1, indexforNumber, indexforDiameter];
+% varsofinterest vs. time histograms over Nn samples
+for i = varsofinterest
+    fignumber = str2num(['530',num2str(i)]);
+    fig = figure(fignumber);
+    for j=1:length(GC_time)
+        subplot(4,3,j)
+        histogram(YstepP_GC(:,j,i),'LineWidth', 1.2);
+        xlabel(GC_time(j)/24/7)
+        set(gca,'FontName','Arial','FontSize',8)
+        title(params{4}(i))
+    end
+    
+end
+
+fig = figure(531);
+tiledlayout(length(GC_time),length(varsofinterest))
+for j=1:length(GC_time) % rows
+    for i = varsofinterest % columns
+        nexttile
+        histogram(YstepP_GC(:,j,i),'LineWidth', 1.2);
+        if i == 1 % common ylabels on the side of each row
+            ylabel(['Week ' num2str(GC_time(j)/24/7)],'FontWeight', 'bold')
+        end
+        if j == 1 % common titles on the top of each column
+            title(params{4}(i))
+        end
+        set(gca,'FontName','Arial','FontSize',8)
+    end
+
+end
+figname = 'test';
+widthInches = 6;
+heightInches = 9;
+run('ScriptForExportingImages.m')   
 % Figure 4 for multiple glucose sample runs
 %FINCH figure 2 data for time series
     pop_diameter = load("data\dbmice_diameter_population.csv");
@@ -125,8 +174,8 @@ run('ScriptForExportingImages.m')
         pop_density_sd(i) = std(density_at_time);
     end
 
-    figure(4) 
-    figname = 'Fig4';
+    figure(3) 
+    figname = 'Fig3';
     % this figure runs at the output for the mean of the glu_sampled
     % glucose variations
     subplot(2,2,1); box;

@@ -20,25 +20,24 @@ size_W = size(W_index, 2);
 % mode=1;
 % % Figs 2, B (52)
 % [T, Y] = coupledODE_IVV_run(tspan, y0, params, p_params, mode, state, GC_conc');
-% 
+
+
+%% Regulatory plots
+global_p_best = []; p_fitted = []; error_fitted = [];
+mode = 3;
+% Figs 3, C (53), test
+if mode == 3
+    [T, Y] = coupledODE_IVV_multirun(tspan, y0, params, p_params, mode, state, global_p_best, p_fitted, error_fitted);
+end
+
+
+% %% Predictions (Fig - 4, 5, 6, 7, D (54), E (55), F (56), G (57))
 % % 
-% %% Regulatory plots
-% 
-% global_p_best = []; p_fitted = []; error_fitted = [];
-% mode = 3;
-% % Figs 4, C (53)
-% if mode == 3
-%     [T, Y] = coupledODE_IVV_multirun(tspan, y0, params, p_params, mode, state, global_p_best, p_fitted, error_fitted);
-% end
-% 
-% 
-% %% Predictions (Fig - 3, 5, 6, 7, D (54), E (55), F (56), G (57))
-% 
 % % Fig 6 and Table E
 % task = 1; Tstop = end_time_h; % placeholder
 % [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
-
-% % Fig D (53) and E (53)
+% 
+% % Fig D (54) and E (55)
 % task = 2; Tstop = end_time_h; % placeholder
 % [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
 % % 
@@ -53,12 +52,12 @@ size_W = size(W_index, 2);
 %     Tstop = 8*7*24; % Fig 7 corresponds to 8 weeks
 %     [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
 % end
-
-task = 4;
-% Figs 3, 5
-if task ==4 
-    Tstop = end_time_h; 
-    [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
-end
+% 
+% task = 4;
+% % Figs 4, 5
+% if task ==4 
+%     Tstop = end_time_h; 
+%     [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
+% end
 
 end

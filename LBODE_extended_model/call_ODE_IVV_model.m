@@ -94,13 +94,6 @@ if strcmp(step,"plot_step")
 
         end
         if state == 'diab_mice'
-            rng("twister") % Default random number generator algorithm with seed = 0 to ensure that we generate the same sequence of draws
-            glu_sampled = zeros(11,1);
-            glucose_data_Lee_sd = abs(glucose_lee - LB_lee);
-            glucose_data_Finch_sd = abs(glu_finch - glu_UB); 
-            for i = 1:length(GC_time)
-                glu_sampled(i) = unifrnd(GC_LB(:,i), GC_UB(:,i)); 
-            end
             [Time, Ypred] = coupledODE_IVV_run(tspan, y0, params, p_params, mode, state, GC_conc');
         end
     else
@@ -119,8 +112,10 @@ elseif strcmp(step,"Publication_plots")
     glu_sampled = zeros(11,1);
     glucose_data_Lee_sd = abs(glucose_lee - LB_lee);
     glucose_data_Finch_sd = abs(glu_finch - glu_UB); 
+    subsetIdx = find(time_lee>=6*24*7);
+    sigma_data = [glucose_data_Lee_sd(subsetIdx)'  glucose_data_Finch_sd];
     for i = 1:length(GC_time)
-        glu_sampled(i) = unifrnd(GC_LB(:,i), GC_UB(:,i)); % 
+        glu_sampled(i) = normrnd(GC_conc(:,i), sigma_data(i)); %
     end
     pub_plots(tspan, y0, params, p_params, mode, state, glu_sampled, tau_index, k_index, n_index, W_index);
     disp('Main-text figures: {2, 3, 4, 5, 6, 7}. Supplementary figures start with 5 and are {52, 53, 54, 55, 56, 57} for B, C, D, E, F, G, respectively.');
@@ -171,11 +166,6 @@ elseif strcmp(step,"Multistart_NLS")
     mode = 0;
     tau_index = []; W_index = []; n_index = []; k_index = [];
     glu_sampled = GC_conc;
-    % rng("twister") % Default random number generator algorithm with seed = 0 to ensure that we generate the same sequence of draws
-    % glu_sampled = zeros(11,1);
-    % for i = 1:length(GC_time)
-    %         glu_sampled(i) = unifrnd(glu_LB(:,i), glu_UB(:,i)); % 
-    % end
     [global_p_best, p_fitted, error_fitted] = multistart_param_opt(params, y0, tspan, p_params, tau_index, n_index, k_index, W_index, repeats, state, glu_sampled);    
     disp(global_p_best);
 

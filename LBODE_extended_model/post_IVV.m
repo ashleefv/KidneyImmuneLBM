@@ -12,14 +12,6 @@ indexforNumber = 36;
 indexforDiameter = 37;
 
 intv = 'none';
-glu_sampled = zeros(11,1);
-rng("twister") % Default random number generator algorithm with seed = 0 to ensure that we generate the same sequence of draws
-glucose_data_Lee_sd = abs(glucose_lee - LB_lee);
-glucose_data_Finch_sd = abs(glu_finch - glu_UB); 
-for i = 1:length(GC_time)
-           glu_sampled(i) = unifrnd(GC_LB(:,i), GC_UB(:,i)); % 
-end
-
 
 RP = length(params{1}(1,:));
 SP = length(params{3}(:));
@@ -28,19 +20,26 @@ s_FD_Ym = []; s_FD_W = [];
 %% 1: test_knockout
 if task == 1
     opts=[];
-    Nn = 25;
+    Nn = 100;
     state = 'diab_mice';
     
     glu_sampled = zeros(11,Nn);
     rng("twister") % Default random number generator algorithm with seed = 0 to ensure that we generate the same sequence of draws
-        glucose_data_Lee_sd = abs(glucose_lee - LB_lee);
+    glucose_data_Lee_sd = abs(glucose_lee - LB_lee);
     glucose_data_Finch_sd = abs(glu_finch - glu_UB); 
+    subsetIdx = find(time_lee>=6*24*7);
+    sigma_data = [glucose_data_Lee_sd(subsetIdx)'  glucose_data_Finch_sd];
+
+%     for Nstep = 1:Nn
+%         for i = 1:length(GC_time)
+% %             glu_sampled(i,Nstep) = unifrnd(GC_LB(:,i), GC_UB(:,i)); %            
+%             glu_sampled(i,Nstep) = normrnd(GC_conc(:,i), sigma_data(i)); %
+%         end
+    for i = 1:length(GC_time)
+%                glu_sampled(i,Nstep) = unifrnd(GC_LB(:,i), GC_UB(:,i)); %
+        glu_sampled(i,:) = normrnd(GC_conc(i), sigma_data(i),[1,Nn]); %
+    end
     for Nstep = 1:Nn
-        for i = 1:length(GC_time)
-            glu_sampled(i,Nstep) = unifrnd(GC_LB(:,i), GC_UB(:,i)); %
-
-        end
-
         [t, y] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,params,p_params, state, glu_sampled(:,Nstep), intv);
         YstepP(Nstep,:) = real(y(end,:));
         %disp(size(YstepP))
@@ -287,7 +286,7 @@ fclose(fid);
 
 end
 %% 2: LSA-based perturbation
-if task ==2
+if task == 2
 
 % sensitivity coefficient initialization
 % size: length(species), length(params), length(time)
@@ -557,16 +556,24 @@ if task == 4
     %Y = real(Y);
 
     opts=[];
-    Nn = 25;
+    Nn = 100;
     glu_sampled = zeros(11,Nn);
     rng("twister") % Default random number generator algorithm with seed = 0 to ensure that we generate the same sequence of draws
     glucose_data_Lee_sd = abs(glucose_lee - LB_lee);
     glucose_data_Finch_sd = abs(glu_finch - glu_UB); 
-    for Nstep = 1:Nn
-        for i = 1:length(GC_time)
-            glu_sampled(i,Nstep) = unifrnd(GC_LB(:,i), GC_UB(:,i)); %
+    subsetIdx = find(time_lee>=6*24*7);
+    sigma_data = [glucose_data_Lee_sd(subsetIdx)'  glucose_data_Finch_sd];
 
-        end
+%     for Nstep = 1:Nn
+%         for i = 1:length(GC_time)
+% %             glu_sampled(i,Nstep) = unifrnd(GC_LB(:,i), GC_UB(:,i)); %            
+%             glu_sampled(i,Nstep) = normrnd(GC_conc(:,i), sigma_data(i)); %
+%         end
+    for i = 1:length(GC_time)
+%                glu_sampled(i,Nstep) = unifrnd(GC_LB(:,i), GC_UB(:,i)); %
+        glu_sampled(i,:) = normrnd(GC_conc(i), sigma_data(i),[1,Nn]); %
+    end
+    for Nstep = 1:Nn
 
         [T, Y] = ode15s(@coupledODE_IVV_step,t1,y0,opts,params,p_params, state, glu_sampled(:,Nstep), intv);
         YstepP(Nstep,:,:) = real(Y);
@@ -589,11 +596,6 @@ if task == 4
         end
     end
 
-
-    
-    
-    
-
     % intervention at 4 hours 
     intv = '4h';
     [T4, Y4] = ode15s(@coupledODE_IVV_step,t1,y0,opts,params,p_params, state, GC_conc', intv);
@@ -609,8 +611,6 @@ if task == 4
             end
         end
     
-    
-
     y0 = Y4(end,:);
     intv = '10h';
     % intervention at 10 hours 
@@ -623,11 +623,19 @@ if task == 4
     rng("twister") % Default random number generator algorithm with seed = 0 to ensure that we generate the same sequence of draws
     glucose_data_Lee_sd = abs(glucose_lee - LB_lee);
     glucose_data_Finch_sd = abs(glu_finch - glu_UB); 
-    for Nstep = 1:Nn
-        for i = 1:length(GC_time)
-            glu_sampled(i,Nstep) = unifrnd(GC_LB(:,i), GC_UB(:,i)); %
+    subsetIdx = find(time_lee>=6*24*7);
+    sigma_data = [glucose_data_Lee_sd(subsetIdx)'  glucose_data_Finch_sd];
 
-        end
+%     for Nstep = 1:Nn
+%         for i = 1:length(GC_time)
+% %             glu_sampled(i,Nstep) = unifrnd(GC_LB(:,i), GC_UB(:,i)); %            
+%             glu_sampled(i,Nstep) = normrnd(GC_conc(:,i), sigma_data(i)); %
+%         end
+    for i = 1:length(GC_time)
+%                glu_sampled(i,Nstep) = unifrnd(GC_LB(:,i), GC_UB(:,i)); %
+        glu_sampled(i,:) = normrnd(GC_conc(i), sigma_data(i),[1,Nn]); %
+    end
+    for Nstep = 1:Nn
 
         [T10, Y10] = ode15s(@coupledODE_IVV_step,t1,y0,opts,params,p_params, state, glu_sampled(:,Nstep), intv);
         YstepP10(Nstep,:,:) = real(Y10);
@@ -655,8 +663,8 @@ if task == 4
     
  %%   
 
-    figure(3); 
-    figname = 'Fig3';
+    figure(4); 
+    figname = 'Fig4';
 
     Gp0 = GLU_p(start_time_h,1);
     leftymin = 4;
@@ -668,38 +676,42 @@ if task == 4
 
     box;  
     
-    subplot(1,2,1)
-    yyaxis left
-    hold on
+    % subplot(1,2,1)
+    % yyaxis left
+    % hold on
+    % 
+    % set(gca,'FontName','Arial','FontSize',8)
+    % 
+    % % colors = jet(25);
+    % % colororder(colors);
+    % colororder('default');
+    % 
+    % for i = 1:25;%size(GLU_p,2)
+    %     plot(T/(24*7), GLU_p(start_time_h:end_time_h,i), 'LineWidth', 1.2,'LineStyle','-','DisplayName',num2str(i));
+    % end
+    % % % for aesthetics make the mean black
+    % % MEANGLU_p=mean(GLU_p,2);
+    % % h=plot(T/(24*7),  MEANGLU_p, 'LineWidth', 5,'LineStyle','-','Color','k');
+    % % %legend('show', 'NumColumns', 3, 'Location', 'southoutside','FontSize',4);
+    % % h.DisplayName=sprintf('Mean of samples = \nModel: no intervention case')
+    % % legend('show', 'NumColumns', 8,'Location', 'southoutside','FontSize',4);
+    % 
+    % 
+    % ax = gca;
+    % ax.YAxis(1).Color = 'k'; 
+    % hold on;
+    % xlabel('Time (weeks)'); xlim([0,21]);
+    % ylabel('Glucose (mmol/l)'); 
+    % 
+    % ylim([leftymin,leftymax]);
+    % 
+    % yyaxis right
+    % set(gca,'FontName','Arial','FontSize',8)
+    % ylabel('Normalized Glucose Units');
+    % ax.YAxis(2).Color = 'k';    
+    % ylim([rightymin,rightymax]);
 
-    set(gca,'FontName','Arial','FontSize',8)
-    
-    % colors = jet(25);
-    % colororder(colors);
-    colororder('default');
-    
-    for i = 1:size(GLU_p,2)
-        plot(T/(24*7), GLU_p(start_time_h:end_time_h,i), 'LineWidth', 1.2,'DisplayName',num2str(i),'LineStyle','-');
-    end
-    legend('show', 'NumColumns', 3, 'Location', 'southoutside','FontSize',4);
-
-
-    ax = gca;
-    ax.YAxis(1).Color = 'k'; 
-    hold on;
-    xlabel('Time (weeks)'); xlim([0,21]);
-    ylabel('Glucose (mmol/l)'); 
-    
-    ylim([leftymin,leftymax]);
-
-    yyaxis right
-    set(gca,'FontName','Arial','FontSize',8)
-    ylabel('Normalized Glucose Units');
-    ax.YAxis(2).Color = 'k';    
-    ylim([rightymin,rightymax]);
-
-    subplot(1,2,2)
-
+    % subplot(1,2,2)
     yyaxis left
     hold on
     plot(T/(24*7), mean(GLU_p(start_time_h:end_time_h,:)'), 'LineWidth', 1.2, 'Color', 'k'); 
@@ -726,15 +738,15 @@ if task == 4
     ylim([rightymin,rightymax]);
     box on
 
-    labelstring = {'A', 'B'};
-    for v = 1:2
-        subplot(1,2,v)
-        hold on
-        text(-0.15, 1.1, labelstring(v)', 'Units', 'normalized', 'FontWeight', 'bold','FontSize',8)
-        set(gca,'FontName','Arial','FontSize',8)
-    end
+    % labelstring = {'A', 'B'};
+    % for v = 1:2
+    %     subplot(1,2,v)
+    %     hold on
+    %     text(-0.15, 1.1, labelstring(v)', 'Units', 'normalized', 'FontWeight', 'bold','FontSize',8)
+    %     set(gca,'FontName','Arial','FontSize',8)
+    % end
 
-    legend('Model: no intervention case', 'Model: intervention at 4 weeks', 'Model: intervention at 10 weeks', 'Lee et al. (2018)','Finch et al. (2022)','location','southoutside');
+    legend('No intervention', 'Intervention at 4 weeks', 'Intervention at 10 weeks', 'Lee et al. (2018)','Finch et al. (2022)','location','northeast');
     widthInches = 5.5;
     heightInches = 4.23;
     run('ScriptForExportingImages.m')    
@@ -763,27 +775,27 @@ if task == 4
 figure(5);
 figname = 'Fig5';
     subplot(3,3,[1 2]);
-    bar((Ymean(end,2:35) - Ymean(1,2:35)), 'k'); %title('No intervention'); 
+    bar((Ymean(end,2:35) - Ymean(1,2:35)), 'k'); title('No intervention'); 
     xticks(1:34); xticklabels(params{4}(2:35)); ylabel('Change relative to baseline')
     
     subplot(3,3,3)
-    bar((Ymean(end,indexforNumber:indexforDiameter) - Ymean(1,indexforNumber:indexforDiameter)), 'k'); %title('No intervention')
+    bar((Ymean(end,indexforNumber:indexforDiameter) - Ymean(1,indexforNumber:indexforDiameter)), 'k'); title('No intervention')
     xticks(1:2); xticklabels(params{4}(indexforNumber:indexforDiameter)); ylabel('Change relative to baseline')
  
     subplot(3,3,[4,5]);
-    bar((Y4(end,2:35) - Y4(1,2:35)), 'k'); %title('Glucose intervention at 4 weeks'); 
+    bar((Y4(end,2:35) - Y4(1,2:35)), 'k'); title('Intervention at 4 weeks'); 
     xticks(1:34); xticklabels(params{4}(2:35)); ylabel('Change relative to baseline')
     
     subplot(3,3,6)
-    bar((Y4(end,indexforNumber:indexforDiameter) - Y4(1,indexforNumber:indexforDiameter)), 'k'); %title('Glucose intervention at 4 weeks')
+    bar((Y4(end,indexforNumber:indexforDiameter) - Y4(1,indexforNumber:indexforDiameter)), 'k'); title('Intervention at 4 weeks')
     xticks(1:2); xticklabels(params{4}(indexforNumber:indexforDiameter)); ylabel('Change relative to baseline')
     
     subplot(3,3,[7,8]);
-    bar((Ymean10(end,2:35) - Ymean10(1,2:35)), 'k'); %title('Glucose intervention at 10 weeks'); 
+    bar((Ymean10(end,2:35) - Ymean10(1,2:35)), 'k'); title('Intervention at 10 weeks'); 
     xticks(1:34); xticklabels(params{4}(2:35)); ylabel('Change relative to baseline')
     
     subplot(3,3,9)
-    bar((Ymean10(end,indexforNumber:indexforDiameter) - Ymean10(1,indexforNumber:indexforDiameter)), 'k'); %title('Glucose intervention at 10 weeks')
+    bar((Ymean10(end,indexforNumber:indexforDiameter) - Ymean10(1,indexforNumber:indexforDiameter)), 'k'); title('Intervention at 10 weeks')
     xticks(1:2); xticklabels(params{4}(indexforNumber:indexforDiameter)); ylabel('Change relative to baseline')
 
     labelstring = {'A', 'B','C', 'D','E', 'F'};
