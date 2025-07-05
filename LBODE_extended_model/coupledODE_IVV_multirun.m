@@ -129,7 +129,8 @@ for i = varsofinterest
     
 end
 
-fig = figure(531);
+fig = figure(54);
+figname = 'FigD';
 tiledlayout(length(GC_time),length(varsofinterest))
 for j=1:length(GC_time) % rows
     for i = varsofinterest % columns
@@ -145,7 +146,7 @@ for j=1:length(GC_time) % rows
     end
 
 end
-figname = 'test';
+
 widthInches = 6;
 heightInches = 9;
 run('ScriptForExportingImages.m')   

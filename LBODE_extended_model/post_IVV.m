@@ -344,69 +344,74 @@ for m = 1:RP
     end
 end
 
-figure(54); 
+figure(55); 
 hcolormap = colMapGen([1 0 0],[0 0 1],100,1);
+% do not consider the GLU input i = 1 or the responses Number and Diameter i = 36 and 37 because species parameters are undefined
 heatmapdata = real(s_FD_Ym(indexforNumber,2:35,1));
 [x_sorted, sortIdx] = sort(heatmapdata);
-subplot(2,1,1); h1=heatmap(x_sorted, 'Colormap', hcolormap); ax = gca; ax.XDisplayLabels = params{4}(sortIdx); ax.YDisplayLabels = '$y_{max_i}$'; ax.YLabel = {'Normalized % change'; 'in Number'; 'relative to'};
+subplot(2,1,1); h1=heatmap(x_sorted, 'Colormap', hcolormap); 
+ax = gca; ax.Interpreter = 'tex';
+% sortIdx is offset by 1 because heatmap started at 2 to ignore GLU
+ax.XDisplayLabels = params{4}(sortIdx+1); ax.XLabel = 'Species i';
+ax.YDisplayLabels = 'y_{max_i}'; ax.YLabel = {'Normalized % change'; 'in Number'; 'relative to'};
 %params{4}(indexforNumber); 
-set(gca,'FontName','Arial','FontSize',8)
-ax.Interpreter = 'latex';
+set(gca,'FontName','Arial','FontSize',6)
 h1.ColorLimits = [-round(max(abs(x_sorted)),-1), round(max(abs(x_sorted)),-1)];
-ax.Interpreter = 'latex';
 h1.Title = 'A';
 
 
 hcolormap = colMapGen([1 0 0],[0 0 1],50,1);
+% do not consider the GLU input rxn j = 1 because the reaction parameters are undefined
 heatmapdata = real(s_FD_W(indexforNumber,2:47,1));
 [x_sorted, sortIdx] = sort(heatmapdata);
-subplot(2,1,2); h2=heatmap(x_sorted, 'Colormap', hcolormap); ax = gca; ax.XDisplayLabels = params{5}(sortIdx);  ax.YDisplayLabels = '$W_j$'; ax.YLabel = {'Normalized % change'; 'in Number'; 'relative to'};
+subplot(2,1,2); h2=heatmap(x_sorted, 'Colormap', hcolormap); 
+ax = gca; ax.Interpreter = 'tex';
+% sortIdx is offset by 1 because heatmap started at 2 to ignore GLU
+ax.XDisplayLabels = params{5}(sortIdx+1);  ax.XLabel = 'Reaction rules j';
+ax.YDisplayLabels = 'W_j'; ax.YLabel = {'Normalized % change'; 'in Number'; 'relative to'};
 %params{4}(indexforNumber);  
 set(gca,'FontName','Arial','FontSize',6)
-ax.Interpreter = 'latex';
 h2.Title = 'B';
 h2.ColorLimits = [-round(max(abs(x_sorted)),-1), round(max(abs(x_sorted)),-1)];
 
 
 hcolormap = colMapGen([1 0 0],[0 0 1],80,0.5);
-heatmapdata = real(s_FD_Ym(indexforDiameter,2:35,1));
+% do not consider the GLU input i = 1 or the responses Number and Diameter i = 36 and 37 because species parameters are undefined
+heatmapdata = real(s_FD_Ym(indexforDiameter,2:35,1)); 
 [x_sorted, sortIdx] = sort(heatmapdata);
-figure(55); subplot(2,1,1); h1=heatmap(x_sorted, 'Colormap', hcolormap); ax = gca; ax.XDisplayLabels = params{4}(sortIdx); ax.YDisplayLabels = '$y_{max_i}$'; ax.YLabel = {'Normalized % change'; 'in Diameter'; 'relative to'};
+figure(56); subplot(2,1,1); h1=heatmap(x_sorted, 'Colormap', hcolormap); 
+ax = gca; ax.Interpreter = 'tex';
+% sortIdx is offset by 1 because heatmap started at 2 to ignore GLU
+ax.XDisplayLabels = params{4}(sortIdx+1); ax.XLabel = 'Species i';
+ax.YDisplayLabels = 'y_{max_i}'; ax.YLabel = {'Normalized % change'; 'in Diameter'; 'relative to'};
 %params{4}(indexforDiameter)  ; 
-set(gca,'FontName','Arial','FontSize',8)
-ax.Interpreter = 'latex';
+set(gca,'FontName','Arial','FontSize',6)
 h1.Title = 'A';
 h1.ColorLimits = [0, round(max(abs(x_sorted)),-1)];
 
 
 hcolormap = colMapGen([1 0 0],[0 0 1],80,0.5);
+% do not consider the GLU input rxn j = 1 because the reaction parameters are undefined
 heatmapdata = real(s_FD_W(indexforDiameter,2:47,1));
 [x_sorted, sortIdx] = sort(heatmapdata);
-subplot(2,1,2); h2=heatmap(x_sorted, 'Colormap', hcolormap); ax = gca; ax.XDisplayLabels = params{5}(sortIdx);  ax.YDisplayLabels = '$W_j$'; ax.YLabel = {'Normalized % change'; 'in Diameter'; 'relative to'};
+subplot(2,1,2); h2=heatmap(x_sorted, 'Colormap', hcolormap); 
+ax = gca; ax.Interpreter = 'tex';
+% sortIdx is offset by 1 because heatmap started at 2 to ignore GLU
+ax.XDisplayLabels = params{5}(sortIdx+1);  ax.XLabel = 'Reaction rules j';
+ax.YDisplayLabels = 'W_j'; ax.YLabel = {'Normalized % change'; 'in Diameter'; 'relative to'};
 %params{4}(indexforDiameter); 
 set(gca,'FontName','Arial','FontSize',6)
-ax.Interpreter = 'latex';
 h2.Title = 'B';
 h2.ColorLimits = [0, round(max(abs(x_sorted)),-1)];
 
-figure(54)
-figname = 'FigD';
-labelstring = {'A', 'B'};
-% for v = 1:2
-%     subplot(2,1,v)
-%     %hold on
-%     text(-0.1, 1.1, labelstring(v)', 'Units', 'normalized', 'FontWeight', 'bold','FontSize',8)
-% end
+figure(55)
+figname = 'FigE';
 widthInches = 5.5;
 heightInches = 4.23;
 run('ScriptForExportingImages.m')     
 
-figure(55)
-figname = 'FigE';
-% verticalposition = [0.2 0.8];
-% for v = 1:2
-%     text(-0.1, verticalposition(v), labelstring(v)', 'Units', 'normalized', 'FontWeight', 'bold','FontSize',8)
-% end
+figure(56)
+figname = 'FigF';
 widthInches = 5.5;
 heightInches = 4.23;
 run('ScriptForExportingImages.m')     
@@ -436,11 +441,11 @@ if task == 3
         NUM = 7; % FIG 7 publication
         figname = 'Fig7';
     elseif Tstop/24/7 == 10
-        NUM = 56; % FIG F publication
-        figname = 'FigF';
-    elseif Tstop/24/7 == 20
         NUM = 57; % FIG G publication
         figname = 'FigG';
+    elseif Tstop/24/7 == 20
+        NUM = 58; % FIG H publication
+        figname = 'FigH';
     end
 
     figure(NUM); hold on; ax = gca; ax.FontSize = 8;
