@@ -20,7 +20,7 @@ load data/CGM_db.mat
  
 y0(36) = 6.3;
 y0(37) = 47.91;
-tau(33) = 400.5;
+tau(33) = 400.0;
 
 rpar = [w;n;EC50];
 

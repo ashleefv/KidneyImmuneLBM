@@ -1,36 +1,21 @@
 function [p_params] = coupledODE_physParams(state)
 
-if state == "norm_mice"
+if state == "norm_mice" || state == "diab_mice"
 
+% step 1 (formation based parameters only)
+% see recal-param\fenC_step1_global_25.csv
     yss = 7; % unitless
-    nf = 3.99; % unitless
-    kform = 1.013; % 1/hr
-    kd = 65.9; % nm/hr
-    ke = 2.04; % % 1/hr
-    kloss = 4.6; % 1/hr
-    yss2 = 4.02; % unitless
-
-elseif state == "diab_mice"
-
-
-%     yss = 7;
-%     ns = 3.99;
-%     kform = 1.013;
-%     kd = 65.9; 
-%     ke = 2.04;
-%     kloss = 4.6;
-%     yss2 = 4.07;
-
-    yss = 7; % unitless
-    nf = 3.99; % unitless
-    kform = 1.013; % 1/hr
-    kd = 65.9; % nm/hr
-    ke = 2.04; % % 1/hr
-    kloss = 4.6; % 1/hr
+    nf = 4.00; % unitless
+    kform = 1.01; % 1/hr
+%step 2 (other parameters)
+% see recal-param\fen_combined_global_25.csv
+    ks = 65.9; % nm/hr
+    kd = 2.04; % % 1/hr
+    kloss = 4.61; % 1/hr
     yss2 = 4.02; % unitless
 
 end
 
-p_params = [yss, nf, kform, kd, ke, kloss, yss2]; 
+p_params = [yss, nf, kform, ks, kd, kloss, yss2]; 
 
 end

@@ -52,3 +52,7 @@ Thumbs.db
 *.wmv
 
 *~
+# project specific output to ignore
+*.pdf
+*.tiff
+*.tex

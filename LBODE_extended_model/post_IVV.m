@@ -61,6 +61,12 @@ if task == 1
     % we plot 3 additional columns before test_i: healthy data, diabetes
     % data, no treatment
 
+    % These are the posterior distributions of the output fenestration number and diameter based on MC sampling of the parameter posteriors    
+    MC = load('data/MC_25_fen_multirun.mat');
+    Y_param_var = MC.Y_param_var;
+    MC_samplesn = Y_param_var(:,end,indexforNumber+1);
+    MC_samplesd = Y_param_var(:,end,indexforDiameter+1);
+
     % run t-tests for comparison of number and diameter to each of these
     % three columns
     testColumns = 3;
@@ -77,7 +83,13 @@ if task == 1
     %p-values for diameter relative to the healty condition no treatment
     [h, p_c_d(1,offset)] = ttest2(s_ctrl_db_d, s_ctrl_d, 'Alpha', 0.05,'Vartype','unequal');
     
-
+% We have two options for a distribution of samples of simulated untreated
+% fenestration number and diameter. One of the MC_samples* were * is n or d
+% for number and diameter. The second option selected here is the no
+% treatment case sampled over glucose inputs. The latter is closer to the
+% normal distribution that is expected in a t-test, so is used here.
+refForModeln =  s_FC(:,1,indexforNumber);
+refForModeld =  s_FC(:,1,indexforDiameter);
     inh = 0; % no treatment case
         %p-values for number relative to the healty condition no treatment simulation
         [h, p_c_n(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforNumber), s_ctrl_n, 'Alpha', 0.05,'Vartype','unequal');
@@ -88,9 +100,9 @@ if task == 1
         [h, p_n_data(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforNumber), s_ctrl_db_n, 'Alpha', 0.05,'Vartype','unequal');
         %p-values for diameter relative to the diseased condition no treatment DATA
         [h, p_d_data(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforDiameter), s_ctrl_db_d, 'Alpha', 0.05,'Vartype','unequal');
-        [h, p_n(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforNumber), s_FC(:,1,indexforNumber), 'Alpha', 0.05,'Vartype','unequal');
+        [h, p_n(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforNumber), refForModeln, 'Alpha', 0.05,'Vartype','unequal');
         %p-values for diameter relative to the diseased condition no treatment simulation
-        [h, p_d(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforDiameter), s_FC(:,1,indexforDiameter), 'Alpha', 0.05,'Vartype','unequal');
+        [h, p_d(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforDiameter), refForModeld, 'Alpha', 0.05,'Vartype','unequal');
         
        
 
@@ -119,9 +131,9 @@ if task == 1
         [h, p_n_data(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforNumber), s_ctrl_db_n, 'Alpha', 0.05,'Vartype','unequal');
         %p-values for diameter relative to the diseased condition no treatment DATA
         [h, p_d_data(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforDiameter), s_ctrl_db_d, 'Alpha', 0.05,'Vartype','unequal');
-        [h, p_n(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforNumber), s_FC(:,1,indexforNumber), 'Alpha', 0.05,'Vartype','unequal');
+        [h, p_n(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforNumber), refForModeln, 'Alpha', 0.05,'Vartype','unequal');
         %p-values for diameter relative to the diseased condition no treatment simulation
-        [h, p_d(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforDiameter), s_FC(:,1,indexforDiameter), 'Alpha', 0.05,'Vartype','unequal');
+        [h, p_d(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforDiameter), refForModeld, 'Alpha', 0.05,'Vartype','unequal');
         
 
       % %p-values for number relative to the diseased condition no treatment
@@ -162,7 +174,7 @@ p_d
 %      size(s_FC)
      figure(6)
      figname = 'Fig6';
-     subplot(2,1,1); b = bar([mean(s_ctrl_n),mean(s_ctrl_db_n), mean(s_FC(1:Nn,:,indexforNumber))], 'white'); xticks(1:length(test_i)+3); 
+     subplot(2,1,1); b = bar([mean(s_ctrl_n),mean(s_ctrl_db_n), mean(refForModeln), mean(s_FC(1:Nn,2:end,indexforNumber))], 'white'); xticks(1:length(test_i)+3); 
     xticklabels({'Healthy Data', 'Diabetes Data','No Treatment', 'KN93', 'ML7', 'Y27632', 'CalA', 'CytB'}); 
      ylabel('Fenestration Number');
      b.FaceColor = 'flat';
@@ -176,7 +188,8 @@ p_d
    %er = errorbar([2:7], [mean(s_FC([1:Nn],:,indexforNumber))], (CI_number_lb-CI_number_ub)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;  
    er = errorbar(1, mean(s_ctrl_n), std(s_ctrl_n)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2; 
    er = errorbar(2, mean(s_ctrl_db_n), std(s_ctrl_db_n)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;
-   er = errorbar(3:8, mean(s_FC(1:Nn,:,indexforNumber)), std(s_FC(1:Nn,:,indexforNumber))); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;  
+   er = errorbar(3, mean(refForModeln), std(refForModeln)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;    
+   er = errorbar(4:8, mean(s_FC(1:Nn,2:end,indexforNumber)), std(s_FC(1:Nn,2:end,indexforNumber))); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;  
    ylim([0 10.5])
    
      callsigstar(2,p_n_data,'k')
@@ -184,7 +197,7 @@ p_d
 
      set(gca,'FontSize',8)
 
-     figure(6); subplot(2,1,2); B = bar([mean(s_ctrl_d), mean(s_ctrl_db_d), mean(s_FC([1:Nn],:,indexforDiameter))], 'white'); xticks([1:length(test_i)+3]); xticklabels({'Healthy Data', 'Diabetes Data','No Treatment', 'KN93', 'ML7', 'Y27632', 'CalA', 'CytB'});  ylabel('Fenestration Diameter (nm)')
+     figure(6); subplot(2,1,2); B = bar([mean(s_ctrl_d), mean(s_ctrl_db_d), mean(refForModeld), mean(s_FC(1:Nn,2:end,indexforDiameter))], 'white'); xticks([1:length(test_i)+3]); xticklabels({'Healthy Data', 'Diabetes Data','No Treatment', 'KN93', 'ML7', 'Y27632', 'CalA', 'CytB'});  ylabel('Fenestration Diameter (nm)')
      B.FaceColor = 'flat';
      B.CData(1,:) = [0 0 1];
      B.CData(2,:) = [0 0 0];
@@ -195,7 +208,8 @@ p_d
      hold on;  %er = errorbar([2:7], [mean(s_FC([1:Nn],:,indexforDiameter))], (CI_diameter_lb - CI_diameter_ub)); er.Color = 'r';  er.LineStyle = 'none'; er.LineWidth=2; 
      er = errorbar(1, mean(s_ctrl_d), std(s_ctrl_d)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;  
      er = errorbar(2, mean(s_ctrl_db_d), std(s_ctrl_db_d)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;
-     er = errorbar(3:8, mean(s_FC(1:Nn,:,indexforDiameter)),std(s_FC(1:Nn,:,indexforDiameter))); er.Color = 'r';  er.LineStyle = 'none'; er.LineWidth=2; %standard deviation instead of CI as the error
+     er = errorbar(3, mean(refForModeld), std(refForModeld)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2; 
+     er = errorbar(4:8, mean(s_FC(1:Nn,2:end,indexforDiameter)),std(s_FC(1:Nn,2:end,indexforDiameter))); er.Color = 'r';  er.LineStyle = 'none'; er.LineWidth=2; %standard deviation instead of CI as the error
      callsigstar(2,p_d_data,'k')
      callsigstar(1,p_c_d,'b')
      ylim([0 120])
@@ -305,16 +319,12 @@ for m = 1:SP
     
     
     for l = 1:size(dy_modelR,2)
-        s_FD_Ym(l,m,:) = (dy_modelR(end,l) - y(end,l))/(params_new{3}(m) - params{3}(m)); %/(percent*1e-2); % at 20 weeks
+        s_FD_Ym(l,m,:) = (dy_modelR(end,l) - y(end,l))/(params_new{3}(m) - params{3}(m))* params{3}(m)/y(end,l)*100; %/(percent*1e-2); % at 20 weeks
     end
 %     figure(2);
 %     subplot(5,7,m);
 %     plot(time/(24*7), dy_modelR(:,indexforNumber)); hold on; legend(params{4}(m))
 end
-figure(54); subplot(2,1,1); h1=heatmap(real(s_FD_Ym(indexforNumber,2:35,1)), 'Colormap', jet); ax = gca; ax.XData = params{4}(2:35); ax.YData = params{4}(indexforNumber)  ; set(gca,'FontName','Arial','FontSize',8)
-h1.Title = 'A';
-figure(55); subplot(2,1,1); h1=heatmap(real(s_FD_Ym(indexforDiameter,2:35,1)), 'Colormap', jet); ax = gca; ax.XData = params{4}(2:35); ax.YData = params{4}(indexforDiameter)  ; set(gca,'FontName','Arial','FontSize',8)
-h1.Title = 'A';
 
 
 %%
@@ -331,14 +341,54 @@ for m = 1:RP
     dy_modelR = real(dy_model);
     
     for l = 1:size(dy_modelR,2)
-        s_FD_W(l,m,:) = ((dy_modelR(end,l)) - y(end,l))/(params_new{1}(1,m) - params{1}(1,m)); %/(percent*1e-2); % difference in values at 20 weeks
+        s_FD_W(l,m,:) = ((dy_modelR(end,l)) - y(end,l))/(params_new{1}(1,m) - params{1}(1,m))* params{1}(1,m)/y(end,l)*100; %/(percent*1e-2); % difference in values at 20 weeks
     end
 end
 
-figure(54); subplot(2,1,2); h2=heatmap(real(s_FD_W(indexforNumber,2:47,1)), 'Colormap', jet); ax = gca; ax.XData = params{5}(2:47);  ax.YData = params{4}(indexforNumber);  set(gca,'FontName','Arial','FontSize',8)
+figure(54); 
+hcolormap = colMapGen([1 0 0],[0 0 1],100,1);
+heatmapdata = real(s_FD_Ym(indexforNumber,2:35,1));
+[x_sorted, sortIdx] = sort(heatmapdata);
+subplot(2,1,1); h1=heatmap(x_sorted, 'Colormap', hcolormap); ax = gca; ax.XDisplayLabels = params{4}(sortIdx); ax.YDisplayLabels = '$y_{max_i}$'; ax.YLabel = {'Normalized % change'; 'in Number'; 'relative to'};
+%params{4}(indexforNumber); 
+set(gca,'FontName','Arial','FontSize',8)
+ax.Interpreter = 'latex';
+h1.ColorLimits = [-round(max(abs(x_sorted)),-1), round(max(abs(x_sorted)),-1)];
+ax.Interpreter = 'latex';
+h1.Title = 'A';
+
+
+hcolormap = colMapGen([1 0 0],[0 0 1],50,1);
+heatmapdata = real(s_FD_W(indexforNumber,2:47,1));
+[x_sorted, sortIdx] = sort(heatmapdata);
+subplot(2,1,2); h2=heatmap(x_sorted, 'Colormap', hcolormap); ax = gca; ax.XDisplayLabels = params{5}(sortIdx);  ax.YDisplayLabels = '$W_j$'; ax.YLabel = {'Normalized % change'; 'in Number'; 'relative to'};
+%params{4}(indexforNumber);  
+set(gca,'FontName','Arial','FontSize',6)
+ax.Interpreter = 'latex';
 h2.Title = 'B';
-figure(55); subplot(2,1,2); h2=heatmap(real(s_FD_W(indexforDiameter,2:47,1)), 'Colormap', jet); ax = gca; ax.XData = params{5}(2:47);  ax.YData = params{4}(indexforDiameter); set(gca,'FontName','Arial','FontSize',8)
+h2.ColorLimits = [-round(max(abs(x_sorted)),-1), round(max(abs(x_sorted)),-1)];
+
+
+hcolormap = colMapGen([1 0 0],[0 0 1],80,0.5);
+heatmapdata = real(s_FD_Ym(indexforDiameter,2:35,1));
+[x_sorted, sortIdx] = sort(heatmapdata);
+figure(55); subplot(2,1,1); h1=heatmap(x_sorted, 'Colormap', hcolormap); ax = gca; ax.XDisplayLabels = params{4}(sortIdx); ax.YDisplayLabels = '$y_{max_i}$'; ax.YLabel = {'Normalized % change'; 'in Diameter'; 'relative to'};
+%params{4}(indexforDiameter)  ; 
+set(gca,'FontName','Arial','FontSize',8)
+ax.Interpreter = 'latex';
+h1.Title = 'A';
+h1.ColorLimits = [0, round(max(abs(x_sorted)),-1)];
+
+
+hcolormap = colMapGen([1 0 0],[0 0 1],80,0.5);
+heatmapdata = real(s_FD_W(indexforDiameter,2:47,1));
+[x_sorted, sortIdx] = sort(heatmapdata);
+subplot(2,1,2); h2=heatmap(x_sorted, 'Colormap', hcolormap); ax = gca; ax.XDisplayLabels = params{5}(sortIdx);  ax.YDisplayLabels = '$W_j$'; ax.YLabel = {'Normalized % change'; 'in Diameter'; 'relative to'};
+%params{4}(indexforDiameter); 
+set(gca,'FontName','Arial','FontSize',6)
+ax.Interpreter = 'latex';
 h2.Title = 'B';
+h2.ColorLimits = [0, round(max(abs(x_sorted)),-1)];
 
 figure(54)
 figname = 'FigD';

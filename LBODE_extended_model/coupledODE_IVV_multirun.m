@@ -218,8 +218,8 @@ GB = params;
 pPh = p_params;
 
 
-pPh(4) = global_p_best(:,1); % kd
-pPh(5) = global_p_best(:,2); % ke
+pPh(4) = global_p_best(:,1); % ks
+pPh(5) = global_p_best(:,2); % kd
 GB{2}(33) = global_p_best(:,3); % tau 33
 pPh(6) = global_p_best(:,4); % kloss
 pPh(7) = global_p_best(:,5); % N_ss2
@@ -251,7 +251,7 @@ end
 disp('Starting Monte Carlo Simulations ...')
 
 p_posterior = sorted_Params_error(accep_id,2:end); % acceptable parameters within 1.2*min(SSE)
-Ns = 1000; % number of samples
+Ns = 100; % number of samples
 
 population = zeros(1,length(global_p_best));         % initialize population
 
@@ -293,14 +293,13 @@ for j = 1:length(params{2}(:))
         credible(t,:,j) = quantile(abs(Y_param_var(:,t,j)), [0.025 0.975]);  % diameter
         Yp_mean(t,j) = mean(abs(Y_param_var(:,t,j)));
     end
-%save('data/MC_25_fen_multirun.mat','credible')
+%save('data/MC_25_fen_multirun.mat')
 %note that this was last saved when we had one more variable in a legacy
 %model. Rather than rerunning this time-intensive MC simulation, we simple
 %reuse the previously generated credible intervals matrix credible from 
 %data/MC_25_fen_multirun.mat and offset indexforDiameter and indexforNumber 
 %to account for the legacy variable, which doesn't impact the calculations 
-%for anything else in the model. Also the old mat stored everything in the
-%workspace, not just credible
+%for anything else in the model. 
 end
 
 %%

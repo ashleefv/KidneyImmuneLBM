@@ -38,21 +38,21 @@ size_W = size(W_index, 2);
 % task = 1; Tstop = end_time_h; % placeholder
 % [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
 
-% % Fig D (53) and E (53)
-% task = 2; Tstop = end_time_h; % placeholder
-% [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
+% Fig D (53) and E (53)
+task = 2; Tstop = end_time_h; % placeholder
+[s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
 % 
-% task = 3;
-% if task == 3
-%     Tstop = end_time_h; % Fig G = figure(57) corresponds to 20 weeks
-%     [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
-% 
-%     Tstop = 10*7*24; % Fig F = figure(56) corresponds to 10 weeks
-%     [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
-% 
-%     Tstop = 8*7*24; % Fig 7 corresponds to 8 weeks
-%     [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
-% end
+task = 3;
+if task == 3
+    Tstop = end_time_h; % Fig G = figure(57) corresponds to 20 weeks
+    [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
+
+    Tstop = 10*7*24; % Fig F = figure(56) corresponds to 10 weeks
+    [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
+
+    Tstop = 8*7*24; % Fig 7 corresponds to 8 weeks
+    [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
+end
 
 % task = 4;
 % % Figs 3, 5
