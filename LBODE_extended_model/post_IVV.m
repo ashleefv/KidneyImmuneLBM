@@ -570,7 +570,7 @@ if task == 4
 
         [T, Y] = ode15s(@coupledODE_IVV_step,t1,y0,opts,params,p_params, state, glu_sampled(:,Nstep), intv);
         YstepP(Nstep,:,:) = real(Y);
-        fprintf('run %i finished\n', Nstep)
+        %fprintf('run %i finished\n', Nstep)
 
     end
 
@@ -631,7 +631,7 @@ if task == 4
 
         [T10, Y10] = ode15s(@coupledODE_IVV_step,t1,y0,opts,params,p_params, state, glu_sampled(:,Nstep), intv);
         YstepP10(Nstep,:,:) = real(Y10);
-        fprintf('run %i finished\n', Nstep)
+        %fprintf('run %i finished\n', Nstep)
 
     end
 
@@ -655,42 +655,90 @@ if task == 4
     
  %%   
 
-    figure(3); box;  
-    subplot(1,2,1)
-    plot(T/(24*7), GLU_p(start_time_h:end_time_h,:), 'LineWidth', 1.5); hold on;
-    hold on;
+    figure(3); 
+    figname = 'Fig3';
+
+    Gp0 = GLU_p(start_time_h,1);
+    leftymin = 4;
+    leftymax = 55;
+    % need to convert the y axis to normalized units to get the scaling
+    % perfect
+    rightymin = (leftymin - Gp0) / (max(glu_UB) - Gp0);
+    rightymax = (leftymax - Gp0) / (max(glu_UB) - Gp0);
+
+    box;  
     
-    xlabel('Time (weeks)'); xlim([0,21]);
-    ylabel('Glucose (mmol/l)'); ylim([0,55]);
+    subplot(1,2,1)
+    yyaxis left
+    hold on
+
     set(gca,'FontName','Arial','FontSize',8)
+    
+    % colors = jet(25);
+    % colororder(colors);
+    colororder('default');
+    
+    for i = 1:size(GLU_p,2)
+        plot(T/(24*7), GLU_p(start_time_h:end_time_h,i), 'LineWidth', 1.2,'DisplayName',num2str(i),'LineStyle','-');
+    end
+    legend('show', 'NumColumns', 3, 'Location', 'southoutside','FontSize',4);
+
+
+    ax = gca;
+    ax.YAxis(1).Color = 'k'; 
+    hold on;
+    xlabel('Time (weeks)'); xlim([0,21]);
+    ylabel('Glucose (mmol/l)'); 
+    
+    ylim([leftymin,leftymax]);
+
+    yyaxis right
+    set(gca,'FontName','Arial','FontSize',8)
+    ylabel('Normalized Glucose Units');
+    ax.YAxis(2).Color = 'k';    
+    ylim([rightymin,rightymax]);
 
     subplot(1,2,2)
-    plot(T/(24*7), mean(GLU_p(start_time_h:end_time_h,:)'), 'LineWidth', 3, 'Color', 'k'); 
-    hold on; scatter(time_finch/(7*24), glu_finch, 'MarkerFaceColor',[1 0 0],'Marker','^','Color',[1 0 0])
-    hold on; errorbar(time_finch/(7*24), glu_finch, abs(glu_finch - glu_LB), abs(glu_finch - glu_UB), '^', 'Color',[1  0  0]);
-    hold on; scatter(time_lee/(7*24), glucose_lee, 'MarkerFaceColor',[0  0  1],'Marker','o','Color',[0  0  1])
-    hold on; errorbar(time_lee/(7*24), glucose_lee, abs(glucose_lee - LB_lee), abs(glucose_lee - UB_lee), 'o', 'Color',[0  0  1]);
-    
-%     hold on
-%     jbfill([start_time_h:end_time_h]/24/7, min(GLU_p([start_time_h:end_time_h],:)'), max(GLU_p([start_time_h:end_time_h],:)'), [.7 .7 .7], [.7 .7 .7], 1, 0.2);
-    hold on
-    plot(T4/(24*7), GLU_p4(start_time_h:end_time_h,1), 'LineWidth', 3, 'Color', 'k', 'LineStyle', ':'); 
-    hold on;
-    plot(T10/(24*7), mean(GLU_p10(start_time_h:end_time_h,:)'), 'LineWidth', 3, 'Color', [0.7 0.7 0.7], 'LineStyle', '--'); 
 
+    yyaxis left
+    hold on
+    plot(T/(24*7), mean(GLU_p(start_time_h:end_time_h,:)'), 'LineWidth', 1.2, 'Color', 'k'); 
+    plot(T4/(24*7), GLU_p4(start_time_h:end_time_h,1), 'LineWidth', 1.2, 'Color', 'k', 'LineStyle', ':'); 
+    plot(T10/(24*7), mean(GLU_p10(start_time_h:end_time_h,:)'), 'LineWidth', 1.2, 'Color', [0.7 0.7 0.7], 'LineStyle', '--'); 
+    glucose_data_Lee_sd = abs(glucose_lee - LB_lee);
+    glucose_data_Finch_sd = abs(glu_finch - glu_UB); 
+    hold on; errorbar(time_lee/(7*24), glucose_lee, glucose_data_Lee_sd, 'o', 'Color',[0  0  1],'MarkerFaceColor',[0  0  1]);
+    hold on; errorbar(time_finch/(7*24), glu_finch, glucose_data_Finch_sd, '^', 'Color',[1 0 0],'MarkerFaceColor',[1 0 0]);
+
+    set(gca,'FontName','Arial','FontSize',8)
+    ax = gca;
+    ax.YAxis(1).Color = 'k'; 
     hold on;
     xlabel('Time (weeks)'); xlim([0,21]);
-    ylabel('Glucose (mmol/l)'); ylim([0,55]);
-    ax = gca; ax.FontSize = 20;
-    hold on
-    legend('Model (no intervention)', 'Finch et al. (2022)', '', 'Lee et al. (2018)', '',  'intervention at 4 weeks', 'intervention at 10 weeks');
-    ylim([0,52]);
-    x0=10;
-    y0=10;
-    width=800;
-    height=800;
-    set(gcf,'position',[x0,y0,width,height])
+    ylabel('Glucose (mmol/l)'); 
+    
+    ylim([leftymin,leftymax]);
+
+    yyaxis right
     set(gca,'FontName','Arial','FontSize',8)
+    ylabel('Normalized Glucose Units');
+    ax.YAxis(2).Color = 'k';    
+    ylim([rightymin,rightymax]);
+    box on
+
+    labelstring = {'A', 'B'};
+    for v = 1:2
+        subplot(1,2,v)
+        hold on
+        text(-0.15, 1.1, labelstring(v)', 'Units', 'normalized', 'FontWeight', 'bold','FontSize',8)
+        set(gca,'FontName','Arial','FontSize',8)
+    end
+
+    legend('Model: no intervention case', 'Model: intervention at 4 weeks', 'Model: intervention at 10 weeks', 'Lee et al. (2018)','Finch et al. (2022)','location','southoutside');
+    widthInches = 5.5;
+    heightInches = 4.23;
+    run('ScriptForExportingImages.m')    
+
 
 %     subplot(1,2,2); 
 %     plot(T/(24*7), Y(:,1), 'LineWidth', 3, 'Color', 'k');
@@ -714,40 +762,51 @@ if task == 4
 %%
 figure(5);
 figname = 'Fig5';
-    subplot(3,2,1);
-    bar((Ymean(end,2:35) - Ymean(1,2:35)), 'k'); title('No intervention'); 
+    subplot(3,3,[1 2]);
+    bar((Ymean(end,2:35) - Ymean(1,2:35)), 'k'); %title('No intervention'); 
     xticks(1:34); xticklabels(params{4}(2:35)); ylabel('Change relative to baseline')
     
-    subplot(3,2,2)
-    bar((Ymean(end,indexforNumber:indexforDiameter) - Ymean(1,indexforNumber:indexforDiameter)), 'k'); title('No intervention')
+    subplot(3,3,3)
+    bar((Ymean(end,indexforNumber:indexforDiameter) - Ymean(1,indexforNumber:indexforDiameter)), 'k'); %title('No intervention')
     xticks(1:2); xticklabels(params{4}(indexforNumber:indexforDiameter)); ylabel('Change relative to baseline')
  
-    subplot(3,2,3);
-    bar((Y4(end,2:35) - Y4(1,2:35)), 'k'); title('Glucose intervention at 4 weeks'); 
+    subplot(3,3,[4,5]);
+    bar((Y4(end,2:35) - Y4(1,2:35)), 'k'); %title('Glucose intervention at 4 weeks'); 
     xticks(1:34); xticklabels(params{4}(2:35)); ylabel('Change relative to baseline')
     
-    subplot(3,2,4)
-    bar((Y4(end,indexforNumber:indexforDiameter) - Y4(1,indexforNumber:indexforDiameter)), 'k'); title('Glucose intervention at 4 weeks')
+    subplot(3,3,6)
+    bar((Y4(end,indexforNumber:indexforDiameter) - Y4(1,indexforNumber:indexforDiameter)), 'k'); %title('Glucose intervention at 4 weeks')
     xticks(1:2); xticklabels(params{4}(indexforNumber:indexforDiameter)); ylabel('Change relative to baseline')
     
-    subplot(3,2,5);
-    bar((Ymean10(end,2:35) - Ymean10(1,2:35)), 'k'); title('Glucose intervention at 10 weeks'); 
+    subplot(3,3,[7,8]);
+    bar((Ymean10(end,2:35) - Ymean10(1,2:35)), 'k'); %title('Glucose intervention at 10 weeks'); 
     xticks(1:34); xticklabels(params{4}(2:35)); ylabel('Change relative to baseline')
     
-    subplot(3,2,6)
-    bar((Ymean10(end,indexforNumber:indexforDiameter) - Ymean10(1,indexforNumber:indexforDiameter)), 'k'); title('Glucose intervention at 10 weeks')
+    subplot(3,3,9)
+    bar((Ymean10(end,indexforNumber:indexforDiameter) - Ymean10(1,indexforNumber:indexforDiameter)), 'k'); %title('Glucose intervention at 10 weeks')
     xticks(1:2); xticklabels(params{4}(indexforNumber:indexforDiameter)); ylabel('Change relative to baseline')
 
     labelstring = {'A', 'B','C', 'D','E', 'F'};
-    for v = 1:6
-        subplot(3,2,v)
-        hold on
-        text(-0.1, 1.1, labelstring(v)', 'Units', 'normalized', 'FontWeight', 'bold','FontSize',8)
-        set(gca,'FontName','Arial','FontSize',8)
+    label_iterator = 0;
+    for v = 1:9
+        if mod(v,3) == 1
+            subplot(3,3,[v v+1]);
+            hold on
+        
+            label_iterator = label_iterator+1;
+            text(-0.1, 1.1, labelstring(label_iterator)', 'Units', 'normalized', 'FontWeight', 'bold','FontSize',8)
+            set(gca,'FontName','Arial','FontSize',4)
+        elseif mod(v,3) == 0
+            subplot(3,3,v)
+            hold on
+            label_iterator = label_iterator+1;
+            text(-0.1, 1.1, labelstring(label_iterator)', 'Units', 'normalized', 'FontWeight', 'bold','FontSize',8)
+            set(gca,'FontName','Arial','FontSize',4)      
+        end
     end
 
     widthInches = 5.5;
-    heightInches = 4.23;
+    heightInches = 5.5;
     run('ScriptForExportingImages.m')   
 end
 

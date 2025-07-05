@@ -143,8 +143,6 @@ if state == 'diab_mice'
     figure(2)
     figname = 'Fig2';
     yyaxis left
-    co = orderedcolors("gem");
-    color5 = co(5, :);
     plot((start_time_h:length(GLU_p(:,1)))/(24*7), GLU_p(start_time_h:end_time_h,1), 'LineWidth', 1.2, 'Color','k', 'LineStyle','--'); 
     %hold on; scatter(time_lee/(7*24), glucose_lee, 'MarkerFaceColor',[0  0  1],'Marker','o','MarkerEdgeColor',[0  0  1])
     glucose_data_Lee_sd = abs(glucose_lee - LB_lee);

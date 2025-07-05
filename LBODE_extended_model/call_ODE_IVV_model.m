@@ -123,7 +123,7 @@ elseif strcmp(step,"Publication_plots")
         glu_sampled(i) = unifrnd(GC_LB(:,i), GC_UB(:,i)); % 
     end
     pub_plots(tspan, y0, params, p_params, mode, state, glu_sampled, tau_index, k_index, n_index, W_index);
-    disp('Main-text figures: {2, 3, 4, 5, 6, 7}. 5upplementary figures start with 5 and are {52, 53, 54, 55, 56, 57} for B, C, D, E, F, G, respectively.');
+    disp('Main-text figures: {2, 3, 4, 5, 6, 7}. Supplementary figures start with 5 and are {52, 53, 54, 55, 56, 57} for B, C, D, E, F, G, respectively.');
 
 elseif strcmp(step, "Predictions")
     disp('1: test_knockout, 2: LSA-based perturbation, 3: time-dependent intervention, 4: Glucose-intervention')
