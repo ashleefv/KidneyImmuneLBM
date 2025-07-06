@@ -438,13 +438,15 @@ if task == 3
     s_FD_Ym = zeros(SP, SP, 1); 
     s_FD_W = zeros(SP, RP, 1);
     
-    linest = ["--", "-.", ":", "--", "-.", ":",  "--", "-.", ":", "--", "-.", ":", "--", "-.", ":","--", "-.", ":"];
+    linest = ["--", "-.", ":", "--", "-.", ":",  "--", "-.", ":", "--", "-.", ":", "--", "-.", ":","--", "-.", ":",...
+              "--", "-.", ":", "--", "-.", ":",  "--", "-.", ":", "--", "-.", ":", "--", "-.", ":","--", "-.", ":",...
+              "--", "-.", ":", "--", "-.", ":",  "--", "-.", ":", "--", "-.", ":", "--", "-.", ":","--", "-.", ":"];
     
     tspan = start_time_h:1:Tstop;
     percent = 50; 
     opts = odeset(AbsTol=1e-8,RelTol=1e-6);
     % In this task we use ode23s and stricter than default ode tolerances to provide more stability when the
-    % perturbation cause discontinuities in parameters at differen times
+    % perturbation cause discontinuities in sensitive parameters at different times
     longTfinal = 30; %weeks
     longTfinal_h = longTfinal*24*7;
     [t, y] = ode23s(@coupledODE_IVV_step,tspan,y0,opts,params,p_params, state, GC_conc', intv); 
@@ -569,6 +571,139 @@ load('data/listOfSensSortIdx.mat','listOfSensSortIdx');
     heightInches = 5.5;
     run('ScriptForExportingImages.m')   
 
+    %% Repeat task 2 for non-sensitive parameters
+        tspan = start_time_h:1:Tstop;
+    percent = 50; 
+    opts = [];%odeset(AbsTol=1e-8,RelTol=1e-6);
+
+    longTfinal = 30; %weeks
+    longTfinal_h = longTfinal*24*7;
+    [t, y] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,params,p_params, state, GC_conc', intv); 
+    y = abs(y);
+
+    [tfull, yfull] = ode15s(@coupledODE_IVV_step,[start_time_h:longTfinal_h],y0,opts,params,p_params, state, GC_conc', intv); 
+    yfull = abs(yfull);
+    
+    if Tstop/24/7 == 8
+        % FIG 7 publication non-sensitive counterpart
+        figname = 'Fig70';
+    elseif Tstop/24/7 == 10
+        NUM = 57; % FIG G publication non-sensitive counterpart
+        figname = 'Fig570';
+    elseif Tstop/24/7 == 20
+        NUM = 58; % FIG H publication non-sensitive counterpart
+        figname = 'Fig580';
+    end
+load('data/listOfSensSortIdx.mat','listOfSensSortIdx');
+% {numSpeciesSortIdx,numRxnSortIdx,diamSpeciesSortIdx,diamRxnSortIdx};
+    figure(NUM*10); hold on; ax = gca; ax.FontSize = 8;
+    subplot(2,2,1); box; hold on; h=plot(tfull/(24*7), yfull(:,indexforNumber), 'LineWidth', 1.2, 'color', 'k','DisplayName','No inhibition'); 
+    legendHandles = h;
+    legendNames = {'No inhibition'};
+    
+    SpeciesIdx = 2:35;
+    RxnIdx = 2:47;
+
+    % non-sensitive parameters list
+    inhib_knock_n = setdiff(SpeciesIdx, listOfSensSortIdx{1}); %all: 2:35; %KP list: [1,2,3,5,7,9,11,12,18,19,25,27,31,33]; % 6 ignored
+    inhib_prod_n = setdiff(RxnIdx, listOfSensSortIdx{2}); %all: 2:47; %KP list: [46,21,24,16,2,3,18,20,29,41,43];  % 17 ignored
+    % % inhib_knock_n2 = [35,36,31]; %promotes fenestrations
+    
+    tnew = Tstop:1:longTfinal_h;
+    y0(:) = y(end,:);
+    z_params = params;
+    for inh = 1:length(inhib_knock_n)
+        z_params{3}(inhib_knock_n(inh)) = 0.5;
+        [tn, yn] = ode15s(@coupledODE_IVV_step,tnew,y0,opts,z_params,p_params, state, GC_conc', intv); 
+        yn = abs(yn);
+        
+       
+        name = params{4}(inhib_knock_n(inh));
+        h=plot(tn/(24*7), yn(:,indexforNumber), 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Number');
+        legendHandles(end+1) = h;
+        legendNames{end+1} = name{1};
+
+        z_params = params;
+    end
+
+    legend(legendHandles, legendNames, 'Location', 'Eastoutside','fontsize',4)
+
+    subplot(2,2,2); box; hold on; h=plot(tfull/(24*7), yfull(:,indexforNumber), 'LineWidth', 1.2, 'color', 'k','DisplayName','No inhibition'); 
+    legendHandles = h;
+    legendNames = {'No inhibition'};
+    z_params = params;
+    for inh = 1:length(inhib_prod_n)
+        %z_params{3}(inhib_knock_n2(inh)) = 2;
+        z_params{1}(1,inhib_prod_n(inh)) = 0.5*z_params{1}(1,inhib_prod_n(inh));
+        [tn, yn] = ode15s(@coupledODE_IVV_step,tnew,y0,opts,z_params,p_params, state, GC_conc', intv); 
+        yn = abs(yn);
+        
+        
+        name = params{5}(inhib_prod_n(inh));
+        h=plot(tn/(24*7), yn(:,indexforNumber), 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Number');
+        legendHandles(end+1) = h;
+        legendNames{end+1} = name{1};        
+        z_params = params;
+    end
+    legend(legendHandles, legendNames, 'Location', 'Eastoutside','fontsize',4)
+
+    % non-sensitive parameters list
+    inhib_knock_d = setdiff(SpeciesIdx, listOfSensSortIdx{3}); % all: 2:35;%KP list: [1,3,5,6,7,9,11,12,18,19,25,27,31,33]; 
+    inhib_prod = setdiff(RxnIdx, listOfSensSortIdx{4}); % all: 2:47;%KP list: [2,3,19,20,29,41,43,15,24,21];
+   
+    
+    subplot(2,2,3); box; hold on; h=plot(tfull/(24*7), yfull(:,indexforDiameter), 'LineWidth', 1.2, 'color', 'k','DisplayName','No inhibition'); 
+    legendHandles = h;
+    legendNames = {'No inhibition'};
+    z_params = params;
+    for inh = 1:length(inhib_knock_d)
+        z_params{3}(inhib_knock_d(inh)) = 0.5;
+        [tn, yn] = ode15s(@coupledODE_IVV_step,tnew,y0,opts,z_params,p_params, state, GC_conc', intv); 
+        yn = abs(yn);
+              
+        name = params{4}(inhib_knock_d(inh));
+        h=plot(tn/(24*7), yn(:,indexforDiameter), 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Diameter (nm)');
+        legendHandles(end+1) = h;
+        legendNames{end+1} = name{1};
+        z_params = params;
+    end
+    
+    legend(legendHandles, legendNames, 'Location', 'Eastoutside','fontsize',4)
+
+    subplot(2,2,4); box; hold on; h=plot(tfull/(24*7), yfull(:,indexforDiameter), 'LineWidth', 1.2, 'color', 'k','DisplayName','No inhibition');  
+    legendHandles = h;
+    legendNames = {'No inhibition'};
+
+
+    z_params = params;
+    for inh = 1:length(inhib_prod)
+        z_params{1}(1,inhib_prod(inh)) = 0.5*z_params{1}(1,inhib_prod(inh));
+        [tn, yn] = ode15s(@coupledODE_IVV_step,tnew,y0,opts,z_params,p_params, state, GC_conc', intv); 
+        yn = abs(yn);
+        
+        
+        name = params{5}(inhib_prod(inh));
+        h=plot(tn/(24*7), yn(:,indexforDiameter), 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Diameter (nm)');
+        legendHandles(end+1) = h;
+        legendNames{end+1} = name{1};
+        z_params = params;
+    end
+
+    legend(legendHandles, legendNames, 'Location', 'Eastoutside','fontsize',4)
+
+
+    labelstring = {'A', 'B','C','D'};
+    for v = 1:4
+        subplot(2,2,v)
+        hold on
+        text(-0.1, 1.1, labelstring(v)', 'Units', 'normalized', 'FontWeight', 'bold','FontSize',8)
+        set(gca,'FontName','Arial','FontSize',8)
+    end
+
+    widthInches = 9;
+    heightInches = 7;
+    run('ScriptForExportingImages.m')   
+
 end
 %%  4: Glucose-intervention
 if task == 4
@@ -637,7 +772,7 @@ if task == 4
     y0 = Y4(end,:);
     intv = '10h';
     % intervention at 10 hours 
-    [T10, Y10] = ode23s(@coupledODE_IVV_step,t1,y0,opts,params,p_params, state, GC_conc', intv);
+    [T10, Y10] = ode15s(@coupledODE_IVV_step,t1,y0,opts,params,p_params, state, GC_conc', intv);
     Y10 = real(Y10);
 
     opts = odeset(AbsTol=1e-8);
@@ -660,7 +795,7 @@ if task == 4
     end
     for Nstep = 1:Nn
 
-        [T10, Y10] = ode23s(@coupledODE_IVV_step,t1,y0,opts,params,p_params, state, glu_sampled(:,Nstep), intv);
+        [T10, Y10] = ode15s(@coupledODE_IVV_step,t1,y0,opts,params,p_params, state, glu_sampled(:,Nstep), intv);
         YstepP10(Nstep,:,:) = real(Y10);
         %fprintf('run %i finished\n', Nstep)
 
