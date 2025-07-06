@@ -441,7 +441,7 @@ if task == 3
     linest = ["--", "-.", ":", "--", "-.", ":",  "--", "-.", ":", "--", "-.", ":", "--", "-.", ":","--", "-.", ":",...
               "--", "-.", ":", "--", "-.", ":",  "--", "-.", ":", "--", "-.", ":", "--", "-.", ":","--", "-.", ":",...
               "--", "-.", ":", "--", "-.", ":",  "--", "-.", ":", "--", "-.", ":", "--", "-.", ":","--", "-.", ":"];
-    
+    originaly0 = y0;
     tspan = start_time_h:1:Tstop;
     percent = 50; 
     opts = odeset(AbsTol=1e-8,RelTol=1e-6);
@@ -472,8 +472,8 @@ load('data/listOfSensSortIdx.mat','listOfSensSortIdx');
     legendHandles = h;
     legendNames = {'No inhibition'};
    
-    inhib_knock_n = listOfSensSortIdx{1}; %all: 2:35; %KP list: [1,2,3,5,7,9,11,12,18,19,25,27,31,33]; % 6 ignored
-    inhib_prod_n = listOfSensSortIdx{2}; %all: 2:47; %KP list: [46,21,24,16,2,3,18,20,29,41,43];  % 17 ignored
+    inhib_knock_n = [15];%listOfSensSortIdx{1}; %all: 2:35; %KP list: [1,2,3,5,7,9,11,12,18,19,25,27,31,33]; % 6 ignored
+    inhib_prod_n = [15];%listOfSensSortIdx{2}; %all: 2:47; %KP list: [46,21,24,16,2,3,18,20,29,41,43];  % 17 ignored
     % % inhib_knock_n2 = [35,36,31]; %promotes fenestrations
     
     tnew = Tstop:1:longTfinal_h;
@@ -515,8 +515,8 @@ load('data/listOfSensSortIdx.mat','listOfSensSortIdx');
     legend(legendHandles, legendNames, 'Location', 'Eastoutside','fontsize',4)
 
     
-    inhib_knock_d = listOfSensSortIdx{3}; % all: 2:35;%KP list: [1,3,5,6,7,9,11,12,18,19,25,27,31,33]; 
-    inhib_prod = listOfSensSortIdx{4}; % all: 2:47;%KP list: [2,3,19,20,29,41,43,15,24,21];
+    inhib_knock_d = [15];%listOfSensSortIdx{3}; % all: 2:35;%KP list: [1,3,5,6,7,9,11,12,18,19,25,27,31,33]; 
+    inhib_prod = [15];%listOfSensSortIdx{4}; % all: 2:47;%KP list: [2,3,19,20,29,41,43,15,24,21];
    
     
     subplot(2,2,3); box; hold on; h=plot(tfull/(24*7), yfull(:,indexforDiameter), 'LineWidth', 1.2, 'color', 'k','DisplayName','No inhibition'); 
@@ -572,10 +572,10 @@ load('data/listOfSensSortIdx.mat','listOfSensSortIdx');
     run('ScriptForExportingImages.m')   
 
     %% Repeat task 2 for non-sensitive parameters
-        tspan = start_time_h:1:Tstop;
+    tspan = start_time_h:1:Tstop;
     percent = 50; 
     opts = [];%odeset(AbsTol=1e-8,RelTol=1e-6);
-
+    y0 = originaly0;
     longTfinal = 30; %weeks
     longTfinal_h = longTfinal*24*7;
     [t, y] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,params,p_params, state, GC_conc', intv); 

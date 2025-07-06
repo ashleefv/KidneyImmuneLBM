@@ -72,6 +72,7 @@ load data/GLU_data.mat
     % params{2}(:): tau
     % params{3}(:): ymax
     % params{4}(:): speciesNames
+    % params{5}(:): reac_names
 % y0: initial species values
 % tspan: simulation time
 % tau_index: index of sensitive time constant (tau) parameters    
