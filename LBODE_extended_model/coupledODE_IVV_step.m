@@ -151,7 +151,7 @@ dydt(MLCK) = (OR(AND(rpar(:,39),act(y(ROS),rpar(:,39)),inhib(y(NO),rpar(:,39))),
 dydt(pMLC) = (OR(act(y(RhoRock),rpar(:,41)),AND(rpar(:,45),act(y(MLCK),rpar(:,45)),act(y(MLC),rpar(:,45))))*ymax(pMLC) - y(pMLC))/tau(pMLC); 
 
 dydt(MLCP) = (inhib(y(RhoRock),rpar(:,44))*ymax(MLCP) - y(MLCP))/tau(MLCP); 
-%dydt(MLCP) = (act(y(RhoRock),rpar(:,45))*ymax(MLCP) - y(MLCP))/tau(MLCP); % healthy state simulation for Fenestration Formation
+%dydt(MLCP) = (act(y(RhoRock),rpar(:,44))*ymax(MLCP) - y(MLCP))/tau(MLCP); % healthy state simulation for Fenestration Formation
 
 dydt(MLC) = (AND(rpar(:,42),act(y(pMLC),rpar(:,42)),act(y(MLCP),rpar(:,42)))*ymax(MLC) - y(MLC))/tau(MLC); 
 dydt(RhoRock) = (act(y(VEGFR2),rpar(:,43))*ymax(RhoRock) - y(RhoRock))/tau(RhoRock); 
