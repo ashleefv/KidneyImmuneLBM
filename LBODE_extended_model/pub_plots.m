@@ -20,8 +20,8 @@ size_W = size(W_index, 2);
 % mode=1;
 % % Figs 2, B (52)
 % [T, Y] = coupledODE_IVV_run(tspan, y0, params, p_params, mode, state, GC_conc');
-
-
+% 
+% 
 % %% Regulatory plots
 % global_p_best = []; p_fitted = []; error_fitted = [];
 % mode = 3;
@@ -29,8 +29,8 @@ size_W = size(W_index, 2);
 % if mode == 3
 %     [T, Y] = coupledODE_IVV_multirun(tspan, y0, params, p_params, mode, state, global_p_best, p_fitted, error_fitted);
 % end
-
-
+% 
+% 
 % %% Predictions (Fig - 4, 5, 6, 7, E (55), F (56), G (57), H (58))
 % % 
 % % Fig 6 and Table E
@@ -43,13 +43,13 @@ task = 2; Tstop = end_time_h; % placeholder
 % 
 % task = 3;
 % if task == 3
-    % Tstop = end_time_h; % Fig H = figure(58) corresponds to 20 weeks
-    % [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
-    % 
-    % Tstop = 10*7*24; % Fig G = figure(57) corresponds to 10 weeks
-    % [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
-
-%     Tstop = 8*7*24; % Fig 7 corresponds to 8 weeks
+%     Tstop = end_time_h; % Fig H = figure(58) corresponds to 20 weeks, sensitive. 
+%     [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
+% 
+%     Tstop = 10*7*24; % Fig G = figure(57) corresponds to 10 weeks, sensitive.
+%     [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
+% 
+%     Tstop = 8*7*24; % Fig 7 corresponds to 8 weeks, sensitive. 
 %     [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
 % end
 % % 
