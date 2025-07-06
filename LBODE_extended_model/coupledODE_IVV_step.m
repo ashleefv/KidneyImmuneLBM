@@ -151,8 +151,8 @@ dydt(pJunc) = (act(y(Calcium),rpar(:,37))*ymax(pJunc) - y(pJunc))/tau(pJunc);
 dydt(MLCK) = (OR(AND(rpar(:,39),act(y(ROS),rpar(:,39)),inhib(y(NO),rpar(:,39))), act(y(Calcium),rpar(:,40)))*ymax(MLCK) - y(MLCK))/tau(MLCK); 
 dydt(pMLC) = (OR(act(y(RhoRock),rpar(:,41)),AND(rpar(:,45),act(y(MLCK),rpar(:,45)),act(y(MLC),rpar(:,45))))*ymax(pMLC) - y(pMLC))/tau(pMLC); 
 
-%dydt(MLCP) = (inhib(y(RhoRock),rpar(:,44))*ymax(MLCP) - y(MLCP))/tau(MLCP); 
-dydt(MLCP) = (act(y(RhoRock),rpar(:,44))*ymax(MLCP) - y(MLCP))/tau(MLCP); % healthy state simulation for Fenestration Formation
+dydt(MLCP) = (inhib(y(RhoRock),rpar(:,44))*ymax(MLCP) - y(MLCP))/tau(MLCP); 
+% dydt(MLCP) = (act(y(RhoRock),rpar(:,44))*ymax(MLCP) - y(MLCP))/tau(MLCP); % healthy state simulation for Fenestration Formation
 
 dydt(MLC) = (AND(rpar(:,42),act(y(pMLC),rpar(:,42)),act(y(MLCP),rpar(:,42)))*ymax(MLC) - y(MLC))/tau(MLC); 
 dydt(RhoRock) = (act(y(VEGFR2),rpar(:,43))*ymax(RhoRock) - y(RhoRock))/tau(RhoRock); 
@@ -163,7 +163,7 @@ dydt(ActinS) = (act(y(pMLC),rpar(:,46))*ymax(ActinS) - y(ActinS))/tau(ActinS);
 dydt(ActinR) = (act(y(MLC),rpar(:,47))*ymax(ActinR) - y(ActinR))/tau(ActinR); 
 
 
-dydt(FenCount) = p_params(3)*y(ActinR)*(abs(p_params(1) - y(FenCount)))^p_params(2); % - p_params(6)*(y(ActinS))*(abs(p_params(7) - y(FenCount)))^p_params(2);
+dydt(FenCount) = p_params(3)*y(ActinR)*(abs(p_params(1) - y(FenCount)))^p_params(2) - p_params(6)*(y(ActinS))*(abs(p_params(7) - y(FenCount)))^p_params(2);
 
 y0 = 47.91;
 dydt(FenDiameter) = p_params(4)*(y(pMLC) - 0)^p_params(2) - p_params(5)*(y(FenDiameter) - y0);
