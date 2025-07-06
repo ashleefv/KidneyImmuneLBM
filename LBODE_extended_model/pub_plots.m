@@ -37,9 +37,9 @@ size_W = size(W_index, 2);
 % task = 1; Tstop = end_time_h; % placeholder
 % [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
 
-% % Fig E (55) and F (56)
-% task = 2; Tstop = end_time_h; % placeholder
-% [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
+% Fig E (55) and F (56)
+task = 2; Tstop = end_time_h; % placeholder
+[s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
 
 % task = 3;
 % if task == 3

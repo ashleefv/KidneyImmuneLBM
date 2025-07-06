@@ -4,7 +4,7 @@ global number_ctrl time_ctrl density diameter GC_conc GC_time GC_LB GC_UB time_l
 
 % Time (long-term mice sim.)
     start_time = 2; %weeks
-    start_time_h = start_time*7*24;task == 1
+    start_time_h = start_time*7*24;
     end_time = 20; %weeks
     end_time_h = end_time*7*24;
     tspan = start_time_h:1:end_time_h; % hours
@@ -369,7 +369,7 @@ heatmapdata = real(s_FD_W(indexforNumber,2:47,1));
 subplot(2,1,2); h2=heatmap(x_sorted, 'Colormap', hcolormap); 
 ax = gca; ax.Interpreter = 'tex';
 % sortIdx is offset by 1 because heatmap started at 2 to ignore GLU
-ax.XDisplayLabels = params{5}(sortIdx+1);  ax.XLabel = 'Reaction rules j';
+ax.XDisplayLabels = params{5}(sortIdx+1); ax.XLabel = 'Reaction rules j';
 ax.YDisplayLabels = 'W_j'; ax.YLabel = {'Normalized % change'; 'in Number'; 'relative to'};
 %params{4}(indexforNumber);  
 set(gca,'FontName','Arial','FontSize',6)
@@ -415,13 +415,13 @@ diamRxnSortIdx = original_indices+1;
 
 figure(55)
 figname = 'FigE';
-widthInches = 5.5;
+widthInches = 5;
 heightInches = 4.23;
 run('ScriptForExportingImages.m')     
 
 figure(56)
 figname = 'FigF';
-widthInches = 5.5;
+widthInches = 5;
 heightInches = 4.23;
 run('ScriptForExportingImages.m')
 
