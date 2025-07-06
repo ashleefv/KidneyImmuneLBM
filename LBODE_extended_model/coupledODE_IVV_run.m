@@ -47,6 +47,7 @@ indexforDiameter = 37;
 
 
 if mode == 1
+if state == 'diab_mice'
 
     %FINCH figure 2 data for time series
     pop_diameter = load("data\dbmice_diameter_population.csv");
@@ -137,7 +138,6 @@ if mode == 1
 
          
 
-if state == 'diab_mice'
     Gp0 = GLU_p(start_time_h,1);
     W_GLU = (GLU_p(:,1) - Gp0) / (max(glu_UB) - Gp0);  % (1) use of max of finch et al. data error bars
     figure(2)
@@ -194,22 +194,6 @@ if state == 'diab_mice'
     run('ScriptForExportingImages.m')    
 
 
-else 
-    figure(2)
-    %figname = 'Fig2';
-    plot([336:3360]/(24*7), GLU_p(336:3360,1), 'LineWidth', 1.2);
-    xlabel('Time (weeks)'); %xlim([0,22]);
-    ylabel('Glucose (mmol/l)'); %ylim([0,40])
-    ax = gca; ax.FontSize = 8;
-    hold on
-    legend('Model', 'Data', '')
-    x0=10;
-    y0=10;
-    width=800;
-    height=800;
-    set(gcf,'position',[x0,y0,width,height])
-end
-
 
 var = 1:37;
 fig = figure(52);
@@ -240,7 +224,40 @@ run('ScriptForExportingImages.m')
 
 end
 
+end
 
+if state=="norm_mice" && mode==1
+    figure(41)
+    plot(Tout/(24*7), Yout(:,1), 'LineWidth', 1.2);
+    xlabel('Time (weeks)'); %xlim([0,22]);
+    ylabel('Glucose (mmol/l)'); %ylim([0,40])
+    ax = gca; ax.FontSize = 8;
+    hold on
+    legend('Model', 'Data', '')
+    x0=10;
+    y0=10;
+    width=800;
+    height=800;
+    set(gcf,'position',[x0,y0,width,height])
 
+    figure(42)
+    subplot(1,2,1); plot(Tout/24/7, Yout(:,indexforNumber)); ylim([4,7]); ylabel("Fenestration Number")
+    subplot(1,2,2); plot(Tout/24/7, Yout(:,indexforDiameter)); ylim([30,60]); ylabel("Fenestration Diameter (nm)")
+
+    var = 1:37;
+    figure(43);
+    for i=var
+
+         subplot(5,8,i)
+         plot(Tout/(24*7), Yout(:,i),'LineWidth', 1.2, 'Color', 'k');
+    
+         hold on
+    
+         ylabel(params{4}(i))
+         %xlabel('Time (weeks)')
+         xlim([0,21]);
+         ax = gca; ax.FontSize = 8;
+    end
+end
 
 end

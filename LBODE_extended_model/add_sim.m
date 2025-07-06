@@ -30,9 +30,10 @@ if task == 1
 
 
     if state == "norm_mice"
-    
+        glu_sampled=[];
         for Nstep = 1:Nn
-            [t, y] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,params,p_params, state, ctrl_glu, intv);
+        
+            [t, y] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,params,p_params, state, glu_sampled, intv);
             YstepP(Nstep,:) = real(y(end,:));
             %disp(size(YstepP))
         end

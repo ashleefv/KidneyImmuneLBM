@@ -20,7 +20,7 @@ blue = 	[0 0.4470 0.7410];
 if mode == 3
     MC = load('data/MC_25_fen_multirun.mat');
     credible = MC.credible;
-    opts = odeset(RelTol=1e-3);
+    opts=[];
     Nn = 100;
     if state == 'diab_mice'
         glu_sampled = zeros(11,Nn);
@@ -66,17 +66,17 @@ if mode == 3
             end
         end
     
-    elseif state == 'norm_mice'
-        for Nstep = 1:Nn
-            
-            [t, y] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,params,p_params, state, [], intv);
-            YstepP0(Nstep,:,:) = real(y);
-            fprintf('run %i finished\n', Nstep)
-
-        end
-
-        Ymean0(1,:,:) = mean(YstepP0(1:Nn,:,:));
-        Tout = t;
+    % elseif state == 'norm_mice'
+    %     for Nstep = 1:Nn
+    % 
+    %         [t, y] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,params,p_params, state, [], intv);
+    %         YstepP0(Nstep,:,:) = real(y);
+    %         fprintf('run %i finished\n', Nstep)
+    % 
+    %     end
+    % 
+    %     Ymean0(1,:,:) = mean(YstepP0(1:Nn,:,:));
+    %     Tout = t;
     end
 
 time_g = start_time_h:length(GLU_p(:,1));
@@ -146,10 +146,6 @@ for j=1:length(GC_time) % rows
     end
 
 end
-% for i = varsofinterest
-%     mean(YstepP_GC(:,end,i))
-%     std(YstepP_GC(:,end,i))
-% end
 
 widthInches = 6;
 heightInches = 9;

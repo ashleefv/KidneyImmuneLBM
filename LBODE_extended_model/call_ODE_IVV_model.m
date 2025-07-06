@@ -84,12 +84,10 @@ load data/GLU_data.mat
 if strcmp(step,"norm_mice_sim") % ZZZ
     if state == 'norm_mice'
         mode=0; task=1;
-        y0(31) = mean(ctrl_finch);
         rng("twister") % Default random number generator algorithm with seed = 0 to ensure that we generate the same sequence of draws
-        glu_sampled = zeros(5,1);
-        glu_sampled = ctrl_glu;
-        % % [Time, Ypred] = coupledODE_IVV_run(tspan, y0, params, p_params, mode, state, glu_sampled);
-       [s_FC] = add_sim(params, y0, tspan, p_params, state, task); % figure generated only for reviewer comments
+        glu_sampled = [];
+        [Time, Ypred] = coupledODE_IVV_run(tspan, y0, params, p_params, 1, state, glu_sampled);
+       %[s_FC] = add_sim(params, y0, tspan, p_params, state, task); % figure generated only for reviewer comments
     end
 end
     
