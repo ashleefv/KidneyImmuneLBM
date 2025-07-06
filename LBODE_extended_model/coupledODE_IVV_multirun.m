@@ -20,7 +20,7 @@ blue = 	[0 0.4470 0.7410];
 if mode == 3
     MC = load('data/MC_25_fen_multirun.mat');
     credible = MC.credible;
-    opts=[];
+    opts = odeset(RelTol=1e-3);
     Nn = 100;
     if state == 'diab_mice'
         glu_sampled = zeros(11,Nn);
@@ -146,6 +146,10 @@ for j=1:length(GC_time) % rows
     end
 
 end
+% for i = varsofinterest
+%     mean(YstepP_GC(:,end,i))
+%     std(YstepP_GC(:,end,i))
+% end
 
 widthInches = 6;
 heightInches = 9;

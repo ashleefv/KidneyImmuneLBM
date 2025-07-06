@@ -4,7 +4,7 @@ global number_ctrl time_ctrl density diameter GC_conc GC_time GC_LB GC_UB time_l
 
 % Time (long-term mice sim.)
     start_time = 2; %weeks
-    start_time_h = start_time*7*24;
+    start_time_h = start_time*7*24;task == 1
     end_time = 20; %weeks
     end_time_h = end_time*7*24;
     tspan = start_time_h:1:end_time_h; % hours
@@ -19,7 +19,7 @@ SP = length(params{3}(:));
 s_FD_Ym = []; s_FD_W = [];
 %% 1: test_knockout
 if task == 1
-    opts = odeset(AbsTol=1e-8);
+    opts = [];%odeset(AbsTol=1e-8);
     Nn = 100;
     state = 'diab_mice';
     
@@ -40,7 +40,7 @@ if task == 1
         glu_sampled(i,:) = normrnd(GC_conc(i), sigma_data(i),[1,Nn]); %
     end
     for Nstep = 1:Nn
-        [t, y] = ode23s(@coupledODE_IVV_step,tspan,y0,opts,params,p_params, state, glu_sampled(:,Nstep), intv);
+        [t, y] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,params,p_params, state, glu_sampled(:,Nstep), intv);
         YstepP(Nstep,:) = real(y(end,:));
         %disp(size(YstepP))
     end
@@ -112,7 +112,7 @@ refForModeld =  s_FC(:,1,indexforDiameter);
 
         for Nstep = 1:Nn
             
-            [tn, yn] = ode23s(@coupledODE_IVV_step,tspan,y0,opts,z_params,p_params, state, glu_sampled(:,Nstep), intv);
+            [tn, yn] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,z_params,p_params, state, glu_sampled(:,Nstep), intv);
             YstepP_new(Nstep,:) = real(yn(end,:));
             %fprintf('run %i finished\n', Nstep)
 
@@ -296,10 +296,10 @@ s_FD_W = zeros(SP, RP, 1);
 linest = ["--", "-.", ":", "--", "-.", ":",  "--", "-.", ":", "--", "-.", ":", "--", "-.", ":"];
 
 tspan = start_time_h:end_time_h;
-percent = 50; opts = odeset(AbsTol=1e-8);
+percent = 50; opts = [];%odeset(AbsTol=1e-8);
 
 
-[t, y] = ode23s(@coupledODE_IVV_step,tspan,y0,opts,params,p_params, state, GC_conc', intv); 
+[t, y] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,params,p_params, state, GC_conc', intv); 
 y = abs(y);
 
 % Parameter: Ymax
@@ -308,8 +308,8 @@ y = abs(y);
 for m = 1:SP
     params_new = params;
     params_new{3}(m) = 0; %params{3}(m)*(1 + deltaP); % perturb each "Ymax" parameter by a small amount
-    opts = odeset(AbsTol=1e-8);
-    [time,dy_model] = ode23s(@coupledODE_IVV_step,tspan,y0,opts,params_new,p_params, state, GC_conc', intv);
+    opts = [];%odeset(AbsTol=1e-8);
+    [time,dy_model] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,params_new,p_params, state, GC_conc', intv);
     
 
     dy_model = real(dy_model);
@@ -332,7 +332,7 @@ for m = 1:RP
     params_new = params;
     params_new{1}(1,m) = 0; %params{1}(1,m)*(1 + deltaP); % perturb each "W" parameter by a small amount
         
-    [time,dy_model] = ode23s(@coupledODE_IVV_step,tspan,y0,opts,params_new,p_params, state, GC_conc', intv);
+    [time,dy_model] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,params_new,p_params, state, GC_conc', intv);
      
     dy_model = real(dy_model);
     
@@ -441,7 +441,10 @@ if task == 3
     linest = ["--", "-.", ":", "--", "-.", ":",  "--", "-.", ":", "--", "-.", ":", "--", "-.", ":","--", "-.", ":"];
     
     tspan = start_time_h:1:Tstop;
-    percent = 50; opts = odeset(AbsTol=1e-8);
+    percent = 50; 
+    opts = odeset(AbsTol=1e-8,RelTol=1e-6);
+    % In this task we use ode23s and stricter than default ode tolerances to provide more stability when the
+    % perturbation cause discontinuities in parameters at differen times
     longTfinal = 30; %weeks
     longTfinal_h = longTfinal*24*7;
     [t, y] = ode23s(@coupledODE_IVV_step,tspan,y0,opts,params,p_params, state, GC_conc', intv); 
@@ -569,11 +572,11 @@ load('data/listOfSensSortIdx.mat','listOfSensSortIdx');
 end
 %%  4: Glucose-intervention
 if task == 4
-    opts = odeset(AbsTol=1e-8);
+    opts = [];%odeset(RelTol=1e-6);
     % no intervention step
     intv = 'none';
     t1 = start_time_h:end_time_h;
-    %[T, Y] = ode23s(@coupledODE_IVV_step,t1,y0,opts,params,p_params, state, GC_conc', intv);
+    %[T, Y] = ode15s(@coupledODE_IVV_step,t1,y0,opts,params,p_params, state, GC_conc', intv);
     %Y = real(Y);
 
     Nn = 100;
@@ -595,7 +598,7 @@ if task == 4
     end
     for Nstep = 1:Nn
 
-        [T, Y] = ode23s(@coupledODE_IVV_step,t1,y0,opts,params,p_params, state, glu_sampled(:,Nstep), intv);
+        [T, Y] = ode15s(@coupledODE_IVV_step,t1,y0,opts,params,p_params, state, glu_sampled(:,Nstep), intv);
         YstepP(Nstep,:,:) = real(Y);
         %fprintf('run %i finished\n', Nstep)
 
@@ -618,7 +621,7 @@ if task == 4
 
     % intervention at 4 hours 
     intv = '4h';
-    [T4, Y4] = ode23s(@coupledODE_IVV_step,t1,y0,opts,params,p_params, state, GC_conc', intv);
+    [T4, Y4] = ode15s(@coupledODE_IVV_step,t1,y0,opts,params,p_params, state, GC_conc', intv);
     Y4 = real(Y4);
 
     
