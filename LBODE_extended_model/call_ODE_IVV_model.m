@@ -11,7 +11,7 @@ N_ctrl = load('data/finch_density_ctrl.mat');           % Fenestration density f
 F_diab = load('data/finch_fenestration_disease.mat');   % Fenestration width/density from Finch et al. 2022
 G = load('data/GLU_data.mat');                          % Glucose concentration from Finch et al. 2022 (12-20 weeks) and Lee et al. 2018 (2-11 weeks). Fig 1b male ob-/ob- from both sources
 
-global number_ctrl time_ctrl density diameter GC_conc GC_time GC_LB GC_UB time_lee glu_UB glu_LB time_finch glu_finch LB_lee UB_lee glucose_lee
+global number_ctrl time_ctrl density diameter GC_conc GC_time GC_LB GC_UB time_lee glu_UB glu_LB time_finch glu_finch LB_lee UB_lee glucose_lee ctrl_glu ctrl_LB ctrl_UB
 
 number_ctrl = N_ctrl.number_ctrl;
 time_ctrl = N_ctrl.time_ctrl;
@@ -29,9 +29,14 @@ glu_finch = G.glu_finch;
 LB_lee = G.LB_lee;
 UB_lee = G.UB_lee;
 glucose_lee = G.glucose_lee;
+ctrl_glu = G.ctrl_finch; 
+ctrl_LB = G.ctrl_LB;
+ctrl_UB = G.ctrl_UB;
 
 
 state = "diab_mice"; % "diab_mice" for diabetic mice, "norm_mice" for WT mice
+
+% choose norm_mice_sim with state=norm_mice
 prompt = "Choose an option from {""plot_step"", ""MultiStart_NLS"", ""Variability"", ""Predictions"", ""Publication_plots""}: ";
 step = input(prompt, 's');
 
@@ -76,23 +81,22 @@ load data/GLU_data.mat
 
 
 %%
+if strcmp(step,"norm_mice_sim") % ZZZ
+    if state == 'norm_mice'
+        mode=0; task=1;
+        y0(31) = mean(ctrl_finch);
+        rng("twister") % Default random number generator algorithm with seed = 0 to ensure that we generate the same sequence of draws
+        glu_sampled = zeros(5,1);
+        glu_sampled = ctrl_glu;
+        % % [Time, Ypred] = coupledODE_IVV_run(tspan, y0, params, p_params, mode, state, glu_sampled);
+       [s_FC] = add_sim(params, y0, tspan, p_params, state, task); % figure generated only for reviewer comments
+    end
+end
+    
 if strcmp(step,"plot_step")
     mode = 1; % plots, mode = 0 only simulates
     % Plots from Fitted Model
     if mode>0
-        if state == 'norm_mice'
-            
-            y0(31) = mean(ctrl_finch);
-            rng("twister") % Default random number generator algorithm with seed = 0 to ensure that we generate the same sequence of draws
-            glu_sampled = zeros(11,1);
-            glucose_data_Lee_sd = abs(glucose_lee - LB_lee);
-            glucose_data_Finch_sd = abs(glu_finch - glu_UB); 
-            for i = 1:length(time_finch)
-                glu_sampled(i) = unifrnd(ctrl_LB(:,i), ctrl_UB(:,i)); % 
-            end
-            [Time, Ypred] = coupledODE_IVV_run(tspan, y0, params, p_params, mode, state, glu_sampled);
-
-        end
         if state == 'diab_mice'
             [Time, Ypred] = coupledODE_IVV_run(tspan, y0, params, p_params, mode, state, GC_conc');
         end

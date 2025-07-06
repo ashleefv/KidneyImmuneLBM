@@ -197,9 +197,7 @@ if state == 'diab_mice'
 else 
     figure(2)
     %figname = 'Fig2';
-    plot(Tout(time_in)/(24*7), GLU_p(time_in,1), 'LineWidth', 1.2);
-    hold on; scatter(time_finch/(7*24), ctrl_finch, 'MarkerFaceColor',[0 0 0],'Marker','o','Color',[0.75 0.5 0.25])
-    hold on; errorbar(time_finch/(7*24), ctrl_finch, abs(ctrl_finch - ctrl_LB), abs(ctrl_finch - ctrl_UB), '*');
+    plot([336:3360]/(24*7), GLU_p(336:3360,1), 'LineWidth', 1.2);
     xlabel('Time (weeks)'); %xlim([0,22]);
     ylabel('Glucose (mmol/l)'); %ylim([0,40])
     ax = gca; ax.FontSize = 8;

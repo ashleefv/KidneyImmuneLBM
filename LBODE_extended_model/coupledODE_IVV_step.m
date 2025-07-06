@@ -162,7 +162,11 @@ dydt(ActinS) = (act(y(pMLC),rpar(:,46))*ymax(ActinS) - y(ActinS))/tau(ActinS);
 dydt(ActinR) = (act(y(MLC),rpar(:,47))*ymax(ActinR) - y(ActinR))/tau(ActinR); 
 
 
-dydt(FenCount) = p_params(3)*y(ActinR)*(abs(p_params(1) - y(FenCount)))^p_params(2) - p_params(6)*(y(ActinS))*(abs(p_params(7) - y(FenCount)))^p_params(2);
+if state == "norm_mice"
+    dydt(FenCount) = 0; % forced else decreases due to imbalance
+else
+    dydt(FenCount) = p_params(3)*y(ActinR)*(abs(p_params(1) - y(FenCount)))^p_params(2) - p_params(6)*(y(ActinS))*(abs(p_params(7) - y(FenCount)))^p_params(2);
+end
 
 y0 = 47.91;
 dydt(FenDiameter) = p_params(4)*(y(pMLC) - 0)^p_params(2) - p_params(5)*(y(FenDiameter) - y0);
