@@ -459,11 +459,11 @@ if task == 3
         NUM = 7; % FIG 7 publication
         figname = 'Fig7';
     elseif Tstop/24/7 == 10
-        NUM = 57; % FIG G publication
-        figname = 'FigG';
-    elseif Tstop/24/7 == 20
         NUM = 58; % FIG H publication
         figname = 'FigH';
+    elseif Tstop/24/7 == 20
+        NUM = 510; % FIG J publication
+        figname = 'FigJ';
     end
 load('data/listOfSensSortIdx.mat','listOfSensSortIdx');
 % {numSpeciesSortIdx,numRxnSortIdx,diamSpeciesSortIdx,diamRxnSortIdx};
@@ -584,19 +584,23 @@ load('data/listOfSensSortIdx.mat','listOfSensSortIdx');
     [tfull, yfull] = ode15s(@coupledODE_IVV_step,[start_time_h:longTfinal_h],y0,opts,params,p_params, state, GC_conc', intv); 
     yfull = abs(yfull);
     
+
+
     if Tstop/24/7 == 8
-        % FIG 7 publication non-sensitive counterpart
-        figname = 'Fig70';
+        NUM = 57; % FIG G publication
+        figname = 'FigG';
     elseif Tstop/24/7 == 10
-        NUM = 57; % FIG G publication non-sensitive counterpart
-        figname = 'Fig570';
+        NUM = 59; % FIG I publication
+        figname = 'FigI';
     elseif Tstop/24/7 == 20
-        NUM = 58; % FIG H publication non-sensitive counterpart
-        figname = 'Fig580';
+        NUM = 511; % FIG K publication
+        figname = 'FigK';
     end
+
+
 load('data/listOfSensSortIdx.mat','listOfSensSortIdx');
 % {numSpeciesSortIdx,numRxnSortIdx,diamSpeciesSortIdx,diamRxnSortIdx};
-    figure(NUM*10); hold on; ax = gca; ax.FontSize = 8;
+    figure(NUM); hold on; ax = gca; ax.FontSize = 8;
     subplot(2,2,1); box; hold on; h=plot(tfull/(24*7), yfull(:,indexforNumber), 'LineWidth', 1.2, 'color', 'k','DisplayName','No inhibition'); 
     legendHandles = h;
     legendNames = {'No inhibition'};
