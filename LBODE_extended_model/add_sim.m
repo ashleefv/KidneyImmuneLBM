@@ -26,20 +26,13 @@ if task == 1
     state = state;
     test_i = [29,32,31,34,2]; % inhibitors: KN93, ML7, Y27632, CalA, CytB
 
-    glu_sampled = zeros(11,Nn);
     rng("twister") % Default random number generator algorithm with seed = 0 to ensure that we generate the same sequence of draws
-    glucose_data_Lee_sd = abs(glucose_lee - LB_lee);
-    glucose_data_Finch_sd = abs(glu_finch - glu_UB); 
-    subsetIdx = find(time_lee>=6*24*7);
-    sigma_data = [glucose_data_Lee_sd(subsetIdx)'  glucose_data_Finch_sd];
 
-    CTRL_GLU = ctrl_glu;
-    sigma_ctrl_glu = abs(CTRL_GLU - ctrl_UB);
 
     if state == "norm_mice"
     
         for Nstep = 1:Nn
-            [t, y] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,params,p_params, state, glu_sampled(:,Nstep), intv);
+            [t, y] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,params,p_params, state, ctrl_glu, intv);
             YstepP(Nstep,:) = real(y(end,:));
             %disp(size(YstepP))
         end
@@ -88,16 +81,16 @@ refForModeln =  s_FC(:,1,indexforNumber);
 refForModeld =  s_FC(:,1,indexforDiameter);
 
     % % compare diabetes data to control data and store in the offset column
-    % %p-values for number relative to the healty condition no treatment simulation
-    [h, p_c_n(1,offset)] = ttest2(refForModeln, s_ctrl_n, 'Alpha', 0.05,'Vartype','unequal');
-    % %p-values for diameter relative to the healty condition no treatment
-    [h, p_c_d(1,offset)] = ttest2(refForModeld, s_ctrl_d, 'Alpha', 0.05,'Vartype','unequal');
+    % %p-values for ctrl number relative to the healty condition no treatment simulation
+    % [h, p_c_n(1,offset)] = ttest2(s_ctrl_db_n, s_ctrl_n, 'Alpha', 0.05,'Vartype','unequal');
+    % % %p-values for ctrl diameter relative to the healty condition no treatment
+    % [h, p_c_d(1,offset)] = ttest2(s_ctrl_db_d, s_ctrl_d, 'Alpha', 0.05,'Vartype','unequal');
     
 
     inh = 0; % no treatment case
-        %p-values for number relative to the healty condition no treatment simulation
+        %p-values for ctrl number relative to the healty condition no treatment data
         [h, p_c_n(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforNumber), s_ctrl_n, 'Alpha', 0.05,'Vartype','unequal');
-        %p-values for diameter relative to the healty condition no treatment
+        %p-values for ctrl diameter relative to the healty condition no treatment data
         [h, p_c_d(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforDiameter), s_ctrl_d, 'Alpha', 0.05,'Vartype','unequal');
 
         
@@ -105,9 +98,10 @@ refForModeld =  s_FC(:,1,indexforDiameter);
         % [h, p_n_data(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforNumber), s_ctrl_db_n, 'Alpha', 0.05,'Vartype','unequal');
         % %p-values for diameter relative to the diseased condition no treatment DATA
         % [h, p_d_data(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforDiameter), s_ctrl_db_d, 'Alpha', 0.05,'Vartype','unequal');
-        [h, p_n(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforNumber), refForModeln, 'Alpha', 0.05,'Vartype','unequal');
+
+        %[h, p_n(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforNumber), refForModeln, 'Alpha', 0.05,'Vartype','unequal');
         %p-values for diameter relative to the diseased condition no treatment simulation
-        [h, p_d(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforDiameter), refForModeld, 'Alpha', 0.05,'Vartype','unequal');
+        %[h, p_d(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforDiameter), refForModeld, 'Alpha', 0.05,'Vartype','unequal');
         
        
 
@@ -118,7 +112,7 @@ refForModeld =  s_FC(:,1,indexforDiameter);
 
         for Nstep = 1:Nn
             
-            [tn, yn] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,z_params,p_params, state,  glu_sampled(:,Nstep), intv);
+            [tn, yn] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,z_params,p_params, state,  ctrl_glu, intv);
             YstepP_new(Nstep,:) = real(yn(end,:));
             %fprintf('run %i finished\n', Nstep)
 
@@ -131,17 +125,18 @@ refForModeld =  s_FC(:,1,indexforDiameter);
 
         
 
-        %p-values for number relative to the healty condition no treatment simulation
+        %p-values for  number relative to the healty condition no treatment data
         [h, p_c_n(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforNumber), s_ctrl_n, 'Alpha', 0.05,'Vartype','unequal');
-        %p-values for diameter relative to the healty condition no treatment
+        %p-values for diameter relative to the healty condition no treatment data
         [h, p_c_d(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforDiameter), s_ctrl_d, 'Alpha', 0.05,'Vartype','unequal');
-         %p-values for number relative to the diseased condition no treatment DATA
+        
+        %p-values for number relative to the diseased condition no treatment DATA
         % [h, p_n_data(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforNumber), s_ctrl_db_n, 'Alpha', 0.05,'Vartype','unequal');
         % %p-values for diameter relative to the diseased condition no treatment DATA
         % [h, p_d_data(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforDiameter), s_ctrl_db_d, 'Alpha', 0.05,'Vartype','unequal');
-        [h, p_n(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforNumber), refForModeln, 'Alpha', 0.05,'Vartype','unequal');
+        %[h, p_n(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforNumber), refForModeln, 'Alpha', 0.05,'Vartype','unequal');
         %p-values for diameter relative to the diseased condition no treatment simulation
-        [h, p_d(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforDiameter), refForModeld, 'Alpha', 0.05,'Vartype','unequal');
+        %[h, p_d(1,offset+inh+1)] = ttest2(s_FC(:,inh+1,indexforDiameter), refForModeld, 'Alpha', 0.05,'Vartype','unequal');
         
 
       % %p-values for number relative to the diseased condition no treatment
@@ -198,7 +193,6 @@ p_d
    er = errorbar(3:7, mean(s_FC(1:Nn,2:end,indexforNumber)), std(s_FC(1:Nn,2:end,indexforNumber))); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;  
    ylim([0 10.5])
    
-     callsigstar(2,p_n,'k')
      callsigstar(1,p_c_n,'b')
 
      set(gca,'FontSize',8)
@@ -216,7 +210,6 @@ p_d
      er = errorbar(2, mean(refForModeld), std(refForModeld)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2; 
      er = errorbar(3:7, mean(s_FC(1:Nn,2:end,indexforDiameter)),std(s_FC(1:Nn,2:end,indexforDiameter))); er.Color = 'r';  er.LineStyle = 'none'; er.LineWidth=2; %standard deviation instead of CI as the error
      
-     callsigstar(2,p_n,'k')
      callsigstar(1,p_c_d,'b')
      ylim([0 120])
 
@@ -233,7 +226,7 @@ p_d
 
     widthInches = 5.5;
     heightInches = 4.23;
-   % run('ScriptForExportingImages.m')   
+    run('ScriptForExportingImages.m')   
 
     % [std(s_FC([1:Nn],:,indexforNumber))]
     % [std(s_FC([1:Nn],:,indexforDiameter))]
