@@ -87,7 +87,7 @@ if strcmp(step,"norm_mice_sim") % ZZZ
         rng("twister") % Default random number generator algorithm with seed = 0 to ensure that we generate the same sequence of draws
         glu_sampled = [];
         [Time, Ypred] = coupledODE_IVV_run(tspan, y0, params, p_params, 1, state, glu_sampled);
-       %[s_FC] = add_sim(params, y0, tspan, p_params, state, task); % figure generated only for reviewer comments
+        [s_FC] = add_sim(params, y0, tspan, p_params, state, task); % figure generated only for healthy mice
     end
 end
     
