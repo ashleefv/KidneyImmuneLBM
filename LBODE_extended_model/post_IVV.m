@@ -492,7 +492,7 @@ load('data/listOfSensSortIdx.mat','listOfSensSortIdx');
 
         z_params = params;
     end
-
+    xlim([0 30]),ylim([4 6.5])
     legend(legendHandles, legendNames, 'Location', 'Eastoutside','fontsize',4)
 
     subplot(2,2,2); box; hold on; h=plot(tfull/(24*7), yfull(:,indexforNumber), 'LineWidth', 1.2, 'color', 'k','DisplayName','No inhibition'); 
@@ -512,6 +512,7 @@ load('data/listOfSensSortIdx.mat','listOfSensSortIdx');
         legendNames{end+1} = name{1};        
         z_params = params;
     end
+    xlim([0 30]),ylim([4 6.5])
     legend(legendHandles, legendNames, 'Location', 'Eastoutside','fontsize',4)
 
     
@@ -534,7 +535,7 @@ load('data/listOfSensSortIdx.mat','listOfSensSortIdx');
         legendNames{end+1} = name{1};
         z_params = params;
     end
-    
+    xlim([0 30]),ylim([45 80])
     legend(legendHandles, legendNames, 'Location', 'Eastoutside','fontsize',4)
 
     subplot(2,2,4); box; hold on; h=plot(tfull/(24*7), yfull(:,indexforDiameter), 'LineWidth', 1.2, 'color', 'k','DisplayName','No inhibition');  
@@ -555,7 +556,7 @@ load('data/listOfSensSortIdx.mat','listOfSensSortIdx');
         legendNames{end+1} = name{1};
         z_params = params;
     end
-
+    xlim([0 30]),ylim([45 80])
     legend(legendHandles, legendNames, 'Location', 'Eastoutside','fontsize',4)
 
 
@@ -629,7 +630,7 @@ load('data/listOfSensSortIdx.mat','listOfSensSortIdx');
 
         z_params = params;
     end
-
+    xlim([0 30]),ylim([4 6.5])
     legend(legendHandles, legendNames, 'Location', 'Eastoutside','fontsize',4)
 
     subplot(2,2,2); box; hold on; h=plot(tfull/(24*7), yfull(:,indexforNumber), 'LineWidth', 1.2, 'color', 'k','DisplayName','No inhibition'); 
@@ -649,6 +650,7 @@ load('data/listOfSensSortIdx.mat','listOfSensSortIdx');
         legendNames{end+1} = name{1};        
         z_params = params;
     end
+    xlim([0 30]),ylim([4 6.5])
     legend(legendHandles, legendNames, 'Location', 'Eastoutside','fontsize',4)
 
     % non-sensitive parameters list
@@ -671,7 +673,7 @@ load('data/listOfSensSortIdx.mat','listOfSensSortIdx');
         legendNames{end+1} = name{1};
         z_params = params;
     end
-    
+    xlim([0 30]),ylim([45 80])
     legend(legendHandles, legendNames, 'Location', 'Eastoutside','fontsize',4)
 
     subplot(2,2,4); box; hold on; h=plot(tfull/(24*7), yfull(:,indexforDiameter), 'LineWidth', 1.2, 'color', 'k','DisplayName','No inhibition');  
@@ -692,7 +694,7 @@ load('data/listOfSensSortIdx.mat','listOfSensSortIdx');
         legendNames{end+1} = name{1};
         z_params = params;
     end
-
+    xlim([0 30]),ylim([45 80])
     legend(legendHandles, legendNames, 'Location', 'Eastoutside','fontsize',4)
 
 
@@ -939,7 +941,7 @@ figname = 'Fig5';
     subplot(3,3,[1 2]);
     bar((Ymean(end,2:35) - Ymean(1,2:35)), 'k'); title('No intervention'); 
     xticks(1:34); xticklabels(params{4}(2:35)); ylabel('Change relative to baseline')
-    
+    xtickangle(90)
     subplot(3,3,3)
     bar((Ymean(end,indexforNumber:indexforDiameter) - Ymean(1,indexforNumber:indexforDiameter)), 'k'); title('No intervention')
     xticks(1:2); xticklabels(params{4}(indexforNumber:indexforDiameter)); ylabel('Change relative to baseline')
@@ -947,7 +949,7 @@ figname = 'Fig5';
     subplot(3,3,[4,5]);
     bar((Y4(end,2:35) - Y4(1,2:35)), 'k'); title('Intervention at 4 weeks'); 
     xticks(1:34); xticklabels(params{4}(2:35)); ylabel('Change relative to baseline')
-    
+    xtickangle(90)
     subplot(3,3,6)
     bar((Y4(end,indexforNumber:indexforDiameter) - Y4(1,indexforNumber:indexforDiameter)), 'k'); title('Intervention at 4 weeks')
     xticks(1:2); xticklabels(params{4}(indexforNumber:indexforDiameter)); ylabel('Change relative to baseline')
@@ -955,7 +957,7 @@ figname = 'Fig5';
     subplot(3,3,[7,8]);
     bar((Ymean10(end,2:35) - Ymean10(1,2:35)), 'k'); title('Intervention at 10 weeks'); 
     xticks(1:34); xticklabels(params{4}(2:35)); ylabel('Change relative to baseline')
-    
+    xtickangle(90)
     subplot(3,3,9)
     bar((Ymean10(end,indexforNumber:indexforDiameter) - Ymean10(1,indexforNumber:indexforDiameter)), 'k'); title('Intervention at 10 weeks')
     xticks(1:2); xticklabels(params{4}(indexforNumber:indexforDiameter)); ylabel('Change relative to baseline')
@@ -982,6 +984,57 @@ figname = 'Fig5';
     widthInches = 5.5;
     heightInches = 5.5;
     run('ScriptForExportingImages.m')   
+
+
+
+
+
+    var = 1:37;
+fig = figure(512);
+figname = 'FigB4';
+for i=var
+
+     subplot(5,8,i)
+     plot(T4/(24*7), Y4(:,i),'LineWidth', 1.2, 'Color', 'k');
+     hold on
+
+     ylabel(params{4}(i))
+     %xlabel('Time (weeks)')
+     xlim([0,20]);
+     ax = gca; ax.FontSize = 8;
+end
+% Common x-axis label
+han = axes(fig, 'visible', 'off'); 
+han.XLabel.Visible = 'on';
+xlabel(han, 'Time (weeks)','FontName','Arial','FontSize',8);
+
+widthInches = 9;
+heightInches = 5;
+run('ScriptForExportingImages.m')  
+
+fig = figure(513);
+figname = 'FigC10';
+
+for i=var
+     subplot(5,8,i)
+     plot(T10/(24*7), YstepP10(1:Nn,:,i),'LineWidth', 1.2);
+    
+     hold on
+     % for aesthetics make the mean of samples black
+     plot(T10./(24*7), mean10(:,i),'LineWidth', 1.2,'Color','k');
+     ylabel(params{4}(i))
+     %xlabel('Time (week)')
+    set(gca,'FontName','Arial','FontSize',8)
+end
+
+% Common x-axis label
+han = axes(fig, 'visible', 'off'); 
+han.XLabel.Visible = 'on';
+xlabel(han, 'Time (weeks)','FontName','Arial','FontSize',8);
+
+widthInches = 9;
+heightInches = 5;
+run('ScriptForExportingImages.m')   
 end
 
 

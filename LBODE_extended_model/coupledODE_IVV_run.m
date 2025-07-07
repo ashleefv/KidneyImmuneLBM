@@ -193,11 +193,20 @@ if state == 'diab_mice'
     heightInches = 4.23;
     run('ScriptForExportingImages.m')    
 
-
-
 var = 1:37;
 fig = figure(52);
 figname = 'FigB';
+
+yminSpeciesVector = zeros(1,37);
+yminSpeciesVector(indexforNumber) = 4;
+yminSpeciesVector(indexforDiameter) = 45;
+ymaxSpeciesVector = ones(1,37);
+ymaxSpeciesVector(1) = 2;
+ymaxSpeciesVector(30) = 6e-3; % Actin_r
+ymaxSpeciesVector(35) = 0.02; % MLC
+ymaxSpeciesVector(indexforNumber) = 6.5;
+ymaxSpeciesVector(indexforDiameter) = 80;
+
 for i=var
 
      subplot(5,8,i)
@@ -207,7 +216,8 @@ for i=var
 
      ylabel(params{4}(i))
      %xlabel('Time (weeks)')
-     xlim([0,21]);
+     xlim([0,20]);
+     ylim([yminSpeciesVector(i) ymaxSpeciesVector(i)]);
      ax = gca; ax.FontSize = 8;
 end
 % Common x-axis label

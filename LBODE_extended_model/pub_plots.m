@@ -31,27 +31,27 @@ size_W = size(W_index, 2);
 % end
 % 
 % 
-% %% Predictions (Fig - 4, 5, 6, 7, E (55), F (56), G (57), H (58))
-% % 
-% % Fig 6 and Table E
-% task = 1; Tstop = end_time_h; % placeholder
-% [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
+%% Predictions (Fig - 4, 5, 6, 7, E (55), F (56), G (57), H (58))
+% 
+% Fig 6 and Table E
+task = 1; Tstop = end_time_h; % placeholder
+[s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
 
 % % Fig E (55) and F (56)
 % task = 2; Tstop = end_time_h; % placeholder
 % [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
 % 
-task = 3;
-if task == 3
-    Tstop = end_time_h; % Fig J = figure(510) corresponds to 20 weeks, sensitive. Fig K = figure(511) non-sensitive
-    [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
-
-    Tstop = 10*7*24; % Fig H = figure(58) corresponds to 10 weeks, sensitive. Fig I = figure(59) non-sensitive
-    [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
-
-    Tstop = 8*7*24; % Fig 7 corresponds to 8 weeks, sensitive. Fig G = figure(57) non-sensitive
-    [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
-end
+% task = 3;
+% if task == 3
+%     Tstop = end_time_h; % Fig J = figure(510) corresponds to 20 weeks, sensitive. Fig K = figure(511) non-sensitive
+%     [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
+% 
+%     Tstop = 10*7*24; % Fig H = figure(58) corresponds to 10 weeks, sensitive. Fig I = figure(59) non-sensitive
+%     [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
+% 
+%     Tstop = 8*7*24; % Fig 7 corresponds to 8 weeks, sensitive. Fig G = figure(57) non-sensitive
+%     [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
+% end
 % % 
 % task = 4;
 % % Figs 4, 5
@@ -59,5 +59,6 @@ end
 %     Tstop = end_time_h; 
 %     [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
 % end
+
 
 end

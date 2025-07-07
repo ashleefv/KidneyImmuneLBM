@@ -88,6 +88,16 @@ var = 1:37;
 fig = figure(53);
 figname = 'FigC';
 
+yminSpeciesVector = zeros(1,37);
+yminSpeciesVector(indexforNumber) = 4;
+yminSpeciesVector(indexforDiameter) = 45;
+ymaxSpeciesVector = ones(1,37);
+ymaxSpeciesVector(1) = 2;
+ymaxSpeciesVector(30) = 6e-3; % Actin_r
+ymaxSpeciesVector(35) = 0.02; % MLC
+ymaxSpeciesVector(indexforNumber) = 6.5;
+ymaxSpeciesVector(indexforDiameter) = 80;
+
 for i=var
      subplot(5,8,i)
      plot(time_g./(24*7), YstepP(1:Nn,:,i),'LineWidth', 1.2);
@@ -97,6 +107,8 @@ for i=var
      MEANYstepP(:,i)=mean(YstepP(1:Nn,:,i),1);
      plot(time_g./(24*7), MEANYstepP(:,i),'LineWidth', 1.2,'Color','k');
      ylabel(params{4}(i))
+     xlim([0,20]);
+     ylim([yminSpeciesVector(i) ymaxSpeciesVector(i)]);
      %xlabel('Time (week)')
     set(gca,'FontName','Arial','FontSize',8)
 end
