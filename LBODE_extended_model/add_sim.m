@@ -191,9 +191,9 @@ p_c_d
 %      s_FC([1:Nn],:,indexforNumber)
 %      size(s_FC)
      figure(6)
-     figname = 'Fig6';
+     figname = 'Fig6norm';
      subplot(2,1,1); b = bar([mean(s_ctrl_n), mean(refForModeln), mean(s_FC(1:Nn,2:end,indexforNumber))], 'white'); xticks(1:length(test_i)+2); 
-    xticklabels({'Healthy Data', 'No treatment', 'KN93', 'ML7', 'Y27632', 'CalA', 'CytB'}); 
+    xticklabels({'Healthy Data', 'Healthy Model', 'KN93', 'ML7', 'Y27632', 'CalA', 'CytB'}); 
      ylabel('Fenestration Number');
      b.FaceColor = 'flat';
      b.CData(1,:) = [0 0 1];
@@ -204,16 +204,16 @@ p_c_d
    hold on;  
    %er = errorbar([2:7], [mean(s_FC([1:Nn],:,indexforNumber))], (CI_number_lb-CI_number_ub)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;  
   er = errorbar(1, mean(s_ctrl_n), std(s_ctrl_n)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2; 
-  er = errorbar(2, mean(refForModeln), std(refForModeln)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;    
-  er = errorbar(3:7, mean(s_FC(1:Nn,2:end,indexforNumber)), std(s_FC(1:Nn,2:end,indexforNumber))); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;  
+  % er = errorbar(2, mean(refForModeln), std(refForModeln)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;    
+  % er = errorbar(3:7, mean(s_FC(1:Nn,2:end,indexforNumber)), std(s_FC(1:Nn,2:end,indexforNumber))); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;  
    ylim([0 10.5])
    
-    callsigstar(1,p_c_n,'b')
+    % callsigstar(1,p_c_n,'b')
 
      set(gca,'FontSize',8)
 
      figure(6); subplot(2,1,2); B = bar([mean(s_ctrl_d), mean(refForModeld), mean(s_FC(1:Nn,2:end,indexforDiameter))], 'white'); xticks([1:length(test_i)+2]); 
-     xticklabels({'Healthy Data', 'No treatment', 'KN93', 'ML7', 'Y27632', 'CalA', 'CytB'});  ylabel('Fenestration Diameter (nm)')
+     xticklabels({'Healthy Data', 'Healthy Model', 'KN93', 'ML7', 'Y27632', 'CalA', 'CytB'});  ylabel('Fenestration Diameter (nm)')
           B.FaceColor = 'flat';
      B.CData(1,:) = [0 0 1];
      B.CData(2,:) = [.7 .7 .7];
@@ -222,10 +222,10 @@ p_c_d
      end
      hold on;  %er = errorbar([2:7], [mean(s_FC([1:Nn],:,indexforDiameter))], (CI_diameter_lb - CI_diameter_ub)); er.Color = 'r';  er.LineStyle = 'none'; er.LineWidth=2; 
     er = errorbar(1, mean(s_ctrl_d), std(s_ctrl_d)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;  
-    er = errorbar(2, mean(refForModeld), std(refForModeld)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2; 
-    er = errorbar(3:7, mean(s_FC(1:Nn,2:end,indexforDiameter)),std(s_FC(1:Nn,2:end,indexforDiameter))); er.Color = 'r';  er.LineStyle = 'none'; er.LineWidth=2; %standard deviation instead of CI as the error
-     
-    callsigstar(1,p_c_d,'b')
+    % er = errorbar(2, mean(refForModeld), std(refForModeld)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2; 
+    % er = errorbar(3:7, mean(s_FC(1:Nn,2:end,indexforDiameter)),std(s_FC(1:Nn,2:end,indexforDiameter))); er.Color = 'r';  er.LineStyle = 'none'; er.LineWidth=2; %standard deviation instead of CI as the error
+    % 
+    % callsigstar(1,p_c_d,'b')
      ylim([0 120])
 
  
