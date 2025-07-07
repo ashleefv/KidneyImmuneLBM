@@ -17,7 +17,7 @@ indexforDiameter = 37;
   opts=[];
   %opts = odeset('RelTol',1e-20, 'MaxStep',1e-16);
   intv = "none";
-  [t, y] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,params,p_params, state, GC_conc', intv);
+  [t, y] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,params,p_params, state, glu_sampled, intv);
 
    Yout = real(y);
    Tout = t;
