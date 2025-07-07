@@ -16,6 +16,8 @@ size_W = size(W_index, 2);
     end_time_h = end_time*7*24;
     tspan = [start_time_h:1:end_time_h]; % hours
 
+%% You are encouraged to comment on/off each chunk below. Task = 3 takes the longest. 
+
 %% Fitted plots
 mode=1;
 % Figs 2, B (52)
@@ -31,16 +33,20 @@ if mode == 3
 end
 
 
-%% Predictions (Fig - 4, 5, 6, 7, E (55), F (56), G (57), H (58))
-% 
+%% Predictions (Fig - 4, 5, 6, 7, E-K)
+%
+%% t-test
 % Fig 6 and Table E
 task = 1; Tstop = end_time_h; % placeholder
 [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
 
+%% heatmap
 % Fig E (55) and F (56)
 task = 2; Tstop = end_time_h; % placeholder
 [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
 % 
+
+%% dynamic perturbations knock-down
 task = 3;
 if task == 3
     Tstop = end_time_h; % Fig J = figure(510) corresponds to 20 weeks, sensitive. Fig K = figure(511) non-sensitive
@@ -53,6 +59,7 @@ if task == 3
     [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
 end
 % 
+%% glucose interventions
 task = 4;
 % Figs 4, 5
 if task ==4 
