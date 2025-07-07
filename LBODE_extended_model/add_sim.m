@@ -30,10 +30,22 @@ if task == 1
 
 
     if state == "norm_mice"
-        glu_sampled=[];
+        
+       % glu_sampled = zeros(11,1);
+       % glu_sampled([7:11],1) = ctrl_glu;
+
+        glu_sampled = zeros(11,Nn);
+        glu_ctrl_ref=readmatrix('data/LEE_FINCH_CTRL_GLU.csv');
+        mean_ctrl = glu_ctrl_ref([5:end],2);
+        sd_ctrl = glu_ctrl_ref([5:end],4);
+
+        for i = 1:length(GC_time)
+            glu_sampled(i,:) = normrnd(mean_ctrl(i), sd_ctrl(i), [1,Nn]); %
+        end
+
         for Nstep = 1:Nn
         
-            [t, y] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,params,p_params, state, glu_sampled, intv);
+            [t, y] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,params,p_params, state, glu_sampled(:,Nstep), intv);
             YstepP(Nstep,:) = real(y(end,:));
             %disp(size(YstepP))
         end
@@ -110,10 +122,15 @@ refForModeld =  s_FC(:,1,indexforDiameter);
         % treatment knocks out a pathway via its parameter
         z_params{3}(test_i(inh)) = 0;
         
+       % glu_sampled = zeros(11,1);
+       % glu_sampled([7:11],1) = ctrl_glu;
+
 
         for Nstep = 1:Nn
+
+
             
-            [tn, yn] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,z_params,p_params, state,  ctrl_glu, intv);
+            [tn, yn] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,z_params,p_params, state,  glu_sampled(:,Nstep), intv);
             YstepP_new(Nstep,:) = real(yn(end,:));
             %fprintf('run %i finished\n', Nstep)
 
@@ -156,10 +173,7 @@ refForModeld =  s_FC(:,1,indexforDiameter);
     end
 p_c_n
 p_c_d
-    p_n_data
-p_d_data
-    p_n
-p_d
+
 %%
     s_FC_d = squeeze(s_FC(:,:,indexforDiameter));
     s_FC_n = squeeze(s_FC(:,:,indexforNumber));
@@ -189,12 +203,12 @@ p_d
      end
    hold on;  
    %er = errorbar([2:7], [mean(s_FC([1:Nn],:,indexforNumber))], (CI_number_lb-CI_number_ub)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;  
-   er = errorbar(1, mean(s_ctrl_n), std(s_ctrl_n)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2; 
-   er = errorbar(2, mean(refForModeln), std(refForModeln)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;    
-   er = errorbar(3:7, mean(s_FC(1:Nn,2:end,indexforNumber)), std(s_FC(1:Nn,2:end,indexforNumber))); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;  
+  er = errorbar(1, mean(s_ctrl_n), std(s_ctrl_n)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2; 
+  er = errorbar(2, mean(refForModeln), std(refForModeln)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;    
+  er = errorbar(3:7, mean(s_FC(1:Nn,2:end,indexforNumber)), std(s_FC(1:Nn,2:end,indexforNumber))); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;  
    ylim([0 10.5])
    
-     callsigstar(1,p_c_n,'b')
+    callsigstar(1,p_c_n,'b')
 
      set(gca,'FontSize',8)
 
@@ -207,11 +221,11 @@ p_d
         B.CData(2+inh,:) = [1 1 1]; 
      end
      hold on;  %er = errorbar([2:7], [mean(s_FC([1:Nn],:,indexforDiameter))], (CI_diameter_lb - CI_diameter_ub)); er.Color = 'r';  er.LineStyle = 'none'; er.LineWidth=2; 
-     er = errorbar(1, mean(s_ctrl_d), std(s_ctrl_d)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;  
-     er = errorbar(2, mean(refForModeld), std(refForModeld)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2; 
-     er = errorbar(3:7, mean(s_FC(1:Nn,2:end,indexforDiameter)),std(s_FC(1:Nn,2:end,indexforDiameter))); er.Color = 'r';  er.LineStyle = 'none'; er.LineWidth=2; %standard deviation instead of CI as the error
+    er = errorbar(1, mean(s_ctrl_d), std(s_ctrl_d)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2;  
+    er = errorbar(2, mean(refForModeld), std(refForModeld)); er.Color = 'r';          er.LineStyle = 'none'; er.LineWidth=2; 
+    er = errorbar(3:7, mean(s_FC(1:Nn,2:end,indexforDiameter)),std(s_FC(1:Nn,2:end,indexforDiameter))); er.Color = 'r';  er.LineStyle = 'none'; er.LineWidth=2; %standard deviation instead of CI as the error
      
-     callsigstar(1,p_c_d,'b')
+    callsigstar(1,p_c_d,'b')
      ylim([0 120])
 
  

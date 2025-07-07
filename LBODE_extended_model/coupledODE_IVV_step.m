@@ -92,10 +92,17 @@ elseif intv == "10h"
 end
 end
 
-if state == 'norm_mice'
+if state == 'norm_mice' % ZZZ
      Gp0 =   0.051*(336)  - 9.38;
-     Gp1 = Gp0;
-     W_GLU = (Gp1 - Gp0) / (max(glu_UB) - Gp0);
+     %Gp1 = Gp0;
+     %W_GLU = (Gp1 - Gp0) / (max(glu_UB) - Gp0);
+     if (t>=time_lee(1) && t<=time_lee(5))
+       Gp1 =  Gp0;
+       W_GLU = (Gp1 - Gp0) / (max(glu_UB) - Gp0);  % (1) use of max of finch et al. data
+     else
+       Gp = step_function(t, glu_sampled);
+       W_GLU = (Gp - Gp0) / (max(glu_UB) - Gp0) ; 
+    end
 end
 
 dydt(GLU) = (ymax(GLU)*W_GLU - y(GLU))/tau(GLU);   % LBM glucose 
