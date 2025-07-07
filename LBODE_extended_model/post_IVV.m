@@ -305,10 +305,11 @@ yout_Ym = zeros(SP, SP, length(tspan));
 yout_W = zeros(SP, RP, length(tspan));
 
 [~, y] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,params,p_params, state, GC_conc', intv); 
-y = abs(y);
+y = real(y);
 
 yfull=y; %store the non-perturbed output;
-
+y(end,indexforNumber)
+y(end,indexforDiameter)
 % Parameter: Ymax
 %deltaP = -1; % full knockdown
 
@@ -331,8 +332,8 @@ for m = 1:SP
 %     subplot(5,7,m);
 %     plot(time/(24*7), dy_modelR(:,indexforNumber)); hold on; legend(params{4}(m))
 end
-
-
+% s_FD_Ym(indexforNumber:indexforDiameter,2:35,1)
+% yout_Ym(indexforNumber:indexforDiameter,2:35, end)
 %%
 % Parameter: W
 for m = 1:RP
@@ -356,6 +357,7 @@ end
 figure(55); 
 hcolormap = colMapGen([1 0 0],[0 0 1],100,1);
 % do not consider the GLU input i = 1 or the responses Number and Diameter i = 36 and 37 because species parameters are undefined
+
 heatmapdata = real(s_FD_Ym(indexforNumber,2:35,1));
 [x_sorted, sortIdx] = sort(heatmapdata);
 subplot(2,1,1); h1=heatmap(x_sorted, 'Colormap', hcolormap); 
@@ -367,11 +369,11 @@ ax.YDisplayLabels = 'y_{max_i}'; ax.YLabel = {'Normalized % change'; 'in Number'
 set(gca,'FontName','Arial','FontSize',6)
 h1.ColorLimits = [-round(max(abs(x_sorted)),-1), round(max(abs(x_sorted)),-1)];
 h1.Title = 'A';
-filtered_sorted_indices = find(abs(x_sorted) > 5);
+filtered_sorted_indices = find(abs(x_sorted) > 1.5);
 original_indices = sortIdx(filtered_sorted_indices);
 numSpeciesSortIdx = original_indices+1;
 
-hcolormap = colMapGen([1 0 0],[0 0 1],50,1);
+hcolormap = colMapGen([1 0 0],[0 0 1],100,1);
 % do not consider the GLU input rxn j = 1 because the reaction parameters are undefined
 heatmapdata = real(s_FD_W(indexforNumber,2:47,1));
 [x_sorted, sortIdx] = sort(heatmapdata);
@@ -384,7 +386,7 @@ ax.YDisplayLabels = 'W_j'; ax.YLabel = {'Normalized % change'; 'in Number'; 'rel
 set(gca,'FontName','Arial','FontSize',6)
 h2.Title = 'B';
 h2.ColorLimits = [-round(max(abs(x_sorted)),-1), round(max(abs(x_sorted)),-1)];
-filtered_sorted_indices = find(abs(x_sorted) > 5);
+filtered_sorted_indices = find(abs(x_sorted) > 1.5);
 original_indices = sortIdx(filtered_sorted_indices);
 numRxnSortIdx = original_indices+1;
 
@@ -401,7 +403,7 @@ ax.YDisplayLabels = 'y_{max_i}'; ax.YLabel = {'Normalized % change'; 'in Diamete
 set(gca,'FontName','Arial','FontSize',6)
 h1.Title = 'A';
 h1.ColorLimits = [0, round(max(abs(x_sorted)),-1)];
-filtered_sorted_indices = find(abs(x_sorted) > 5);
+filtered_sorted_indices = find(abs(x_sorted) > 1.5);
 original_indices = sortIdx(filtered_sorted_indices);
 diamSpeciesSortIdx = original_indices+1;
 
@@ -418,7 +420,7 @@ ax.YDisplayLabels = 'W_j'; ax.YLabel = {'Normalized % change'; 'in Diameter'; 'r
 set(gca,'FontName','Arial','FontSize',6)
 h2.Title = 'B';
 h2.ColorLimits = [0, round(max(abs(x_sorted)),-1)];
-filtered_sorted_indices = find(abs(x_sorted) > 5);
+filtered_sorted_indices = find(abs(x_sorted) > 1.5);
 original_indices = sortIdx(filtered_sorted_indices);
 diamRxnSortIdx = original_indices+1;
 
@@ -439,17 +441,18 @@ save('data/listOfSensSortIdx.mat','listOfSensSortIdx')
 
 figure(71)
 figname = 'Fig7_EF'; %for EF 100% perturbation, Fig 7 equivalent
-    hold on; ax = gca; ax.FontSize = 8;
+    inhib_knock_n = listOfSensSortIdx{1}; 
+    inhib_prod_n = listOfSensSortIdx{2}; 
+    inhib_knock_d = listOfSensSortIdx{3}; 
+    inhib_prod_d = listOfSensSortIdx{4}; 
+
     subplot(2,2,1); box; hold on; h=plot(tspan/(24*7), yfull(:,indexforNumber), 'LineWidth', 1.2, 'color', 'k','DisplayName','No inhibition'); 
     legendHandles = h;
     legendNames = {'No inhibition'};
 
-    inhib_knock_n = 2:35;%listOfSensSortIdx{1}; 
-    inhib_prod_n = 2:47;%listOfSensSortIdx{2}; 
-
     for inh = 1:length(inhib_knock_n)  
         name = params{4}(inhib_knock_n(inh));
-        ploty(:) = yout_Ym(indexforNumber, inh, :);
+        ploty(:) = yout_Ym(indexforNumber, inhib_knock_n(inh), :);
         h=plot(tspan/(24*7), ploty, 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Number');
         legendHandles(end+1) = h;
         legendNames{end+1} = name{1};
@@ -458,13 +461,12 @@ figname = 'Fig7_EF'; %for EF 100% perturbation, Fig 7 equivalent
     xlim([0 20])%ylim([4 6.5])
     legend(legendHandles, legendNames, 'Location', 'Eastoutside','fontsize',4)
 
-
     subplot(2,2,2); box; hold on; h=plot(tspan/(24*7), yfull(:,indexforNumber), 'LineWidth', 1.2, 'color', 'k','DisplayName','No inhibition'); 
     legendHandles = h;
     legendNames = {'No inhibition'};
     for inh = 1:length(inhib_prod_n)
         name = params{5}(inhib_prod_n(inh));
-        ploty(:) = yout_W(indexforNumber, inh, :);
+        ploty(:) = yout_W(indexforNumber, inhib_prod_n(inh), :);
         h=plot(tspan/(24*7), ploty, 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Number');
         legendHandles(end+1) = h;
         legendNames{end+1} = name{1};        
@@ -472,10 +474,129 @@ figname = 'Fig7_EF'; %for EF 100% perturbation, Fig 7 equivalent
     xlim([0 20])%,ylim([4 6.5])
     legend(legendHandles, legendNames, 'Location', 'Eastoutside','fontsize',4)
 
+    subplot(2,2,3); box; hold on; h=plot(tspan/(24*7), yfull(:,indexforDiameter), 'LineWidth', 1.2, 'color', 'k','DisplayName','No inhibition'); 
+    legendHandles = h;
+    legendNames = {'No inhibition'};
+
+    for inh = 1:length(inhib_knock_d)       
+        name = params{4}(inhib_knock_d(inh));
+        ploty(:) = yout_Ym(indexforDiameter, inhib_knock_d(inh), :);        
+        h=plot(tspan/(24*7), ploty, 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Diameter (nm)');
+        legendHandles(end+1) = h;
+        legendNames{end+1} = name{1};
+    end
+    xlim([0 20])%,ylim([45 80])
+    legend(legendHandles, legendNames, 'Location', 'Eastoutside','fontsize',4)
+
+    subplot(2,2,4); box; hold on; h=plot(tspan/(24*7), yfull(:,indexforDiameter), 'LineWidth', 1.2, 'color', 'k','DisplayName','No inhibition');  
+    legendHandles = h;
+    legendNames = {'No inhibition'};
+
+    for inh = 1:length(inhib_prod_d)
+        name = params{5}(inhib_prod_d(inh));
+        ploty(:) = yout_W(indexforDiameter, inhib_prod_d(inh), :);        
+        h=plot(tspan/(24*7), ploty, 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Diameter (nm)');
+        legendHandles(end+1) = h;
+        legendNames{end+1} = name{1};
+    end
+    xlim([0 20])%,ylim([45 80])
+    legend(legendHandles, legendNames, 'Location', 'Eastoutside','fontsize',4)
+
+
+    labelstring = {'A', 'B','C','D'};
+    for v = 1:4
+        subplot(2,2,v)
+        hold on
+        text(-0.1, 1.1, labelstring(v)', 'Units', 'normalized', 'FontWeight', 'bold','FontSize',8)
+        set(gca,'FontName','Arial','FontSize',8)
+    end
+
+    widthInches = 9;
+    heightInches = 5.5;
+    run('ScriptForExportingImages.m')   
+
+
+
 figure(72)
 figname = 'FigG_EF'; %for EF 100% perturbation, Fig G equivalent
+    SpeciesIdx = 2:35;
+    RxnIdx = 2:47;
+
+    % non-sensitive parameters list
+    inhib_knock_n = setdiff(SpeciesIdx, listOfSensSortIdx{1}); 
+    inhib_prod_n = setdiff(RxnIdx, listOfSensSortIdx{2});
+    
+    % non-sensitive parameters list
+    inhib_knock_d = setdiff(SpeciesIdx, listOfSensSortIdx{3}); 
+    inhib_prod_d = setdiff(RxnIdx, listOfSensSortIdx{4}); 
+    subplot(2,2,1); box; hold on; h=plot(tspan/(24*7), yfull(:,indexforNumber), 'LineWidth', 1.2, 'color', 'k','DisplayName','No inhibition'); 
+    legendHandles = h;
+    legendNames = {'No inhibition'};
+
+    for inh = 1:length(inhib_knock_n)  
+        name = params{4}(inhib_knock_n(inh));
+        ploty(:) = yout_Ym(indexforNumber, inhib_knock_n(inh), :);
+        h=plot(tspan/(24*7), ploty, 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Number');
+        legendHandles(end+1) = h;
+        legendNames{end+1} = name{1};
+
+    end
+    xlim([0 20])%ylim([4 6.5])
+    legend(legendHandles, legendNames, 'Location', 'Eastoutside','fontsize',4)
+
+    subplot(2,2,2); box; hold on; h=plot(tspan/(24*7), yfull(:,indexforNumber), 'LineWidth', 1.2, 'color', 'k','DisplayName','No inhibition'); 
+    legendHandles = h;
+    legendNames = {'No inhibition'};
+    for inh = 1:length(inhib_prod_n)
+        name = params{5}(inhib_prod_n(inh));
+        ploty(:) = yout_W(indexforNumber, inhib_prod_n(inh), :);
+        h=plot(tspan/(24*7), ploty, 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Number');
+        legendHandles(end+1) = h;
+        legendNames{end+1} = name{1};        
+    end
+    xlim([0 20])%,ylim([4 6.5])
+    legend(legendHandles, legendNames, 'Location', 'Eastoutside','fontsize',4)
+
+    subplot(2,2,3); box; hold on; h=plot(tspan/(24*7), yfull(:,indexforDiameter), 'LineWidth', 1.2, 'color', 'k','DisplayName','No inhibition'); 
+    legendHandles = h;
+    legendNames = {'No inhibition'};
+
+    for inh = 1:length(inhib_knock_d)       
+        name = params{4}(inhib_knock_d(inh));
+        ploty(:) = yout_Ym(indexforDiameter, inhib_knock_d(inh), :);        
+        h=plot(tspan/(24*7), ploty, 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Diameter (nm)');
+        legendHandles(end+1) = h;
+        legendNames{end+1} = name{1};
+    end
+    xlim([0 20])%,ylim([45 80])
+    legend(legendHandles, legendNames, 'Location', 'Eastoutside','fontsize',4)
+
+    subplot(2,2,4); box; hold on; h=plot(tspan/(24*7), yfull(:,indexforDiameter), 'LineWidth', 1.2, 'color', 'k','DisplayName','No inhibition');  
+    legendHandles = h;
+    legendNames = {'No inhibition'};
+
+    for inh = 1:length(inhib_prod_d)
+        name = params{5}(inhib_prod_d(inh));
+        ploty(:) = yout_W(indexforDiameter, inhib_prod_d(inh), :);        
+        h=plot(tspan/(24*7), ploty, 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Diameter (nm)');
+        legendHandles(end+1) = h;
+        legendNames{end+1} = name{1};
+    end
+    xlim([0 20])%,ylim([45 80])
+    legend(legendHandles, legendNames, 'Location', 'Eastoutside','fontsize',4)
 
 
+    labelstring = {'A', 'B','C','D'};
+    for v = 1:4
+        subplot(2,2,v)
+        hold on
+        text(-0.1, 1.1, labelstring(v)', 'Units', 'normalized', 'FontWeight', 'bold','FontSize',8)
+        set(gca,'FontName','Arial','FontSize',8)
+    end
+
+    widthInches = 9;
+    heightInches = 7;
+    run('ScriptForExportingImages.m')   
 end
 
 %%  3: time-dependent intervention
@@ -565,7 +686,7 @@ load('data/listOfSensSortIdx.mat','listOfSensSortIdx');
 
     
     inhib_knock_d = listOfSensSortIdx{3}; % all: 2:35;%KP list: [1,3,5,6,7,9,11,12,18,19,25,27,31,33]; 
-    inhib_prod = listOfSensSortIdx{4}; % all: 2:47;%KP list: [2,3,19,20,29,41,43,15,24,21];
+    inhib_prod_d = listOfSensSortIdx{4}; % all: 2:47;%KP list: [2,3,19,20,29,41,43,15,24,21];
    
     
     subplot(2,2,3); box; hold on; h=plot(tfull/(24*7), yfull(:,indexforDiameter), 'LineWidth', 1.2, 'color', 'k','DisplayName','No inhibition'); 
@@ -592,13 +713,13 @@ load('data/listOfSensSortIdx.mat','listOfSensSortIdx');
 
 
     z_params = params;
-    for inh = 1:length(inhib_prod)
-        z_params{1}(1,inhib_prod(inh)) = 0.5*z_params{1}(1,inhib_prod(inh));
+    for inh = 1:length(inhib_prod_d)
+        z_params{1}(1,inhib_prod_d(inh)) = 0.5*z_params{1}(1,inhib_prod_d(inh));
         [tn, yn] = ode23s(@coupledODE_IVV_step,tnew,y0,opts,z_params,p_params, state, GC_conc', intv); 
         yn = abs(yn);
         
         
-        name = params{5}(inhib_prod(inh));
+        name = params{5}(inhib_prod_d(inh));
         h=plot(tn/(24*7), yn(:,indexforDiameter), 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Diameter (nm)');
         legendHandles(end+1) = h;
         legendNames{end+1} = name{1};
