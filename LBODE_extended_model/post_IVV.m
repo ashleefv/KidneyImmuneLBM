@@ -293,14 +293,21 @@ if task == 2
 s_FD_Ym = zeros(SP, SP, 1); 
 s_FD_W = zeros(SP, RP, 1);
 
-linest = ["--", "-.", ":", "--", "-.", ":",  "--", "-.", ":", "--", "-.", ":", "--", "-.", ":"];
+linest = ["--", "-.", ":", "--", "-.", ":",  "--", "-.", ":", "--", "-.", ":", "--", "-.", ":","--", "-.", ":",...
+          "--", "-.", ":", "--", "-.", ":",  "--", "-.", ":", "--", "-.", ":", "--", "-.", ":","--", "-.", ":",...
+          "--", "-.", ":", "--", "-.", ":",  "--", "-.", ":", "--", "-.", ":", "--", "-.", ":","--", "-.", ":"];
 
 tspan = start_time_h:end_time_h;
 percent = 50; opts = [];%odeset(AbsTol=1e-8);
 
+% initilize matrices to store the y values
+yout_Ym = zeros(SP, SP, length(tspan)); 
+yout_W = zeros(SP, RP, length(tspan));
 
-[t, y] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,params,p_params, state, GC_conc', intv); 
+[~, y] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,params,p_params, state, GC_conc', intv); 
 y = abs(y);
+
+yfull=y; %store the non-perturbed output;
 
 % Parameter: Ymax
 %deltaP = -1; % full knockdown
@@ -309,13 +316,13 @@ for m = 1:SP
     params_new = params;
     params_new{3}(m) = 0; %params{3}(m)*(1 + deltaP); % perturb each "Ymax" parameter by a small amount
     opts = [];%odeset(AbsTol=1e-8);
-    [time,dy_model] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,params_new,p_params, state, GC_conc', intv);
+    [~,dy_model] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,params_new,p_params, state, GC_conc', intv);
     
 
     dy_model = real(dy_model);
 
     dy_modelR = real(dy_model);
-    
+    yout_Ym(:, m, :) = dy_modelR'; 
     
     for l = 1:size(dy_modelR,2)
         s_FD_Ym(l,m,:) = (dy_modelR(end,l) - y(end,l))/(params_new{3}(m) - params{3}(m))* params{3}(m)/y(end,l)*100; %/(percent*1e-2); % at 20 weeks
@@ -332,13 +339,15 @@ for m = 1:RP
     params_new = params;
     params_new{1}(1,m) = 0; %params{1}(1,m)*(1 + deltaP); % perturb each "W" parameter by a small amount
         
-    [time,dy_model] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,params_new,p_params, state, GC_conc', intv);
+    [~,dy_model] = ode15s(@coupledODE_IVV_step,tspan,y0,opts,params_new,p_params, state, GC_conc', intv);
      
     dy_model = real(dy_model);
     
     
     dy_modelR = real(dy_model);
-    
+
+    yout_W(:, m, :) = dy_modelR';
+
     for l = 1:size(dy_modelR,2)
         s_FD_W(l,m,:) = ((dy_modelR(end,l)) - y(end,l))/(params_new{1}(1,m) - params{1}(1,m))* params{1}(1,m)/y(end,l)*100; %/(percent*1e-2); % difference in values at 20 weeks
     end
@@ -427,6 +436,45 @@ run('ScriptForExportingImages.m')
 
 listOfSensSortIdx = {numSpeciesSortIdx,numRxnSortIdx,diamSpeciesSortIdx,diamRxnSortIdx};
 save('data/listOfSensSortIdx.mat','listOfSensSortIdx')
+
+figure(71)
+figname = 'Fig7_EF'; %for EF 100% perturbation, Fig 7 equivalent
+    hold on; ax = gca; ax.FontSize = 8;
+    subplot(2,2,1); box; hold on; h=plot(tspan/(24*7), yfull(:,indexforNumber), 'LineWidth', 1.2, 'color', 'k','DisplayName','No inhibition'); 
+    legendHandles = h;
+    legendNames = {'No inhibition'};
+
+    inhib_knock_n = 2:35;%listOfSensSortIdx{1}; 
+    inhib_prod_n = 2:47;%listOfSensSortIdx{2}; 
+
+    for inh = 1:length(inhib_knock_n)  
+        name = params{4}(inhib_knock_n(inh));
+        ploty(:) = yout_Ym(indexforNumber, inh, :);
+        h=plot(tspan/(24*7), ploty, 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Number');
+        legendHandles(end+1) = h;
+        legendNames{end+1} = name{1};
+
+    end
+    xlim([0 20])%ylim([4 6.5])
+    legend(legendHandles, legendNames, 'Location', 'Eastoutside','fontsize',4)
+
+
+    subplot(2,2,2); box; hold on; h=plot(tspan/(24*7), yfull(:,indexforNumber), 'LineWidth', 1.2, 'color', 'k','DisplayName','No inhibition'); 
+    legendHandles = h;
+    legendNames = {'No inhibition'};
+    for inh = 1:length(inhib_prod_n)
+        name = params{5}(inhib_prod_n(inh));
+        ploty(:) = yout_W(indexforNumber, inh, :);
+        h=plot(tspan/(24*7), ploty, 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Number');
+        legendHandles(end+1) = h;
+        legendNames{end+1} = name{1};        
+    end
+    xlim([0 20])%,ylim([4 6.5])
+    legend(legendHandles, legendNames, 'Location', 'Eastoutside','fontsize',4)
+
+figure(72)
+figname = 'FigG_EF'; %for EF 100% perturbation, Fig G equivalent
+
 
 end
 
@@ -992,6 +1040,17 @@ figname = 'Fig5';
     var = 1:37;
 fig = figure(512);
 figname = 'FigB4';
+
+yminSpeciesVector = zeros(1,37);
+yminSpeciesVector(indexforNumber) = 4;
+yminSpeciesVector(indexforDiameter) = 45;
+ymaxSpeciesVector = ones(1,37);
+ymaxSpeciesVector(1) = 2;
+ymaxSpeciesVector(30) = 6e-3; % Actin_r
+ymaxSpeciesVector(35) = 0.02; % MLC
+ymaxSpeciesVector(indexforNumber) = 6.5;
+ymaxSpeciesVector(indexforDiameter) = 80;
+
 for i=var
 
      subplot(5,8,i)
@@ -1001,6 +1060,7 @@ for i=var
      ylabel(params{4}(i))
      %xlabel('Time (weeks)')
      xlim([0,20]);
+     ylim([yminSpeciesVector(i) ymaxSpeciesVector(i)]);
      ax = gca; ax.FontSize = 8;
 end
 % Common x-axis label
@@ -1021,9 +1081,11 @@ for i=var
     
      hold on
      % for aesthetics make the mean of samples black
-     plot(T10./(24*7), mean10(:,i),'LineWidth', 1.2,'Color','k');
+     plot(T10./(24*7), Ymean10(:,i),'LineWidth', 1.2,'Color','k');
      ylabel(params{4}(i))
      %xlabel('Time (week)')
+     xlim([0,20]);
+     ylim([yminSpeciesVector(i) ymaxSpeciesVector(i)]);
     set(gca,'FontName','Arial','FontSize',8)
 end
 
