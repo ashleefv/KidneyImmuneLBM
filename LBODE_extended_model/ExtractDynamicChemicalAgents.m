@@ -25,7 +25,7 @@ end
     % NonSensIdx = setdiff(SpeciesIdx, SortIdx);
     % g = test_i(i) == SortIdx;
 
-    test_i = 2;%[31, 34, 2];
+    test_i = 31;%[31, 34, 2];
     i = 1;
     SortIdx = listOfSensSortIdx{1};
     g = test_i(i) == SortIdx;
@@ -36,7 +36,8 @@ end
         ax1 = gca; 
         h1 = findobj(ax1,'Type','line')
         spot = find(g>0)
-        whichCurve=length(SortIdx)+1-spot
+            whichCurve=length(SortIdx)+1-spot
+        
         addplot(h1,whichCurve,test_i(i),whichsubplot,ax1)
         
         fig2 = openfig('fig7.fig');
@@ -47,7 +48,12 @@ end
         whichCurve = length(SortIdx)+1
         addplot(h2,whichCurve,test_i(i),whichsubplot,ax2)
         spot = find(g>0)
-        whichCurve=length(SortIdx)+1-spot
+                if test_i == 34;
+            %MLCP
+            whichCurve=length(SortIdx)+2-spot
+        else
+            whichCurve=length(SortIdx)+1-spot
+        end
         addplot(h2,whichCurve,test_i(i),whichsubplot,ax2)
 
         fig3 = openfig('figH.fig');
@@ -55,7 +61,12 @@ end
         ax3 = gca; 
         h3 = findobj(ax3,'Type','line')        
         spot = find(g>0)
-        whichCurve=length(SortIdx)+1-spot
+                if test_i == 34;
+            %MLCP
+            whichCurve=length(SortIdx)+2-spot
+        else
+            whichCurve=length(SortIdx)+1-spot
+        end
         addplot(h3,whichCurve,test_i(i),whichsubplot,ax3)   
 
         fig4 = openfig('figJ.fig');
@@ -63,7 +74,12 @@ end
         ax4 = gca; 
         h4 = findobj(ax4,'Type','line')        
         spot = find(g>0)
-        whichCurve=length(SortIdx)+1-spot
+        if test_i == 34;
+            %MLCP
+            whichCurve=length(SortIdx)+2-spot
+        else
+            whichCurve=length(SortIdx)+1-spot
+        end
         addplot(h4,whichCurve,test_i(i),whichsubplot,ax4)      
     % else
     %     [num2str(i) ' is non-sensitive for Number']
@@ -137,7 +153,7 @@ end
          set(gca,'FontName','Arial','FontSize',6)
    end
    figname = 'Fig50';
-widthInches = 6;
+widthInches = 6.5;
     heightInches = 4.23;
     run('ScriptForExportingImages.m')
 end

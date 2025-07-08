@@ -5,7 +5,7 @@ function addplot(h,whichCurve,test_i,whichsubplot,ax1)
     % Copy all relevant properties
     props = {'Color', 'LineStyle', 'LineWidth', 'Marker', 'MarkerSize', ...
              'MarkerEdgeColor', 'MarkerFaceColor', 'DisplayName'};
-    f2=figure(50);
+    f2=figure(6);
     subplot(whichsubplot)
     hold on
     newLine=plot(x,y); hold on
