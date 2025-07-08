@@ -122,6 +122,56 @@ widthInches = 9;
 heightInches = 5;
 run('ScriptForExportingImages.m')   
 
+     figure(41); 
+    figname = 'Fig4C';
+ Gp0 = 0.051*(336)  - 9.38;
+    leftymin = 4;
+    leftymax = 62.7520;
+    % need to convert the y axis to normalized units to get the scaling
+    % perfect
+    rightymin = (leftymin - Gp0) / (max(glu_UB) - Gp0);
+    rightymax = (leftymax - Gp0) / (max(glu_UB) - Gp0);
+    box;  
+
+    yyaxis right
+    hold on
+    colororder("gem")
+    for i = 1:Nn
+        plot(time_g./(24*7), YstepP(i,:,1), 'LineWidth', 1.2,'LineStyle','-','Marker','none'); hold on
+    end
+    plot(time_g./(24*7), MEANYstepP(:,1),'LineWidth', 1.2,'Color','k','LineStyle','-');hold on
+    plot(time_lee/(7*24), (glucose_lee- Gp0) / (max(glu_UB) - Gp0),  'o', 'Color',[0  0  1],'MarkerFaceColor',[0  0  1],'LineWidth', 1.2);
+    plot(time_finch/(7*24), (glu_finch- Gp0) / (max(glu_UB) - Gp0),  '^', 'Color',[1 0 0],'MarkerFaceColor',[1 0 0],'LineWidth', 1.2);
+    ax = gca;
+    set(gca,'FontName','Arial','FontSize',8)
+    ylabel('Normalized Glucose Units');
+    ax.YAxis(2).Color = 'k';    
+    ylim([rightymin,rightymax]);
+    box on
+
+    yyaxis left
+    hold on
+
+    glucose_data_Lee_sd = abs(glucose_lee - LB_lee);
+    glucose_data_Finch_sd = abs(glu_finch - glu_UB); 
+    hold on; errorbar(time_lee/(7*24), glucose_lee, glucose_data_Lee_sd, 'o', 'Color','k','MarkerFaceColor',[0  0  1],'LineWidth', 1.2,'CapSize',12);
+    hold on; errorbar(time_finch/(7*24), glu_finch, glucose_data_Finch_sd, '^', 'Color','k','MarkerFaceColor',[1 0 0],'LineWidth', 1.2,'CapSize',12);
+
+    set(gca,'FontName','Arial','FontSize',8)
+    ax = gca;
+    ax.YAxis(1).Color = 'k'; 
+    hold on;
+    xlabel('Time (weeks)'); xlim([0,21]);
+    ylabel('Glucose (mmol/l)'); 
+
+    ylim([leftymin,leftymax]);
+
+    legend('Lee et al. (2018)','Finch et al. (2022)','location','southeast');
+    widthInches = 5.5;
+    heightInches = 4.23;
+    run('ScriptForExportingImages.m')    
+
+
 % reduce YstepP to only the times that correspond to GC_time
 [~, idx] = ismember(GC_time, time_g);
 valid_idx = idx(idx > 0);

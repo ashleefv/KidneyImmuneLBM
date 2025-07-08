@@ -27,7 +27,7 @@ size_W = size(W_index, 2);
 % %% Regulatory plots
 % global_p_best = []; p_fitted = []; error_fitted = [];
 % mode = 3;
-% % Figs 3, C (53), D (54)
+% % Figs 3, C (53), D (54), 4C (41)
 % if mode == 3
 %     [T, Y] = coupledODE_IVV_multirun(tspan, y0, params, p_params, mode, state, global_p_best, p_fitted, error_fitted);
 % end
@@ -40,10 +40,10 @@ size_W = size(W_index, 2);
 % task = 1; Tstop = end_time_h; % placeholder
 % [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
 
-%% heatmap
-% Fig E (55) and F (56), 7_EF, G_EF
-task = 2; Tstop = end_time_h; % placeholder
-[s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
+% %% heatmap
+% % Fig E (55) and F (56), 7_EF, G_EF
+% task = 2; Tstop = end_time_h; % placeholder
+% [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
 % 
 
 %% dynamic perturbations knock-down
