@@ -355,10 +355,10 @@ for m = 1:RP
 end
 
 figure(55); 
-hcolormap = colMapGen([1 0 0],[0 0 1],100,1);
+hcolormap = colMapGen([1 0 0],[0 0 1],300,1);
 % do not consider the GLU input i = 1 or the responses Number and Diameter i = 36 and 37 because species parameters are undefined
 
-heatmapdata = real(s_FD_Ym(indexforNumber,2:35,1));
+heatmapdata = round(real(s_FD_Ym(indexforNumber,2:35,1)),0); %round to the nearest integer value for colormap purposes
 [x_sorted, sortIdx] = sort(heatmapdata);
 subplot(2,1,1); h1=heatmap(x_sorted, 'Colormap', hcolormap); 
 ax = gca; ax.Interpreter = 'tex';
@@ -366,16 +366,16 @@ ax = gca; ax.Interpreter = 'tex';
 ax.XDisplayLabels = params{4}(sortIdx+1); ax.XLabel = 'Species i';
 ax.YDisplayLabels = 'y_{max_i}'; ax.YLabel = {'Normalized % change'; 'in Number'; 'relative to'};
 %params{4}(indexforNumber); 
-set(gca,'FontName','Arial','FontSize',6)
+set(gca,'FontName','Arial','FontSize',4)
 h1.ColorLimits = [-round(max(abs(x_sorted)),-1), round(max(abs(x_sorted)),-1)];
 h1.Title = 'A';
 filtered_sorted_indices = find(abs(x_sorted) > 1.5);
 original_indices = sortIdx(filtered_sorted_indices);
 numSpeciesSortIdx = original_indices+1;
 
-hcolormap = colMapGen([1 0 0],[0 0 1],100,1);
+hcolormap = colMapGen([1 0 0],[0 0 1],300,1);
 % do not consider the GLU input rxn j = 1 because the reaction parameters are undefined
-heatmapdata = real(s_FD_W(indexforNumber,2:47,1));
+heatmapdata = round(real(s_FD_W(indexforNumber,2:47,1)),0); %round to the nearest integer value for colormap purposes
 [x_sorted, sortIdx] = sort(heatmapdata);
 subplot(2,1,2); h2=heatmap(x_sorted, 'Colormap', hcolormap); 
 ax = gca; ax.Interpreter = 'tex';
@@ -383,16 +383,16 @@ ax = gca; ax.Interpreter = 'tex';
 ax.XDisplayLabels = params{5}(sortIdx+1); ax.XLabel = 'Reaction rules j';
 ax.YDisplayLabels = 'W_j'; ax.YLabel = {'Normalized % change'; 'in Number'; 'relative to'};
 %params{4}(indexforNumber);  
-set(gca,'FontName','Arial','FontSize',6)
+set(gca,'FontName','Arial','FontSize',4)
 h2.Title = 'B';
 h2.ColorLimits = [-round(max(abs(x_sorted)),-1), round(max(abs(x_sorted)),-1)];
 filtered_sorted_indices = find(abs(x_sorted) > 1.5);
 original_indices = sortIdx(filtered_sorted_indices);
 numRxnSortIdx = original_indices+1;
 
-hcolormap = colMapGen([1 0 0],[0 0 1],80,0.5);
+hcolormap = colMapGen([1 0 0],[0 0 1],150,0.5);
 % do not consider the GLU input i = 1 or the responses Number and Diameter i = 36 and 37 because species parameters are undefined
-heatmapdata = real(s_FD_Ym(indexforDiameter,2:35,1)); 
+heatmapdata = round(real(s_FD_Ym(indexforDiameter,2:35,1)),0); %round to the nearest integer value for colormap purposes
 [x_sorted, sortIdx] = sort(heatmapdata);
 figure(56); subplot(2,1,1); h1=heatmap(x_sorted, 'Colormap', hcolormap); 
 ax = gca; ax.Interpreter = 'tex';
@@ -400,7 +400,7 @@ ax = gca; ax.Interpreter = 'tex';
 ax.XDisplayLabels = params{4}(sortIdx+1); ax.XLabel = 'Species i';
 ax.YDisplayLabels = 'y_{max_i}'; ax.YLabel = {'Normalized % change'; 'in Diameter'; 'relative to'};
 %params{4}(indexforDiameter)  ; 
-set(gca,'FontName','Arial','FontSize',6)
+set(gca,'FontName','Arial','FontSize',4)
 h1.Title = 'A';
 h1.ColorLimits = [0, round(max(abs(x_sorted)),-1)];
 filtered_sorted_indices = find(abs(x_sorted) > 1.5);
@@ -409,7 +409,7 @@ diamSpeciesSortIdx = original_indices+1;
 
 hcolormap = colMapGen([1 0 0],[0 0 1],80,0.5);
 % do not consider the GLU input rxn j = 1 because the reaction parameters are undefined
-heatmapdata = real(s_FD_W(indexforDiameter,2:47,1));
+heatmapdata = round(real(s_FD_W(indexforDiameter,2:47,1)),0);%round to the nearest integer value for colormap purposes
 [x_sorted, sortIdx] = sort(heatmapdata);
 subplot(2,1,2); h2=heatmap(x_sorted, 'Colormap', hcolormap); 
 ax = gca; ax.Interpreter = 'tex';
@@ -417,7 +417,7 @@ ax = gca; ax.Interpreter = 'tex';
 ax.XDisplayLabels = params{5}(sortIdx+1);  ax.XLabel = 'Reaction rules j';
 ax.YDisplayLabels = 'W_j'; ax.YLabel = {'Normalized % change'; 'in Diameter'; 'relative to'};
 %params{4}(indexforDiameter); 
-set(gca,'FontName','Arial','FontSize',6)
+set(gca,'FontName','Arial','FontSize',4)
 h2.Title = 'B';
 h2.ColorLimits = [0, round(max(abs(x_sorted)),-1)];
 filtered_sorted_indices = find(abs(x_sorted) > 1.5);
@@ -426,13 +426,13 @@ diamRxnSortIdx = original_indices+1;
 
 figure(55)
 figname = 'FigE';
-widthInches = 4.5;
+widthInches = 4.23;
 heightInches = 4.23;
 run('ScriptForExportingImages.m')     
 
 figure(56)
 figname = 'FigF';
-widthInches = 4.5;
+widthInches = 4.23;
 heightInches = 4.23;
 run('ScriptForExportingImages.m')
 
@@ -453,7 +453,7 @@ figname = 'Fig7_EF'; %for EF 100% perturbation, Fig 7 equivalent
     for inh = 1:length(inhib_knock_n)  
         name = params{4}(inhib_knock_n(inh));
         ploty(:) = yout_Ym(indexforNumber, inhib_knock_n(inh), :);
-        h=plot(tspan/(24*7), ploty, 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Number');
+        h=plot(tspan/(24*7), ploty, 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (weeks)'); ylabel('Fenestration Number');
         legendHandles(end+1) = h;
         legendNames{end+1} = name{1};
 
@@ -467,7 +467,7 @@ figname = 'Fig7_EF'; %for EF 100% perturbation, Fig 7 equivalent
     for inh = 1:length(inhib_prod_n)
         name = params{5}(inhib_prod_n(inh));
         ploty(:) = yout_W(indexforNumber, inhib_prod_n(inh), :);
-        h=plot(tspan/(24*7), ploty, 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Number');
+        h=plot(tspan/(24*7), ploty, 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (weeks)'); ylabel('Fenestration Number');
         legendHandles(end+1) = h;
         legendNames{end+1} = name{1};        
     end
@@ -481,7 +481,7 @@ figname = 'Fig7_EF'; %for EF 100% perturbation, Fig 7 equivalent
     for inh = 1:length(inhib_knock_d)       
         name = params{4}(inhib_knock_d(inh));
         ploty(:) = yout_Ym(indexforDiameter, inhib_knock_d(inh), :);        
-        h=plot(tspan/(24*7), ploty, 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Diameter (nm)');
+        h=plot(tspan/(24*7), ploty, 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (weeks)'); ylabel('Fenestration Diameter (nm)');
         legendHandles(end+1) = h;
         legendNames{end+1} = name{1};
     end
@@ -495,7 +495,7 @@ figname = 'Fig7_EF'; %for EF 100% perturbation, Fig 7 equivalent
     for inh = 1:length(inhib_prod_d)
         name = params{5}(inhib_prod_d(inh));
         ploty(:) = yout_W(indexforDiameter, inhib_prod_d(inh), :);        
-        h=plot(tspan/(24*7), ploty, 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Diameter (nm)');
+        h=plot(tspan/(24*7), ploty, 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (weeks)'); ylabel('Fenestration Diameter (nm)');
         legendHandles(end+1) = h;
         legendNames{end+1} = name{1};
     end
@@ -536,7 +536,7 @@ figname = 'FigG_EF'; %for EF 100% perturbation, Fig G equivalent
     for inh = 1:length(inhib_knock_n)  
         name = params{4}(inhib_knock_n(inh));
         ploty(:) = yout_Ym(indexforNumber, inhib_knock_n(inh), :);
-        h=plot(tspan/(24*7), ploty, 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Number');
+        h=plot(tspan/(24*7), ploty, 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (weeks)'); ylabel('Fenestration Number');
         legendHandles(end+1) = h;
         legendNames{end+1} = name{1};
 
@@ -550,7 +550,7 @@ figname = 'FigG_EF'; %for EF 100% perturbation, Fig G equivalent
     for inh = 1:length(inhib_prod_n)
         name = params{5}(inhib_prod_n(inh));
         ploty(:) = yout_W(indexforNumber, inhib_prod_n(inh), :);
-        h=plot(tspan/(24*7), ploty, 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Number');
+        h=plot(tspan/(24*7), ploty, 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (weeks)'); ylabel('Fenestration Number');
         legendHandles(end+1) = h;
         legendNames{end+1} = name{1};        
     end
@@ -564,7 +564,7 @@ figname = 'FigG_EF'; %for EF 100% perturbation, Fig G equivalent
     for inh = 1:length(inhib_knock_d)       
         name = params{4}(inhib_knock_d(inh));
         ploty(:) = yout_Ym(indexforDiameter, inhib_knock_d(inh), :);        
-        h=plot(tspan/(24*7), ploty, 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Diameter (nm)');
+        h=plot(tspan/(24*7), ploty, 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (weeks)'); ylabel('Fenestration Diameter (nm)');
         legendHandles(end+1) = h;
         legendNames{end+1} = name{1};
     end
@@ -578,7 +578,7 @@ figname = 'FigG_EF'; %for EF 100% perturbation, Fig G equivalent
     for inh = 1:length(inhib_prod_d)
         name = params{5}(inhib_prod_d(inh));
         ploty(:) = yout_W(indexforDiameter, inhib_prod_d(inh), :);        
-        h=plot(tspan/(24*7), ploty, 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Diameter (nm)');
+        h=plot(tspan/(24*7), ploty, 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (weeks)'); ylabel('Fenestration Diameter (nm)');
         legendHandles(end+1) = h;
         legendNames{end+1} = name{1};
     end
@@ -655,7 +655,7 @@ load('data/listOfSensSortIdx.mat','listOfSensSortIdx');
         
        
         name = params{4}(inhib_knock_n(inh));
-        h=plot(tn/(24*7), yn(:,indexforNumber), 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Number');
+        h=plot(tn/(24*7), yn(:,indexforNumber), 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (weeks)'); ylabel('Fenestration Number');
         legendHandles(end+1) = h;
         legendNames{end+1} = name{1};
 
@@ -676,7 +676,7 @@ load('data/listOfSensSortIdx.mat','listOfSensSortIdx');
         
         
         name = params{5}(inhib_prod_n(inh));
-        h=plot(tn/(24*7), yn(:,indexforNumber), 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Number');
+        h=plot(tn/(24*7), yn(:,indexforNumber), 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (weeks)'); ylabel('Fenestration Number');
         legendHandles(end+1) = h;
         legendNames{end+1} = name{1};        
         z_params = params;
@@ -699,7 +699,7 @@ load('data/listOfSensSortIdx.mat','listOfSensSortIdx');
         yn = abs(yn);
               
         name = params{4}(inhib_knock_d(inh));
-        h=plot(tn/(24*7), yn(:,indexforDiameter), 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Diameter (nm)');
+        h=plot(tn/(24*7), yn(:,indexforDiameter), 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (weeks)'); ylabel('Fenestration Diameter (nm)');
         legendHandles(end+1) = h;
         legendNames{end+1} = name{1};
         z_params = params;
@@ -717,10 +717,9 @@ load('data/listOfSensSortIdx.mat','listOfSensSortIdx');
         z_params{1}(1,inhib_prod_d(inh)) = 0.5*z_params{1}(1,inhib_prod_d(inh));
         [tn, yn] = ode23s(@coupledODE_IVV_step,tnew,y0,opts,z_params,p_params, state, GC_conc', intv); 
         yn = abs(yn);
-        
-        
+
         name = params{5}(inhib_prod_d(inh));
-        h=plot(tn/(24*7), yn(:,indexforDiameter), 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Diameter (nm)');
+        h=plot(tn/(24*7), yn(:,indexforDiameter), 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (weeks)'); ylabel('Fenestration Diameter (nm)');
         legendHandles(end+1) = h;
         legendNames{end+1} = name{1};
         z_params = params;
@@ -793,7 +792,7 @@ load('data/listOfSensSortIdx.mat','listOfSensSortIdx');
         
        
         name = params{4}(inhib_knock_n(inh));
-        h=plot(tn/(24*7), yn(:,indexforNumber), 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Number');
+        h=plot(tn/(24*7), yn(:,indexforNumber), 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (weeks)'); ylabel('Fenestration Number');
         legendHandles(end+1) = h;
         legendNames{end+1} = name{1};
 
@@ -814,7 +813,7 @@ load('data/listOfSensSortIdx.mat','listOfSensSortIdx');
         
         
         name = params{5}(inhib_prod_n(inh));
-        h=plot(tn/(24*7), yn(:,indexforNumber), 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Number');
+        h=plot(tn/(24*7), yn(:,indexforNumber), 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (weeks)'); ylabel('Fenestration Number');
         legendHandles(end+1) = h;
         legendNames{end+1} = name{1};        
         z_params = params;
@@ -837,7 +836,7 @@ load('data/listOfSensSortIdx.mat','listOfSensSortIdx');
         yn = abs(yn);
               
         name = params{4}(inhib_knock_d(inh));
-        h=plot(tn/(24*7), yn(:,indexforDiameter), 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Diameter (nm)');
+        h=plot(tn/(24*7), yn(:,indexforDiameter), 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (weeks)'); ylabel('Fenestration Diameter (nm)');
         legendHandles(end+1) = h;
         legendNames{end+1} = name{1};
         z_params = params;
@@ -858,7 +857,7 @@ load('data/listOfSensSortIdx.mat','listOfSensSortIdx');
         
         
         name = params{5}(inhib_prod(inh));
-        h=plot(tn/(24*7), yn(:,indexforDiameter), 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (week)'); ylabel('Fenestration Diameter (nm)');
+        h=plot(tn/(24*7), yn(:,indexforDiameter), 'LineWidth', 1.2,'LineStyle',linest(inh), 'DisplayName',name{1}); xlabel('Time (weeks)'); ylabel('Fenestration Diameter (nm)');
         legendHandles(end+1) = h;
         legendNames{end+1} = name{1};
         z_params = params;
@@ -1204,7 +1203,7 @@ for i=var
      % for aesthetics make the mean of samples black
      plot(T10./(24*7), Ymean10(:,i),'LineWidth', 1.2,'Color','k');
      ylabel(params{4}(i))
-     %xlabel('Time (week)')
+     %xlabel('Time (weeks)')
      xlim([0,20]);
      ylim([yminSpeciesVector(i) ymaxSpeciesVector(i)]);
     set(gca,'FontName','Arial','FontSize',8)
