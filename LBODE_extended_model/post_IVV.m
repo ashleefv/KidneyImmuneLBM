@@ -358,7 +358,7 @@ figure(55);
 hcolormap = colMapGen([1 0 0],[0 0 1],300,1);
 % do not consider the GLU input i = 1 or the responses Number and Diameter i = 36 and 37 because species parameters are undefined
 
-heatmapdata = round(real(s_FD_Ym(indexforNumber,2:35,1)),0); %round to the nearest integer value for colormap purposes
+heatmapdata = real(s_FD_Ym(indexforNumber,2:35,1));
 [x_sorted, sortIdx] = sort(heatmapdata);
 subplot(2,1,1); h1=heatmap(x_sorted, 'Colormap', hcolormap); 
 ax = gca; ax.Interpreter = 'tex';
@@ -375,7 +375,7 @@ numSpeciesSortIdx = original_indices+1;
 
 hcolormap = colMapGen([1 0 0],[0 0 1],300,1);
 % do not consider the GLU input rxn j = 1 because the reaction parameters are undefined
-heatmapdata = round(real(s_FD_W(indexforNumber,2:47,1)),0); %round to the nearest integer value for colormap purposes
+heatmapdata = real(s_FD_W(indexforNumber,2:47,1));
 [x_sorted, sortIdx] = sort(heatmapdata);
 subplot(2,1,2); h2=heatmap(x_sorted, 'Colormap', hcolormap); 
 ax = gca; ax.Interpreter = 'tex';
@@ -392,7 +392,7 @@ numRxnSortIdx = original_indices+1;
 
 hcolormap = colMapGen([1 0 0],[0 0 1],150,0.5);
 % do not consider the GLU input i = 1 or the responses Number and Diameter i = 36 and 37 because species parameters are undefined
-heatmapdata = round(real(s_FD_Ym(indexforDiameter,2:35,1)),0); %round to the nearest integer value for colormap purposes
+heatmapdata = real(s_FD_Ym(indexforDiameter,2:35,1));
 [x_sorted, sortIdx] = sort(heatmapdata);
 figure(56); subplot(2,1,1); h1=heatmap(x_sorted, 'Colormap', hcolormap); 
 ax = gca; ax.Interpreter = 'tex';
@@ -409,7 +409,7 @@ diamSpeciesSortIdx = original_indices+1;
 
 hcolormap = colMapGen([1 0 0],[0 0 1],80,0.5);
 % do not consider the GLU input rxn j = 1 because the reaction parameters are undefined
-heatmapdata = round(real(s_FD_W(indexforDiameter,2:47,1)),0);%round to the nearest integer value for colormap purposes
+heatmapdata = real(s_FD_W(indexforDiameter,2:47,1));
 [x_sorted, sortIdx] = sort(heatmapdata);
 subplot(2,1,2); h2=heatmap(x_sorted, 'Colormap', hcolormap); 
 ax = gca; ax.Interpreter = 'tex';

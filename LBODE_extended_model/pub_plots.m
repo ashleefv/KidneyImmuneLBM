@@ -35,15 +35,15 @@ size_W = size(W_index, 2);
 % 
 % %% Predictions (Fig - 4, 5, 6, 7, E-K)
 % %
-%% t-test
-% Fig 6 and Table E
-task = 1; Tstop = end_time_h; % placeholder
-[s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
-
-% %% heatmap
-% % Fig E (55) and F (56)
-% task = 2; Tstop = end_time_h; % placeholder
+% %% t-test
+% % Fig 6 and Table E
+% task = 1; Tstop = end_time_h; % placeholder
 % [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
+
+%% heatmap
+% Fig E (55) and F (56), 7_EF, G_EF
+task = 2; Tstop = end_time_h; % placeholder
+[s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
 % 
 
 %% dynamic perturbations knock-down
