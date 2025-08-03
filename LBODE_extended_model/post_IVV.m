@@ -171,8 +171,8 @@ p_d
 % %%
 %      s_FC([1:Nn],:,indexforNumber)
 %      size(s_FC)
-     figure(6)
-     figname = 'Fig6';
+     figure(10)
+     figname = 'Fig10';
      subplot(2,1,1); b = bar([mean(s_ctrl_n),mean(s_ctrl_db_n), mean(refForModeln), mean(s_FC(1:Nn,2:end,indexforNumber))], 'white'); xticks(1:length(test_i)+3); 
     xticklabels({'Healthy Data', 'Diabetes Data','No Treatment', 'KN93', 'ML7', 'Y27632', 'CalA', 'CytB'}); 
      ylabel('Fenestration Number');
@@ -424,14 +424,14 @@ filtered_sorted_indices = find(abs(x_sorted) > 1.5);
 original_indices = sortIdx(filtered_sorted_indices);
 diamRxnSortIdx = original_indices+1;
 
-figure(55)
-figname = 'FigE';
+figure(6)
+figname = 'Fig6';
 widthInches = 4.23;
 heightInches = 4.23;
 run('ScriptForExportingImages.m')     
 
-figure(56)
-figname = 'FigF';
+figure(7)
+figname = 'Fig7';
 widthInches = 4.23;
 heightInches = 4.23;
 run('ScriptForExportingImages.m')
@@ -439,8 +439,8 @@ run('ScriptForExportingImages.m')
 listOfSensSortIdx = {numSpeciesSortIdx,numRxnSortIdx,diamSpeciesSortIdx,diamRxnSortIdx};
 save('data/listOfSensSortIdx.mat','listOfSensSortIdx')
 
-figure(71)
-figname = 'Fig7_EF'; %for EF 100% perturbation, Fig 7 equivalent
+figure(54)
+figname = 'FigD'; %for EF 100% perturbation, Fig 7 equivalent
     inhib_knock_n = listOfSensSortIdx{1}; 
     inhib_prod_n = listOfSensSortIdx{2}; 
     inhib_knock_d = listOfSensSortIdx{3}; 
@@ -517,8 +517,8 @@ figname = 'Fig7_EF'; %for EF 100% perturbation, Fig 7 equivalent
 
 
 
-figure(72)
-figname = 'FigG_EF'; %for EF 100% perturbation, Fig G equivalent
+figure(55)
+figname = 'FigE'; %for EF 100% perturbation, Fig G equivalent
     SpeciesIdx = 2:35;
     RxnIdx = 2:47;
 
@@ -625,14 +625,14 @@ if task == 3
     yfull = abs(yfull);
     
     if Tstop/24/7 == 8
-        NUM = 7; % FIG 7 publication
-        figname = 'Fig7';
+        NUM = 11; % FIG 11 publication
+        figname = 'Fig11';
     elseif Tstop/24/7 == 10
-        NUM = 58; % FIG H publication
-        figname = 'FigH';
-    elseif Tstop/24/7 == 20
         NUM = 510; % FIG J publication
         figname = 'FigJ';
+    elseif Tstop/24/7 == 20
+        NUM = 512; % FIG L publication
+        figname = 'FigL';
     end
 load('data/listOfSensSortIdx.mat','listOfSensSortIdx');
 % {numSpeciesSortIdx,numRxnSortIdx,diamSpeciesSortIdx,diamRxnSortIdx};
@@ -756,14 +756,14 @@ load('data/listOfSensSortIdx.mat','listOfSensSortIdx');
 
 
     if Tstop/24/7 == 8
-        NUM = 57; % FIG G publication
-        figname = 'FigG';
-    elseif Tstop/24/7 == 10
         NUM = 59; % FIG I publication
         figname = 'FigI';
-    elseif Tstop/24/7 == 20
+    elseif Tstop/24/7 == 10
         NUM = 511; % FIG K publication
         figname = 'FigK';
+    elseif Tstop/24/7 == 20
+        NUM = 513; % FIG M publication
+        figname = 'FigM';
     end
 
 
@@ -995,8 +995,8 @@ if task == 4
     
  %%   
 
-    figure(4); 
-    figname = 'Fig4';
+    figure(8); 
+    figname = 'Fig8';
 
     Gp0 = GLU_p(start_time_h,1);
     leftymin = 4;
@@ -1104,8 +1104,8 @@ if task == 4
     
 
 %%
-figure(5);
-figname = 'Fig5';
+figure(9);
+figname = 'Fig9';
     subplot(3,3,[1 2]);
     bar((Ymean(end,2:35) - Ymean(1,2:35)), 'k'); title('No intervention'); 
     xticks(1:34); xticklabels(params{4}(2:35)); ylabel('Change relative to baseline')
@@ -1158,8 +1158,8 @@ figname = 'Fig5';
 
 
     var = 1:37;
-fig = figure(512);
-figname = 'FigB4';
+fig = figure(56);
+figname = 'FigF';
 
 yminSpeciesVector = zeros(1,37);
 yminSpeciesVector(indexforNumber) = 4;
@@ -1192,8 +1192,8 @@ widthInches = 9;
 heightInches = 5;
 run('ScriptForExportingImages.m')  
 
-fig = figure(513);
-figname = 'FigC10';
+fig = figure(57);
+figname = 'FigG';
 
 for i=var
      subplot(5,8,i)

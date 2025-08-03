@@ -31,7 +31,7 @@ end
     g = test_i(i) == SortIdx;
     whichsubplot = 221;
 
-        fig1 = openfig('fig7_EF.fig');
+        fig1 = openfig('figD.fig');
         subplot(whichsubplot)
         ax1 = gca; 
         h1 = findobj(ax1,'Type','line')
@@ -40,7 +40,7 @@ end
         
         addplot(h1,whichCurve,test_i(i),whichsubplot,ax1)
         
-        fig2 = openfig('fig7.fig');
+        fig2 = openfig('fig11.fig');
         subplot(whichsubplot)
         ax2 = gca; 
         h2 = findobj(ax2,'Type','line')        
@@ -56,7 +56,7 @@ end
         end
         addplot(h2,whichCurve,test_i(i),whichsubplot,ax2)
 
-        fig3 = openfig('figH.fig');
+        fig3 = openfig('figJ.fig');
         subplot(whichsubplot)
         ax3 = gca; 
         h3 = findobj(ax3,'Type','line')        
@@ -69,7 +69,7 @@ end
         end
         addplot(h3,whichCurve,test_i(i),whichsubplot,ax3)   
 
-        fig4 = openfig('figJ.fig');
+        fig4 = openfig('figL.fig');
         subplot(whichsubplot)
         ax4 = gca; 
         h4 = findobj(ax4,'Type','line')        
@@ -108,7 +108,7 @@ end
     g = test_i(i) == SortIdx;
     whichsubplot = 223;
 
-        fig1 = openfig('fig7_EF.fig');
+        fig1 = openfig('figD.fig');
         subplot(whichsubplot)
         ax1 = gca; 
         h1 = findobj(ax1,'Type','line')
@@ -116,7 +116,7 @@ end
         whichCurve=length(SortIdx)+1-spot
         addplot(h1,whichCurve,test_i(i),whichsubplot,ax1)
         
-        fig2 = openfig('fig7.fig');
+        fig2 = openfig('fig11.fig');
         subplot(whichsubplot)
         ax2 = gca; 
         h2 = findobj(ax2,'Type','line')        
@@ -127,7 +127,7 @@ end
         whichCurve=length(SortIdx)+1-spot
         addplot(h2,whichCurve,test_i(i),whichsubplot,ax2)
 
-        fig3 = openfig('figH.fig');
+        fig3 = openfig('figJ.fig');
         subplot(whichsubplot)
         ax3 = gca; 
         h3 = findobj(ax3,'Type','line')        
@@ -135,7 +135,7 @@ end
         whichCurve=length(SortIdx)+1-spot
         addplot(h3,whichCurve,test_i(i),whichsubplot,ax3)   
 
-        fig4 = openfig('figJ.fig');
+        fig4 = openfig('figL.fig');
         subplot(whichsubplot)
         ax4 = gca; 
         h4 = findobj(ax4,'Type','line')        
@@ -152,7 +152,7 @@ end
          text(-0.15, 1.1, labelstring(v)', 'Units', 'normalized', 'FontWeight', 'bold','FontSize',8)
          set(gca,'FontName','Arial','FontSize',6)
    end
-   figname = 'Fig50';
+   figname = 'FigH';
 widthInches = 6.5;
     heightInches = 4.23;
     run('ScriptForExportingImages.m')

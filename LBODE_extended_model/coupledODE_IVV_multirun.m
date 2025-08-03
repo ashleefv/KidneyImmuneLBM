@@ -85,8 +85,8 @@ var = 1:37;
 
 %%
 
-fig = figure(53);
-figname = 'FigC';
+fig = figure(5);
+figname = 'Fig5';
 
 yminSpeciesVector = zeros(1,37);
 yminSpeciesVector(indexforNumber) = 4;
@@ -122,8 +122,8 @@ widthInches = 9;
 heightInches = 5;
 run('ScriptForExportingImages.m')   
 
-     figure(41); 
-    figname = 'Fig4C';
+     figure(3); 
+    figname = 'Fig3';
  Gp0 = 0.051*(336)  - 9.38;
     leftymin = 4;
     leftymax = 62.7520;
@@ -191,8 +191,8 @@ for i = varsofinterest
     
 end
 
-fig = figure(54);
-figname = 'FigD';
+fig = figure(53);
+figname = 'FigC';
 tiledlayout(length(GC_time),length(varsofinterest))
 for j=1:length(GC_time) % rows
     for i = varsofinterest % columns
@@ -237,8 +237,8 @@ run('ScriptForExportingImages.m')
         pop_density_sd(i) = std(density_at_time);
     end
 
-    figure(3) 
-    figname = 'Fig3';
+    figure(4) 
+    figname = 'Fig4';
     % this figure runs at the output for the mean of the glu_sampled
     % glucose variations
     subplot(2,2,1); box;

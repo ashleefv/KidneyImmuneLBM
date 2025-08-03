@@ -27,21 +27,21 @@ size_W = size(W_index, 2);
 % %% Regulatory plots
 % global_p_best = []; p_fitted = []; error_fitted = [];
 % mode = 3;
-% % Figs 3, C (53), D (54), 4C (41)
+% % Figs 3, 4, 5, C (53)
 % if mode == 3
 %     [T, Y] = coupledODE_IVV_multirun(tspan, y0, params, p_params, mode, state, global_p_best, p_fitted, error_fitted);
 % end
 % 
 % 
-% %% Predictions (Fig - 4, 5, 6, 7, E-K)
+% %% Predictions (Fig - 6-11, D-M)
 % %
 % %% t-test
-% % Fig 6 and Table E
+% % Fig 10 and Table E
 % task = 1; Tstop = end_time_h; % placeholder
 % [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
 
 % %% heatmap
-% % Fig E (55) and F (56), 7_EF, G_EF
+% % Figs 6, 7, D, E
 % task = 2; Tstop = end_time_h; % placeholder
 % [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
 % 
@@ -49,25 +49,25 @@ size_W = size(W_index, 2);
 %% dynamic perturbations knock-down
 % task = 3;
 % if task == 3
-%     Tstop = end_time_h; % Fig J = figure(510) corresponds to 20 weeks, sensitive. Fig K = figure(511) non-sensitive
+%     Tstop = end_time_h; % Fig L = figure(512) corresponds to 20 weeks, sensitive. Fig M = figure(513) non-sensitive
 %     [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
 % 
-%     Tstop = 10*7*24; % Fig H = figure(58) corresponds to 10 weeks, sensitive. Fig I = figure(59) non-sensitive
+%     Tstop = 10*7*24; % Fig J = figure(510) corresponds to 10 weeks, sensitive. Fig K = figure(511) non-sensitive
 %     [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
 % 
-%     Tstop = 8*7*24; % Fig 7 corresponds to 8 weeks, sensitive. Fig G = figure(57) non-sensitive
+%     Tstop = 8*7*24; % Fig 11 corresponds to 8 weeks, sensitive. Fig I = figure(59) non-sensitive
 %     [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
 % end
 % % 
 % %% glucose interventions
 % task = 4;
-% % Figs 4, 5
+% % Figs 8, 9, F, G
 % if task ==4 
 %     Tstop = end_time_h; 
 %     [s_FD_Ym, s_FD_W] = post_IVV(params, y0, tspan, p_params, state, task, Tstop);
 % end
 
-%% ExtractDynameChemicalAgents.m and addplot.m were used to create Fig 50. 
+%% ExtractDynameChemicalAgents.m and addplot.m were used to create Fig H. 
 % However, it needed human intervention to for each chunk of code because
 % there is some issue with the axis staying on the figure in progress instead of the newly opened ref fig.
 % the reference figs needed as all the outputs of all of the above saved as
