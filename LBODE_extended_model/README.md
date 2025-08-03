@@ -1,6 +1,8 @@
 # LBODE Extended Model
 The LBODE extended model is an extension to the Logic-Based Model of Inflammatory Macrophage Crosstalk with Glomerular Endothelial Cells in Diabetic Kidney Disease. This folder contains code for research work titled "Multi-Cellular Network Model Predicts Alterations in Glomerular Endothelial Structure in Diabetic Kidney Disease" available [here](https://biorxiv.org/cgi/content/short/2023.04.04.535594)
 
+[![DOI](https://zenodo.org/badge/642046465.svg)](https://doi.org/10.5281/zenodo.7958229)
+
 
 ## Overview
 This extended logic-based ODE model predicts the effects of long-term exposure to glucose on pro-inflammatory macrophages and glomerular endothelial cells in diabetic mice. A novel model-based approach to predict the effect of glucose and disease intervention strategies on changes in fenestration structure in glomerular endothelial cells in diabetic kidney disease.
